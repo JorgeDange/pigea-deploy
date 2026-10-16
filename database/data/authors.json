@@ -1,0 +1,38 @@
+[
+    {
+        "name":  "Ana Manuel",
+        "avatar":  "images/avatar/1.jpg"
+    },
+    {
+        "name":  "By Ann Kowalsky",
+        "avatar":  "images/avatar/3.jpg"
+    },
+    {
+        "name":  "By Jake Domik",
+        "avatar":  "images/avatar/5.jpg"
+    },
+    {
+        "name":  "By Jane Taylor",
+        "avatar":  "images/avatar/1.jpg"
+    },
+    {
+        "name":  "By Jessie Bond",
+        "avatar":  "images/avatar/4.jpg"
+    },
+    {
+        "name":  "By Mark Rose",
+        "avatar":  "images/avatar/2.jpg"
+    },
+    {
+        "name":  "Carlos Neto",
+        "avatar":  "images/avatar/2.jpg"
+    },
+    {
+        "name":  "Helena José",
+        "avatar":  "images/avatar/3.jpg"
+    },
+    {
+        "name":  "Paulo Fernando",
+        "avatar":  "images/avatar/4.jpg"
+    }
+]
