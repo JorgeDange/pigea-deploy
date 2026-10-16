@@ -59,7 +59,8 @@ Preencher o `.env` (ver §3), depois:
 
 ```bash
 php artisan migrate --force
-php artisan db:seed --class=RoleSeeder --force      # obrigatório, ver §4
+php artisan db:seed --class=RoleSeeder --force      # papéis e permissões
+php artisan db:seed --class=ContentSeeder --force   # o conteúdo do site — ver §4
 php artisan pigea:criar-admin direccao@pigea.ao --nome="Direcção PIGEA"
 php artisan storage:link
 php artisan optimize
@@ -95,18 +96,29 @@ preciso mudar pelo menos isto:
 
 ---
 
-## 4. Seeders — **só o de papéis**
+## 4. Seeders — quais correr
 
 ```bash
 php artisan db:seed --class=RoleSeeder --force
+php artisan db:seed --class=ContentSeeder --force
 ```
+
+Sempre **por classe** — nunca `php artisan db:seed` sem `--class`, que correria o
+`DatabaseSeeder` e criaria as contas de demonstração.
 
 | Seeder | Em produção? | Porquê |
 |---|---|---|
-| `RoleSeeder` | **Sim — obrigatório** | Cria os 4 papéis e as 18 permissões (Spatie). Sem ele nada autoriza nada. Idempotente. |
-| `ContentSeeder` | **Não** | Conteúdo de demonstração (notícias, projetos, vagas…) |
-| `PainelSeeder` | **Não** | Utilizadores e candidaturas de demonstração |
-| `DatabaseSeeder` | **Não** | Chama os três anteriores e cria `test@example.com` |
+| `RoleSeeder` | **Sim — obrigatório** | Cria os 4 papéis e as 18 permissões (Spatie). Sem ele nada autoriza nada. Correr **primeiro**. Idempotente. |
+| `ContentSeeder` | **Sim — é o conteúdo do site** | Carrega os **113 registos reais** de `database/data/*.json`: 20 notícias, 9 projetos mineiros, 8 vagas, 8 fornecedores, 8 eventos, 8 legislações, 9 investigações, 9 entrevistas, 9 tecnologias, 8 empresas, 9 formações — mais 9 autores e 62 categorias. **Sem ele o site fica vazio.** Idempotente (`firstOrCreate` por `slug`). |
+| `PainelSeeder` | **Não** | Cria as contas de demonstração `utilizador@pigea.ao` e `empresa@pigea.ao` — ambas com **password `password`** — e candidaturas, notificações e oportunidades de exemplo. |
+| `DatabaseSeeder` | **Não** | Chama os três anteriores e acrescenta `test@example.com`. |
+
+> O `ContentSeeder` **não** é conteúdo de lixo: é a extração do protótipo para a
+> base de dados — os textos reais que o site vai publicar. Verificou-se por
+> comparação de `slug` que as 11 tabelas de conteúdo ficam **idênticas** às
+> originais (a única diferença na BD de desenvolvimento são 3 linhas
+> "Vaga de teste temporaria" que ficaram de testes e que o seeder **não**
+> reproduz — o seeder é mais limpo do que a BD de dev).
 
 ### Criar o primeiro administrador
 
@@ -269,15 +281,17 @@ routes/web.php            rotas públicas + admin.* (prefixo por ADMIN_PATH)
 tests/Feature/            158 testes de autorização, formulários, CSP, comandos
 ```
 
-### Contas de desenvolvimento (não usar em produção)
+### Contas de demonstração — não as crie em produção
 
-| Email | Papel | Password |
-|---|---|---|
-| `test@example.com` | admin | `password` |
-| `utilizador@pigea.ao` | utilizador | `password` |
-| `empresa@pigea.ao` | empresa | `password` |
+| Email | Papel | Password | Vem de |
+|---|---|---|---|
+| `test@example.com` | admin | `password` | `DatabaseSeeder` |
+| `utilizador@pigea.ao` | utilizador | `password` | `PainelSeeder` |
+| `empresa@pigea.ao` | empresa | `password` | `PainelSeeder` |
 
-**Remova estas contas antes de publicar.**
+Se **não** correr `PainelSeeder` nem `DatabaseSeeder` (§4), estas contas nunca
+existem na base de dados de produção — é a forma correcta de as evitar. Se já
+existirem, remova-as.
 
 ---
 
