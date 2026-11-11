@@ -63,4 +63,35 @@ class NoticiaAutosaveTest extends TestCase
                 'titulo' => 'x',
             ])->assertStatus(422);
     }
+
+    public function test_autosave_cria_rascunho_novo_sem_id(): void
+    {
+        $admin = User::where('email', 'test@example.com')->firstOrFail();
+
+        $resposta = $this->actingAs($admin)->postJson(route('admin.noticia-autosave'), [
+            'titulo' => 'Rascunho autosave novo',
+            'conteudo' => '<p>Corpo.</p><script>alert(1)</script>',
+        ]);
+
+        $resposta->assertOk()->assertJsonPath('ok', true);
+        $id = $resposta->json('id');
+        $this->assertNotNull($id);
+
+        // Segundo autosave com id agora ligado ao rascunho criado
+        $resposta = $this->actingAs($admin)->postJson(route('admin.noticia-autosave'), [
+            'id' => $id,
+            'titulo' => 'Rascunho autosave novo (iter)',
+            'conteudo' => '<p>Corpo atualizado.</p>',
+        ]);
+
+        $resposta->assertOk()->assertJsonPath('ok', true);
+
+        $this->assertDatabaseHas('news', [
+            'id' => $id,
+            'title' => 'Rascunho autosave novo (iter)',
+            'status' => 'draft',
+        ]);
+
+        $this->assertStringNotContainsString('<script', News::findOrFail($id)->content ?? '');
+    }
 }

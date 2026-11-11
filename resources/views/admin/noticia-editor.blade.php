@@ -27,7 +27,7 @@
     <div class="flash-toast" data-flash-toast="success" hidden>{{ session('estado') }}</div>
 @endif
 
-<form method="POST" action="{{ $noticia ? route('admin.noticia-editor.update', $noticia) : route('admin.noticia-editor.store') }}" enctype="multipart/form-data" id="news-editor-form" data-preview-url="{{ route('admin.noticia-pre-visualizar') }}" data-image-url="{{ route('admin.noticia-imagem.store') }}" data-autosave-url="{{ route('admin.noticia-autosave') }}" data-id="{{ $noticia?->id ?? '' }}" data-loading-submit>
+<form method="POST" action="{{ $noticia ? route('admin.noticia-editor.update', $noticia) : route('admin.noticia-editor.store') }}" enctype="multipart/form-data" id="news-editor-form" data-preview-url="{{ route('admin.noticia-pre-visualizar') }}" data-image-url="{{ route('admin.noticia-imagem.store') }}" data-autosave-url="{{ route('admin.noticia-autosave') }}" data-update-url="{{ url(config('app.admin_path') . '/noticias/ID') }}" data-id="{{ $noticia?->id ?? '' }}" data-loading-submit>
     @csrf
     @if ($noticia)
         @method('PUT')

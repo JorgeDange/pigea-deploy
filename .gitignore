@@ -28,3 +28,5 @@ Thumbs.db
 /composer
 /composer-setup.php
 /diag_*.php
+/storage/schedule-run.cmd
+

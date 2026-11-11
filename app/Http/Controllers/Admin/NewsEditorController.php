@@ -124,21 +124,41 @@ class NewsEditorController extends Controller
      * Autosave do editor (cms_v.md Fase 8.1).
      *
      * Regras:
-     *  - Apenas registos EXISTENTES (com id); a criação inicial continua manual.
      *  - Sanitiza o corpo com o ArticleSanitizer antes de guardar.
+     *  - Novos registos: cria 1 rascunho na 1ª chamada (id deixado de fora).
      *  - Nunca publica: status NÃO muda para 'published' via autosave.
      */
     public function autosave(Request $request): \Illuminate\Http\JsonResponse
     {
         $dados = $request->validate([
-            'id' => ['required', 'integer', Rule::exists('news', 'id')],
+            'id' => ['nullable', 'integer', Rule::exists('news', 'id')],
             'titulo' => ['nullable', 'string', 'max:190'],
             'conteudo' => ['nullable', 'string', 'max:2097152'],
             'subtitulo' => ['nullable', 'string', 'max:500'],
             'categoria' => ['nullable', 'integer', Rule::exists('categories', 'id')->where('type', 'news')],
         ]);
 
-        $noticia = News::findOrFail($dados['id']);
+        $novo = empty($dados['id']);
+
+        if ($novo) {
+            $titulo = trim((string) ($dados['titulo'] ?? ''));
+            if ($titulo === '') {
+                return response()->json([
+                    'ok' => false,
+                    'message' => 'Escreve um título para ativar o autosave.',
+                ], 422);
+            }
+
+            $noticia = new News();
+            $noticia->title = $titulo;
+            $noticia->slug = $this->slugUnico($titulo);
+            $noticia->status = 'draft';
+            $noticia->published_at = null;
+            $noticia->date_label = null;
+            $noticia->author_id = $request->user()->id;
+        } else {
+            $noticia = News::findOrFail($dados['id']);
+        }
 
         if (array_key_exists('titulo', $dados)) {
             $titulo = trim((string) $dados['titulo']);

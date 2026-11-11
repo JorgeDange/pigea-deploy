@@ -316,12 +316,18 @@ tinymce.init({
     var indicador = document.getElementById('autosave-indicador');
     if (!form || !indicador) return;
 
-    // Apenas em edição; a criação inicial é manual.
-    var id = form.getAttribute('data-id');
-    if (!id) return;
+    var form = document.getElementById('news-editor-form');
+    var indicador = document.getElementById('autosave-indicador');
+    if (!form || !indicador) return;
+
+    // Fase 11B/fase 12: o autosave tambem funciona para novos artigos —
+    // na primeira gravacao cria o rascunho e passa a fazer PUT (update).
+    var id = form.getAttribute('data-id') || '';
 
     var autosaveUrl = form.getAttribute('data-autosave-url');
+    var updateUrl = form.getAttribute('data-update-url');
 
+    var emVoo = false;
     var timers = { pendente: null };
     var ultimoPayload = null;
 
@@ -341,7 +347,7 @@ tinymce.init({
         }
 
         var payload = {
-            id: Number(id),
+            id: id ? Number(id) : null,
             titulo: titulo,
             conteudo: conteudo,
             subtitulo: document.getElementById('subtitulo').value.trim(),
@@ -355,6 +361,7 @@ tinymce.init({
         var token = form.querySelector('input[name="_token"]').value;
 
         setIndicador('saving', 'A guardar…');
+        emVoo = true;
 
         fetch(autosaveUrl, {
             method: 'POST',
@@ -363,6 +370,7 @@ tinymce.init({
             body: JSON.stringify(payload)
         })
             .then(function (res) {
+                emVoo = false;
                 if (res.status === 419 || res.status === 401) {
                     setIndicador('error', 'Sessão expirada — guarda manualmente.');
                     throw new Error('Sessão expirada');
@@ -372,6 +380,24 @@ tinymce.init({
             })
             .then(function (data) {
                 if (data && data.ok) {
+                    // Se o rascunho foi criado agora, passar o form a update por PUT.
+                    if (data.id && !id) {
+                        id = String(data.id);
+                        form.setAttribute('data-id', id);
+
+                        if (updateUrl) {
+                            form.action = updateUrl.replace('/ID', '/' + id);
+                        }
+                        // Inserir o hidden _method=PUT se ainda não existir.
+                        if (!form.querySelector('input[name="_method"]')) {
+                            var hm = document.createElement('input');
+                            hm.type = 'hidden';
+                            hm.name = '_method';
+                            hm.value = 'PUT';
+                            form.appendChild(hm);
+                        }
+                    }
+
                     var hora = ((data.saved_at || '').split('T')[1] || '').substring(0, 5);
                     setIndicador('saved', 'Guardado às ' + hora);
                 } else {
@@ -379,6 +405,7 @@ tinymce.init({
                 }
             })
             .catch(function () {
+                emVoo = false;
                 setIndicador('error', 'Não foi possível guardar. Tenta manualmente.');
             });
     }
