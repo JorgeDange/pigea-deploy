@@ -12,11 +12,22 @@
 
 @section('content')
 <h1 class="sr-only">{{ ($noticia ?? null) ? 'Editar notícia' : 'Nova notícia' }}</h1>
+@php
+    $ehAdmin = auth()->user()?->hasRole('admin') ?? false;
+    $podePublicar = $ehAdmin || (bool) config('cms.editor_pode_publicar');
+    $statusAtual = $noticia?->status ?? 'draft';
+    $estadoLabel = ['draft' => 'Rascunho', 'em_revisao' => 'Em revisão', 'published' => 'Publicado'][$statusAtual] ?? $statusAtual;
+    $estadoClasse = ['draft' => 'neutral', 'em_revisao' => 'pending', 'published' => 'active'][$statusAtual] ?? 'neutral';
+@endphp
+@if (session('erro'))
+    <div class="flash-toast" data-flash-toast="error" hidden>{{ session('erro') }}</div>
+@endif
 @if (session('estado'))
-    <p class="status-badge active" role="status">{{ session('estado') }}</p>
+    {{-- Fase 5 (cms_v.md): flash simples → toast global (dashboard.js) --}}
+    <div class="flash-toast" data-flash-toast="success" hidden>{{ session('estado') }}</div>
 @endif
 
-<form method="POST" action="{{ $noticia ? route('admin.noticia-editor.update', $noticia) : route('admin.noticia-editor.store') }}" enctype="multipart/form-data" id="news-editor-form">
+<form method="POST" action="{{ $noticia ? route('admin.noticia-editor.update', $noticia) : route('admin.noticia-editor.store') }}" enctype="multipart/form-data" id="news-editor-form" data-preview-url="{{ route('admin.noticia-pre-visualizar') }}" data-image-url="{{ route('admin.noticia-imagem.store') }}" data-autosave-url="{{ route('admin.noticia-autosave') }}" data-id="{{ $noticia?->id ?? '' }}" data-loading-submit>
     @csrf
     @if ($noticia)
         @method('PUT')
@@ -25,6 +36,7 @@
     <div class="card">
         <div class="card-head">
             <h2 class="card-title">{{ $noticia ? 'Editar' : 'Nova' }} notícia</h2>
+            <span class="status-badge {{ $estadoClasse }}">{{ $estadoLabel }}</span>
         </div>
         <div class="card-body">
             <div class="editor-grid">
@@ -32,12 +44,14 @@
                 <div class="editor-col">
                     <div class="dashboard-form-group">
                         <label class="dashboard-form-label" for="titulo">Título <span aria-hidden="true">*</span></label>
-                        <input class="dashboard-form-input" id="titulo" name="titulo" type="text" maxlength="190" placeholder="Título da notícia" value="{{ old('titulo', $noticia?->title ?? '') }}" required aria-describedby="erro-titulo">
+                        <input class="dashboard-form-input" id="titulo" name="titulo" type="text" maxlength="190" placeholder="Título da notícia" value="{{ old('titulo', $noticia?->title ?? '') }}" required aria-describedby="erro-titulo contador-titulo">
+                        <div class="form-counter"><span id="contador-titulo">0</span>/190</div>
                         @error('titulo')<p class="form-error" id="erro-titulo" role="alert">{{ $message }}</p>@enderror
                     </div>
                     <div class="dashboard-form-group">
-                        <label class="dashboard-form-label" for="subtitulo">Subtítulo</label>
-                        <input class="dashboard-form-input" id="subtitulo" name="subtitulo" type="text" maxlength="500" placeholder="Linha fina / destaque curto (opcional)" value="{{ old('subtitulo', $noticia?->excerpt ?? '') }}" aria-describedby="erro-subtitulo">
+                        <label class="dashboard-form-label" for="subtitulo">Resumo <small class="form-label-hint">(linha de destaque usada na lista e no SEO)</small></label>
+                        <input class="dashboard-form-input" id="subtitulo" name="subtitulo" type="text" maxlength="500" placeholder="Resumo curto (opcional)" value="{{ old('subtitulo', $noticia?->excerpt ?? '') }}" aria-describedby="erro-subtitulo contador-subtitulo">
+                        <div class="form-counter"><span id="contador-subtitulo">0</span>/500</div>
                         @error('subtitulo')<p class="form-error" id="erro-subtitulo" role="alert">{{ $message }}</p>@enderror
                     </div>
                     <div class="dashboard-form-group">
@@ -45,6 +59,44 @@
                         <textarea id="conteudo-editor" name="conteudo" class="dashboard-form-textarea" rows="16" aria-describedby="erro-conteudo">{{ old('conteudo', $noticia?->content ?? '') }}</textarea>
                         @error('conteudo')<p class="form-error" id="erro-conteudo" role="alert">{{ $message }}</p>@enderror
                     </div>
+
+                    <details class="editor-more">
+                        <summary>Mais opções</summary>
+                        <div class="editor-more-body">
+                            <div class="dashboard-form-group">
+                                <label class="dashboard-form-label" for="slug">Endereço <small class="form-label-hint">(/noticias/…)</small></label>
+                                <input class="dashboard-form-input slug-input" id="slug" name="slug" type="text" maxlength="190" value="{{ old('slug', $noticia?->slug ?? '') }}" placeholder="titulo-da-noticia" autocapitalize="off" spellcheck="false" data-slug-url="{{ route('admin.noticia-slug-unico') }}" data-ignorar="{{ $noticia?->id ?? '' }}" aria-describedby="erro-slug slug-state">
+                                <span class="slug-state" id="slug-state" role="status"></span>
+                                @error('slug')<p class="form-error" id="erro-slug" role="alert">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="dashboard-form-group">
+                                <label class="dashboard-form-label" for="tags">Etiquetas</label>
+                                <input class="dashboard-form-input" id="tags" name="tags" type="text" maxlength="250" placeholder="Ex.: mineração, Angola, diamantes" value="{{ old('tags', $noticia?->tags ?? '') }}">
+                                @error('tags')<p class="form-error" id="erro-tags" role="alert">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="dashboard-form-group">
+                                <label class="dashboard-form-label" for="publicar_em">Publicar em <small class="form-label-hint">(agendar; vazio = agora)</small></label>
+                                <input class="dashboard-form-input" id="publicar_em" name="publicar_em" type="datetime-local" value="{{ old('publicar_em', $noticia?->published_at?->format('Y-m-d\TH:i')) }}" aria-describedby="erro-publicar_em publicar_em-hint">
+                                <small class="help-text" id="publicar_em-hint">Só entra em vigor quando primires «Publicar». O artigo fica visível no site a partir desta data/hora.</small>
+                                @error('publicar_em')<p class="form-error" id="erro-publicar_em" role="alert">{{ $message }}</p>@enderror
+                            </div>
+                            <details class="editor-more-seo">
+                                <summary>SEO — título e descrição nos motores de busca</summary>
+                                <div class="dashboard-form-group">
+                                    <label class="dashboard-form-label" for="meta_title">Título da página <small class="form-label-hint">(ideal 60 caracteres)</small></label>
+                                    <input class="dashboard-form-input" id="meta_title" name="meta_title" type="text" maxlength="190" value="{{ old('meta_title', $noticia?->meta_title ?? '') }}" aria-describedby="erro-meta_title contador-meta-title">
+                                    <div class="form-counter"><span id="contador-meta-title">0</span>/60</div>
+                                    @error('meta_title')<p class="form-error" id="erro-meta_title" role="alert">{{ $message }}</p>@enderror
+                                </div>
+                                <div class="dashboard-form-group">
+                                    <label class="dashboard-form-label" for="meta_description">Descrição da página <small class="form-label-hint">(ideal 160 caracteres)</small></label>
+                                    <textarea class="dashboard-form-textarea" id="meta_description" name="meta_description" rows="2" maxlength="500" aria-describedby="erro-meta_description contador-meta-description">{{ old('meta_description', $noticia?->meta_description ?? '') }}</textarea>
+                                    <div class="form-counter"><span id="contador-meta-description">0</span>/160</div>
+                                    @error('meta_description')<p class="form-error" id="erro-meta_description" role="alert">{{ $message }}</p>@enderror
+                                </div>
+                            </details>
+                        </div>
+                    </details>
                 </div>
 
                 {{-- Coluna lateral direita: ações + metadados --}}
@@ -55,10 +107,19 @@
                             <h2 class="card-title">Ações</h2>
                         </div>
                         <div class="editor-actions-body">
-                            <button type="button" class="btn-secondary js-modal-open" data-modal="news-preview-modal"><i class="fa fa-eye" aria-hidden="true"></i> Pré-visualizar</button>
+                            <button type="button" class="btn-ghost js-modal-open" data-modal="news-preview-modal"><i class="fa fa-eye" aria-hidden="true"></i> Pré-visualizar</button>
                             <button type="submit" name="acao" value="rascunho" class="btn-secondary"><i class="fa fa-save" aria-hidden="true"></i> Guardar rascunho</button>
-                            <button type="submit" name="acao" value="publicar" class="btn-success"><i class="fa fa-paper-plane" aria-hidden="true"></i> Publicar</button>
+                            @if ($podePublicar)
+                                <button type="submit" name="acao" value="publicar" class="btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> Publicar</button>
+                            @else
+                                <button type="submit" name="acao" value="submeter_revisao" class="btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> Submeter para revisão</button>
+                            @endif
+                            @if ($ehAdmin && $noticia?->status === 'published')
+                                <button type="submit" name="acao" value="devolver_rascunho" class="btn-secondary" formnovalidate><i class="fa fa-undo" aria-hidden="true"></i> Devolver a rascunho</button>
+                                <button type="submit" name="acao" value="despublicar" class="btn-danger" formnovalidate><i class="fa fa-eye-slash" aria-hidden="true"></i> Despublicar</button>
+                            @endif
                         </div>
+                        <p class="autosave" id="autosave-indicador" role="status"><i class="fa fa-cloud-check" aria-hidden="true"></i> Autosave grava sozinho ao parares de escrever.</p>
                     </div>
 
                     {{-- Categoria + media + links --}}
@@ -68,32 +129,81 @@
                                 <label class="dashboard-form-label" for="categoria">Categoria</label>
                                 <select class="dashboard-form-select" id="categoria" name="categoria" aria-describedby="erro-categoria">
                                     <option value="">Selecionar categoria…</option>
-                                    @foreach ($categorias as $opcao)
-                                        <option value="{{ $opcao->id }}" {{ old('categoria', $noticia?->category_id) == $opcao->id ? 'selected' : '' }}>{{ $opcao->name }}</option>
+                                    @foreach ($tops as $grupo)
+                                        @php $temFilhos = isset($filhos[$grupo->id]) && $filhos[$grupo->id]->count() > 0; @endphp
+                                        @if ($temFilhos)
+                                            <optgroup label="{{ $grupo->name }}">
+                                                <option value="{{ $grupo->id }}" {{ old('categoria', $noticia?->category_id ?? $categoriasSelecionada) == $grupo->id ? 'selected' : '' }}>{{ $grupo->name }} (geral)</option>
+                                                @foreach ($filhos[$grupo->id] as $filho)
+                                                    <option value="{{ $filho->id }}" {{ old('categoria', $noticia?->category_id ?? $categoriasSelecionada) == $filho->id ? 'selected' : '' }}>&nbsp;&nbsp;{{ $filho->name }}</option>
+                                                @endforeach
+                                            </optgroup>
+                                        @else
+                                            <option value="{{ $grupo->id }}" {{ old('categoria', $noticia?->category_id ?? $categoriasSelecionada) == $grupo->id ? 'selected' : '' }}>{{ $grupo->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                                 @error('categoria')<p class="form-error" id="erro-categoria" role="alert">{{ $message }}</p>@enderror
                             </div>
 
+                            @php
+                                $fonteAtual = old('capa_fonte', ($noticia && $noticia->image && str_starts_with($noticia->image, 'http')) ? 'link' : 'ficheiro');
+                            @endphp
                             <div class="dashboard-form-group">
-                                <label class="dashboard-form-label" for="capa">Imagem de capa</label>
-                                <div class="upload-box">
-                                    @if ($noticia?->image)
-                                        <img src="{{ asset($noticia->image) }}" alt="Capa atual da notícia (imagem em uso)" class="capa-atual">
-                                        <br>
-                                    @endif
-                                    <input type="file" id="capa" name="capa" accept="image/png,image/jpeg,image/webp" aria-describedby="erro-capa capa-hint">
+                                <span class="dashboard-form-label">Imagem de capa</span>
+                                <div class="cover-source">
+                                    <label class="dashboard-checkbox"><input type="radio" name="capa_fonte" value="ficheiro" {{ $fonteAtual === 'ficheiro' ? 'checked' : '' }}> Ficheiro (upload)</label>
+                                    <label class="dashboard-checkbox"><input type="radio" name="capa_fonte" value="link" {{ $fonteAtual === 'link' ? 'checked' : '' }}> Link (URL)</label>
                                 </div>
-                                <small class="help-text" id="capa-hint">Recomendado: 1200x675px (16:9). Formatos: JPG, PNG, WEBP. Máx: 2MB.</small>
+
+                                {{-- Painel: upload do ficheiro --}}
+                                <div id="capa-ficheiro" class="file-upload" data-limit="capa"{{ $fonteAtual === 'link' ? ' hidden' : '' }}>
+                                    @if ($noticia?->image)
+                                        <img class="file-upload-preview" src="{{ image_url($noticia->image) }}" alt="Capa atual da notícia (imagem em uso)">
+                                    @endif
+                                    <label class="file-upload-button" for="capa"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher ficheiro</label>
+                                    <div class="file-upload-meta">
+                                        <span class="file-upload-name">{{ $noticia?->image ? 'Imagem atual: ' . basename($noticia->image) : 'Nenhum ficheiro selecionado' }}</span>
+                                        <small class="help-text" id="capa-hint">Recomendado: 1200x675px (16:9). JPG, PNG, WebP. Máx: 2MB.</small>
+                                    </div>
+                                    <input type="file" id="capa" name="capa" accept="image/png,image/jpeg,image/webp" aria-describedby="erro-capa capa-hint"{{ $fonteAtual === 'link' ? ' disabled' : '' }}>
+                                    <button type="button" class="file-upload-remove">Remover</button>
+                                    <p class="file-upload-erro" role="alert"></p>
+                                </div>
+
+                                {{-- Painel: imagem por link (sem ficheiro) --}}
+                                <div id="capa-link" class="dashboard-form-group"{{ $fonteAtual === 'link' ? '' : ' hidden' }}>
+                                    <label class="dashboard-form-label" for="capa_link">Link da imagem</label>
+                                    <input class="dashboard-form-input" id="capa_link" name="capa_link" type="url" placeholder="https://…/imagem.jpg" value="{{ old('capa_link', ($noticia && $noticia->image && str_starts_with($noticia->image, 'http')) ? $noticia->image : '') }}" aria-describedby="erro-capa_link"{{ $fonteAtual === 'link' ? '' : ' disabled' }}>
+                                    <small class="help-text" id="capa_link-hint">Cola o URL direto da imagem. A imagem não é descarregada; o link é mostrado no site. Se usares este campo, o campo «Ficheiro» é ignorado (e vice-versa).</small>
+                                    @error('capa_link')<p class="form-error" id="erro-capa_link" role="alert">{{ $message }}</p>@enderror
+                                </div>
+
+                                <div class="dashboard-form-group">
+                                    <label class="dashboard-form-label" for="image_alt">Texto alternativo da capa</label>
+                                    <input class="dashboard-form-input" id="image_alt" name="image_alt" type="text" maxlength="250" placeholder="Descreve a imagem para leitores de écran" value="{{ old('image_alt', $noticia?->image_alt ?? '') }}" aria-describedby="erro-image_alt">
+                                    @error('image_alt')<p class="form-error" id="erro-image_alt" role="alert">{{ $message }}</p>@enderror
+                                </div>
+                                <div class="dashboard-form-group">
+                                    <label class="dashboard-form-label" for="image_caption">Crédito da imagem</label>
+                                    <input class="dashboard-form-input" id="image_caption" name="image_caption" type="text" maxlength="250" placeholder="Ex.: Foto: Ricardo Mendes (Lusa)" value="{{ old('image_caption', $noticia?->image_caption ?? '') }}" aria-describedby="erro-image_caption">
+                                    @error('image_caption')<p class="form-error" id="erro-image_caption" role="alert">{{ $message }}</p>@enderror
+                                </div>
                                 @error('capa')<p class="form-error" id="erro-capa" role="alert">{{ $message }}</p>@enderror
                             </div>
 
                             <div class="dashboard-form-group">
                                 <label class="dashboard-form-label" for="contexto">Imagens de contexto</label>
-                                <div class="upload-box">
+                                <div class="file-upload" data-limit="contexto">
+                                    <label class="file-upload-button" for="contexto"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher ficheiro(s)</label>
+                                    <div class="file-upload-meta">
+                                        <span class="file-upload-name">Nenhum ficheiro selecionado</span>
+                                        <small class="help-text" id="contexto-hint">Recomendado: 800px de largura. JPG, PNG, WebP. Máx: 4MB por imagem (até 10).</small>
+                                    </div>
                                     <input type="file" id="contexto" name="contexto[]" accept="image/png,image/jpeg,image/webp" multiple aria-describedby="erro-contexto erro-contexto-item contexto-hint">
+                                    <button type="button" class="file-upload-remove">Remover</button>
+                                    <p class="file-upload-erro" role="alert"></p>
                                 </div>
-                                <small class="help-text" id="contexto-hint">Recomendado: 800px de largura. Formatos: JPG, PNG, WEBP. Máx: 4MB por imagem.</small>
                                 @error('contexto')<p class="form-error" id="erro-contexto" role="alert">{{ $message }}</p>@enderror
                                 @error('contexto.*')<p class="form-error" id="erro-contexto-item" role="alert">{{ $message }}</p>@enderror
                             </div>
@@ -108,6 +218,12 @@
                                 <label class="dashboard-form-label" for="documentoLink">Documento (PDF)</label>
                                 <input class="dashboard-form-input" id="documentoLink" name="documentoLink" type="url" placeholder="https://…" value="{{ old('documentoLink', $noticia?->documento_link ?? '') }}" aria-describedby="erro-documentoLink">
                                 @error('documentoLink')<p class="form-error" id="erro-documentoLink" role="alert">{{ $message }}</p>@enderror
+                            </div>
+
+                            <div class="dashboard-form-group">
+                                <label class="dashboard-form-label" for="link">Link (URL) <small class="form-label-hint">externo</small></label>
+                                <input class="dashboard-form-input" id="link" name="link" type="url" placeholder="https://…" value="{{ old('link', $noticia?->link ?? '') }}" aria-describedby="erro-link">
+                                @error('link')<p class="form-error" id="erro-link" role="alert">{{ $message }}</p>@enderror
                             </div>
                         </div>
                     </div>
@@ -134,7 +250,9 @@
             </div>
             <p class="news-preview-title" role="heading" aria-level="3" id="preview-titulo">(sem título)</p>
             <p class="news-preview-lead" id="preview-subtitulo" hidden></p>
-            <div class="news-preview-content" id="preview-content"><p><em>Corpo ainda vazio — escreve algo no editor.</em></p></div>
+            <p class="form-error" id="preview-error" role="alert" hidden></p>
+            {{-- Fase 1: o mesmo parcial do site público, obtido por fetch ao servidor --}}
+            <div class="article-body" id="preview-article"></div>
         </div>
         <div class="dashboard-modal-footer">
             <button type="button" class="btn-ghost js-modal-close">Fechar pré-visualização</button>
@@ -145,152 +263,6 @@
 
 @push('scripts')
 <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
-<script>
-    // Editor rico TinyMCE. Servido de public/js/tinymce (self-host).
-    // Nota CSP: a app corre em Content-Security-Policy-Report-Only, logo
-    // nada é bloqueado em runtime; o self-host mantém o script no mesmo
-    // origin caso a política seja endurecida para enforce.
-    // Nota: as regras de content_style duplicam de propósito as de
-    // `.news-preview-content` em dashboard.css — o TinyMCE injeta um iframe
-    // que não herda o CSS da página. Manter os dois sincronizados.
-    tinymce.init({
-        selector: '#conteudo-editor',
-        height: 430,
-        min_height: 320,
-        menubar: false,
-        branding: false,
-        license_key: 'gpl',
-        language: 'pt_PT',
-        language_url: '/js/tinymce/langs/pt_PT.js',
-        // Nome acessível do iframe do editor (o <label> não atravessa o iframe)
-        iframe_aria_text: 'Corpo da notícia',
-        plugins: ['link', 'lists', 'image', 'autoresize', 'code'],
-        toolbar: 'undo redo | bold italic underline | bullist numlist | link image | dropcap blockquote twocols',
-        formats: {
-            dropcap: { selector: 'p', classes: 'has-drop-cap' },
-            twocols: { selector: 'p', classes: 'texto-duas-colunas' },
-            blockquote: { block: 'blockquote' }
-        },
-        content_style: 'body { font-family: Poppins, sans-serif; font-size: 15px; color: #1A1A1A; } h1,h2,h3 { font-family: "Playfair Display", serif; } .has-drop-cap::first-letter { float: left; font-size: 2.4em; line-height: .85; padding: 4px 10px 0 0; font-family: "Playfair Display", serif; color: #C8102E; } blockquote { border-left: 4px solid #C8102E; margin: 1em 0; padding: .4em 1.2em; background: #FDF3F5; font-style: italic; color: #444; } .texto-duas-colunas { column-count: 2; column-gap: 2.2em; } img { max-width: 100%; height: auto; }',
-        setup: function (editor) {
-            editor.ui.registry.addButton('dropcap', {
-                text: 'Letra capitular',
-                tooltip: 'Letra capitular no início do parágrafo',
-                onAction: function () { editor.formatter.toggle('dropcap'); }
-            });
-            editor.ui.registry.addButton('blockquote', {
-                icon: 'blockquote',
-                tooltip: 'Citação destacada',
-                onAction: function () { editor.formatter.toggle('blockquote'); }
-            });
-            editor.ui.registry.addButton('twocols', {
-                text: 'Duas Colunas',
-                tooltip: 'Texto em duas colunas',
-                onAction: function () { editor.formatter.toggle('twocols'); }
-            });
-        }
-    });
-
-    // A validação devolve o utilizador a esta página com old()+$errors preenchidos;
-    // coloca o foco no primeiro campo com erro (sem autofocus fixo no título).
-    (function () {
-        var primeiro = document.querySelector('.form-error');
-        if (!primeiro) return;
-        var grupo = primeiro.closest('.dashboard-form-group');
-        var campo = grupo ? grupo.querySelector('input, select, textarea') : null;
-        // O TinyMCE esconde o textarea (#conteudo-editor) — .focus() num
-        // elemento oculto é um no-op; o foco real é o editor rich text.
-        if (campo && campo.id === 'conteudo-editor' && window.tinymce) {
-            var ed = tinymce.get('conteudo-editor');
-            if (ed) { ed.focus(); return; }
-            var area = document.querySelector('.tox .tox-edit-area');
-            if (area) { area.setAttribute('tabindex', '-1'); area.focus(); return; }
-        }
-        if (campo) campo.focus();
-    })();
-
-    // Impede duplo clique em "Guardar rascunho" / "Publicar" (duplo POST → notícia duplicada).
-    (function () {
-        var form = document.getElementById('news-editor-form');
-        form.addEventListener('submit', function () {
-            form.querySelectorAll('button[type="submit"]').forEach(function (b) { b.disabled = true; });
-        });
-    })();
-
-    // Pré-visualização: aqui só se preenchem os dados, faz-se trap de Tab e
-    // gere-se o object URL. Abrir/fechar, Escape, backdrop e devolução de foco
-    // ao botão de origem são da responsabilidade do dashboard.js (js-modal-open/close).
-    (function () {
-        var modal = document.getElementById('news-preview-modal');
-        var capa = document.getElementById('capa');
-        var previewCapa = document.getElementById('preview-capa');
-        var previewTitulo = document.getElementById('preview-titulo');
-        var previewSubtitulo = document.getElementById('preview-subtitulo');
-        var previewContent = document.getElementById('preview-content');
-        var previewCategoria = document.getElementById('preview-categoria');
-        var ultimoPreviewUrl = null;
-
-        function preencherPreview() {
-            // O HTML injectado é o que o TinyMCE emite para um autor do painel
-            // (conteúdo confiado) — é o mesmo HTML que a página pública da
-            // notícia renderiza; sanitizar só aqui criaria dois comportamentos
-            // divergentes para o mesmo corpo de texto.
-            var ed = window.tinymce && tinymce.get('conteudo-editor');
-            var conteudo = ed && ed.getContent ? ed.getContent() : document.getElementById('conteudo-editor').value;
-
-            previewTitulo.textContent = document.getElementById('titulo').value || '(sem título)';
-            var sub = document.getElementById('subtitulo').value.trim();
-            previewSubtitulo.textContent = sub;
-            previewSubtitulo.hidden = sub === '';
-
-            var selectCat = document.getElementById('categoria');
-            previewCategoria.textContent = selectCat.selectedIndex > 0 ? selectCat.options[selectCat.selectedIndex].text : 'Geral';
-
-            previewContent.innerHTML = conteudo || '<p><em>Corpo ainda vazio — escreve algo no editor.</em></p>';
-
-            if (ultimoPreviewUrl) {
-                URL.revokeObjectURL(ultimoPreviewUrl);
-                ultimoPreviewUrl = null;
-            }
-            if (capa && capa.files && capa.files[0]) {
-                ultimoPreviewUrl = URL.createObjectURL(capa.files[0]);
-                previewCapa.src = ultimoPreviewUrl;
-                previewCapa.alt = 'Capa da notícia (pré-visualização)';
-                previewCapa.hidden = false;
-            } else {
-                previewCapa.removeAttribute('src');
-                previewCapa.hidden = true;
-            }
-        }
-
-        // Preenche no mesmo clique que abre (delegação; o dashboard.js trata do .open).
-        document.addEventListener('click', function (e) {
-            if (e.target.closest('[data-modal="news-preview-modal"]')) preencherPreview();
-        });
-
-        // Revoga o object URL assim que o modal fecha — por qualquer caminho
-        // (× do cabeçalho, rodapé, Escape ou clique no backdrop).
-        new MutationObserver(function () {
-            if (!modal.classList.contains('open') && ultimoPreviewUrl) {
-                URL.revokeObjectURL(ultimoPreviewUrl);
-                ultimoPreviewUrl = null;
-            }
-        }).observe(modal, { attributes: true, attributeFilter: ['class'] });
-
-        // Trap de Tab/Shift+Tab dentro do diálogo (WCAG 2.4.3).
-        // O dashboard.js foca o próprio contentor (tabindex=-1); sem cobrir
-        // esse caso, Shift+Tab a partir dele saía para a página de fundo.
-        modal.addEventListener('keydown', function (e) {
-            if (e.key !== 'Tab') return;
-            var focaveis = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-            if (!focaveis.length) return;
-            var primeiro = focaveis[0];
-            var ultimo = focaveis[focaveis.length - 1];
-            var ativo = document.activeElement;
-            var noContainer = ativo === modal || !modal.contains(ativo);
-            if (e.shiftKey && (ativo === primeiro || noContainer)) { ultimo.focus(); e.preventDefault(); }
-            else if (!e.shiftKey && (ativo === ultimo || noContainer)) { primeiro.focus(); e.preventDefault(); }
-        });
-    })();
-</script>
+<script src="{{ asset('js/admin/news-editor.js') }}"></script>
 @endpush
+

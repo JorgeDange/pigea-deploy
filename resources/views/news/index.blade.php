@@ -138,7 +138,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image) }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -162,7 +162,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image) }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>

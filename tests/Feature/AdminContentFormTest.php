@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\Admin\ContentFormController;
-use App\Livewire\Admin\ContentTable;
+use App\Livewire\Admin\NewsListTable;
 use App\Models\Event;
 use App\Models\Interview;
 use App\Models\Legislation;
@@ -224,9 +224,9 @@ class AdminContentFormTest extends TestCase
         $noticia = News::query()->firstOrFail();
 
         Livewire::actingAs($this->admin())
-            ->test(ContentTable::class, ['tipo' => 'noticias'])
+            ->test(NewsListTable::class)
             ->call('editar', $noticia->id)
-            ->assertRedirect(route('admin.conteudo.editar', ['tipo' => 'noticias', 'id' => $noticia->id]));
+            ->assertRedirect(route('admin.noticia-editar', ['noticia' => $noticia->id]));
     }
 
     public function test_botoes_novo_estao_ligados_nas_quatro_paginas(): void

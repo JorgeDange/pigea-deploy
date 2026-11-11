@@ -1,6 +1,5 @@
 @charset "utf-8";
 /*======================================
-
  [ -Main Stylesheet-
   Theme: Gmag
   Version: 1.0
@@ -2486,13 +2485,6 @@ section {
 	text-align: left;
 	padding-bottom: 10px;
 	font-weight: 600;
-}
-.has-drop-cap:first-letter {
-	font-size: 70px;
-	float: left;
-	padding: 20px 20px 40px 0;
-	font-family: 'Playfair Display', cursive;
-	color: #000;
 }
 .single-post-content_text_media {
 	margin: 15px 0;
@@ -5549,10 +5541,4 @@ h4.cart-title span {
 	font-size: 13px;
 	font-weight: 500;
 	font-family: 'Poppins', sans-serif;
-}
-
-/* CMS Pro �?" estilos especiais do corpo de notícias (editor TinyMCE �?' público) */
-.texto-duas-colunas {
-	column-count: 2;
-	column-gap: 2em;
 }

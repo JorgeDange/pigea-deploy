@@ -1,0 +1,173 @@
+/* ==========================================================================
+   PIGEA — Corpo do artigo (.article-body) — Fase 1 (cms_v.md)
+   --------------------------------------------------------------------------
+   Ficheiro ÚNICO carregado por TRÊS sítios (paridade visual total):
+     1. site público   — news/show.blade.php (@push('styles'))
+     2. pré-visualização da edição — noticia-editor.blade.php (iframe/preview)
+     3. TinyMCE        — content_css no init
+
+   Cores utilizadas — todas já existentes no código (nenhuma nova):
+   #C8102E (marca) · #A00D25 (hover da marca) · #1A1A1A (texto) · #494949 ·
+   #666666 (ajuda) · #E0E0E0 (bordas) · #F9F9F9 · #FDF3F5 (faixas claras)
+
+   Nomenclatura de classes (e legado):
+     .drop-cap / .two-cols  — novo cânone (Fase 2, TinyMCE Estilos PIGEA)
+     .has-drop-cap / .texto-duas-colunas — legado do tema Gmag + seed;
+     são aliases até `articles:sanitize` os normalizar na BD/seed.
+   ========================================================================== */
+
+.article-body {
+	color: #1A1A1A;
+	font-family: 'Poppins', sans-serif;
+	font-size: 15px;
+	line-height: 1.75;
+}
+
+.article-body p {
+	font-size: 15px;
+	line-height: 1.75;
+	margin: 0 0 16px;
+	text-align: left;
+	padding-bottom: 0;
+	color: #1A1A1A;
+}
+
+/* Títulos dentro do corpo (o H1 vive no cabeçalho do artigo) */
+.article-body h2,
+.article-body h3 {
+	font-family: 'Playfair Display', serif;
+	color: #1A1A1A;
+	line-height: 1.28;
+}
+.article-body h2 { font-size: 28px; margin: 1.4em 0 .55em; }
+.article-body h3 { font-size: 20px; margin: 1.15em 0 .45em; }
+
+/* Letra capitular — classe nova */
+.article-body p.drop-cap::first-letter,
+.article-body .has-drop-cap::first-letter {
+	float: left;
+	font-family: 'Playfair Display', serif;
+	font-weight: 700;
+	font-size: 3.1em;
+	line-height: .82;
+	padding: .06em .14em 0 0;
+	color: #C8102E;
+}
+
+/* Citação em destaque — classe nova */
+.article-body blockquote.pull-quote {
+	float: none;
+	margin: 1.5em 0;
+	padding: 22px 34px 22px 26px;
+	background: #FDF3F5;
+	border-left: 4px solid #C8102E;
+	border-radius: 4px;
+	position: relative;
+	text-align: center;
+}
+.article-body blockquote.pull-quote p {
+	font-family: 'Playfair Display', serif;
+	font-size: 19px;
+	line-height: 1.5;
+	font-style: italic;
+	color: #494949;
+	margin: 0;
+	padding: 0;
+}
+.article-body blockquote.pull-quote::before {
+	content: "“";
+	position: absolute;
+	top: -10px;
+	left: 14px;
+	font-family: 'Playfair Display', serif;
+	font-size: 56px;
+	line-height: 1;
+	color: #C8102E;
+	opacity: .35;
+}
+
+/* Coluna estreita / duas colunas */
+.article-body .narrow { max-width: 640px; margin-left: auto; margin-right: auto; }
+.article-body .two-cols,
+.article-body .texto-duas-colunas { column-count: 2; column-gap: 2.2em; }
+@media (max-width: 768px) {
+	.article-body .two-cols,
+	.article-body .texto-duas-colunas { column-count: 1; }
+}
+
+/* Imagens e figura com texto ao lado */
+.article-body img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 1em auto;
+	border-radius: 4px;
+}
+.article-body figure { margin: 1.5em 0; padding: 0; }
+.article-body figure img { margin: 0; width: 100%; }
+.article-body figure.media-left {
+	float: left; width: 38%; margin: .35em 1.5em 1em .2em;
+}
+.article-body figure.media-right {
+	float: right; width: 38%; margin: .35em .2em 1em 1.5em;
+}
+@media (max-width: 768px) {
+	.article-body figure.media-left,
+	.article-body figure.media-right { float: none; width: 100%; margin: 1.2em 0; }
+}
+.article-body figcaption {
+	font-size: 12px;
+	color: #666666;
+	line-height: 1.5;
+	margin-top: 8px;
+	text-align: left;
+}
+
+/* Tabelas */
+.article-body table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1.5em 0;
+	font-size: 13px;
+	line-height: 1.5;
+	text-align: left;
+}
+.article-body thead th {
+	background: #FDF3F5;
+	color: #1A1A1A;
+	font-weight: 600;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	text-align: left;
+	padding: 10px 12px;
+	border-bottom: 2px solid #C8102E;
+}
+.article-body td,
+.article-body th { padding: 9px 12px; border-bottom: 1px solid #E0E0E0; text-align: left; vertical-align: top; }
+.article-body tbody tr:nth-child(even) { background: #F9F9F9; }
+.article-body table caption { caption-side: top; font-size: 12px; color: #666666; padding: 6px 0; text-align: left; }
+
+/* Listas e links */
+.article-body ul,
+.article-body ol { margin: 0 0 16px 24px; padding: 0; line-height: 1.75; }
+.article-body li { margin-bottom: 6px; text-align: left; }
+.article-body a { color: #C8102E; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.article-body a:hover { color: #A00D25; }
+.article-body strong, .article-body b { font-weight: 700; }
+.article-body em, .article-body i { font-style: italic; }
+.article-body u { text-decoration: underline; }
+.article-body s, .article-body del { text-decoration: line-through; }
+
+/* Código/trechos */
+.article-body code {
+	font-family: Consolas, "Courier New", monospace;
+	font-size: .92em;
+	background: #F9F9F9;
+	border: 1px solid #E0E0E0;
+	border-radius: 3px;
+	padding: 1px 6px;
+}
+
+/* Clearfix de sumidouro flutuante (figuras media-left/media-right) */
+.article-body::after { content: ""; display: table; clear: both; }

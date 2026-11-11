@@ -31,21 +31,22 @@ class News extends Model implements HasMedia
 
     protected $fillable = [
         'category_id', 'author_id', 'title', 'slug', 'excerpt', 'content',
-        'image', 'image_caption', 'status', 'published_at', 'date_label',
+        'image', 'image_alt', 'image_caption', 'status', 'published_at', 'date_label',
 
         'province',
 
         // Campos de `admin/noticia-nova.html` (tags + SEO).
         'tags', 'meta_title', 'meta_description',
 
-        // Links externos (restrutura.md §3.4) — vídeo e documento são só link.
-        'video_link', 'documento_link',
+        // Links externos — vídeo e documento são só link (restrutura.md §3.4);
+        // link genérico acrescentado na Fase 11 (cms_v.md).
+        'video_link', 'documento_link', 'link',
     ];
 
     protected function casts(): array
     {
         return [
-            'published_at' => 'date',
+            'published_at' => 'datetime',
             'views_count' => 'integer',
         ];
     }

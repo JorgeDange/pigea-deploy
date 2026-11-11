@@ -15,7 +15,7 @@
     <a href="{{ route('admin.empresas') }}" class="header-icon" aria-label="Fila de moderação do diretório" title="{{ $pendentesModeracao }} pendentes para moderar — abrir a fila"><i class="fa fa-bell"></i>@if ($pendentesModeracao > 0)<span class="badge">{{ $pendentesModeracao }}</span>@endif</a>
     <div class="header-user">
       <img src="{{ asset(auth()->user()->avatar ?: 'images/avatar/1.jpg') }}" alt="{{ auth()->user()->name }}">
-      <span>{{ auth()->user()->name }}</span>
+      <span>{{ auth()->user()->name }}<small class="header-user-role">{{ auth()->user()->hasRole('admin') ? 'Admin' : (auth()->user()->hasRole('editor') ? 'Editor' : 'Colaborador') }}</small></span>
     </div>
     <a href="#" onclick="event.preventDefault(); document.getElementById('form-sair').submit();" class="header-logout" aria-label="Sair"><i class="fa fa-sign-out"></i></a>
   </div>

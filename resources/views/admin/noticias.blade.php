@@ -11,12 +11,12 @@
 @endsection
 
 @section('content')
-@if (session('estado'))<p class="status-badge active" role="status">{{ session('estado') }}</p>@endif
+@if (session('estado'))<div class="flash-toast" data-flash-toast="success" hidden>{{ session('estado') }}</div>@endif
 <div class="card">
   <div class="card-head">
     <h2 class="card-title">Notícias</h2>
     <div class="card-actions"><a href="{{ Route::has('admin.noticia-nova') ? route('admin.noticia-nova') : '#' }}" class="btn-primary btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> Nova notícia</a></div>
   </div>
-  <livewire:admin.content-table tipo="noticias" />
+  <livewire:admin.news-list-table />
 </div>
 @endsection

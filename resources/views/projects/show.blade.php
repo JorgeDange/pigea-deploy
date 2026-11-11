@@ -86,7 +86,7 @@
     
 <div class="spn_box_img">
     
-    <img src="{{ asset($prev->image ?? 'images/all/2.jpg') }}" class="respimg" alt="">
+    <img src="{{ image_url($prev->image, 'images/all/2.jpg') }}" class="respimg" alt="">
     
 </div>
     
@@ -106,7 +106,7 @@
     
 <div class="spn_box_img">
     
-    <img src="{{ asset($next->image ?? 'images/all/20.jpg') }}" class="respimg" alt="">
+    <img src="{{ image_url($next->image, 'images/all/20.jpg') }}" class="respimg" alt="">
     
 </div>
     
@@ -162,7 +162,7 @@
                                                             <div class="list-post-media">
                                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                                     <div class="bg-wrap">
-                                                                        <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                     </div>
                                                                 </a>
                                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -183,7 +183,7 @@
                                                             <div class="list-post-media">
                                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                                     <div class="bg-wrap">
-                                                                        <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                     </div>
                                                                 </a>
                                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -332,7 +332,7 @@
                                                                 <div class="{{ $loop->index === 0 ? 'grid-post-item     fl-wrap' : 'grid-post-item  bold_gpi  fl-wrap' }}">
                                                                     <div class="grid-post-media gpm_sing">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                             <div class="overlay"></div>
                                                                         </div>
                                                                         <div class="grid-post-media_title">
@@ -376,7 +376,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image) }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -400,7 +400,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image) }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>

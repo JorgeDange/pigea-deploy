@@ -60,7 +60,6 @@
                     @endif
                 @endforeach
             @endforeach
-            <li class="sidebar-item sidebar-logout"><a href="#" onclick="event.preventDefault(); document.getElementById('form-sair').submit();"><i class="fa fa-sign-out"></i> Sair</a></li>
         </ul>
     </nav>
 </aside>

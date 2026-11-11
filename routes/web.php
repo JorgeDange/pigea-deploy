@@ -2,6 +2,7 @@
 
 use App\Models\News;
 use App\Http\Controllers\Admin\NewsEditorController;
+use App\Http\Controllers\Admin\NoticiaImagemController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BannerFormController;
 use App\Http\Controllers\Admin\ContentFormController;
@@ -148,6 +149,36 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
         ->middleware('can:news.manage')
         ->whereNumber('noticia')
         ->name('noticia-editor.update');
+    /**
+     * Pré-visualização do corpo (cms_v.md Fase 1/2): renderiza o MESMO parcial
+     * `news/partials/article-body.blade.php` que o site público usa, com o
+     * conteúdo passado como está no formulário (sanitizado pelo mesmo
+     * ArticleSanitizer) — não grava nada.
+     */
+    Route::post('/noticias/pre-visualizar', [NewsEditorController::class, 'previsualizar'])
+        ->middleware('can:news.manage')
+        ->name('noticia-pre-visualizar');
+    /**
+     * Upload de imagens NO CORPO do artigo (cms_v.md Fase 4).
+     * Autenticado + permissão news.manage; máx. 20 uploads/minuto por utilizador.
+     */
+    Route::post('/noticias/imagem', [NoticiaImagemController::class, 'store'])
+        ->middleware(['can:news.manage', 'throttle:20,1'])
+        ->name('noticia-imagem.store');
+    /**
+     * Verificação de unicidade do slug (Fase 6) — chamada AJAX do editor.
+     */
+    Route::get('/noticias/slug-unico', [NewsEditorController::class, 'slugUnicoCheck'])
+        ->middleware('can:news.manage')
+        ->name('noticia-slug-unico');
+    /**
+     * Autosave do editor (cms_v.md Fase 8.1): grava como rascunho (ou atualiza
+     * um já existente) — NUNCA publica. Apenas registos com id (edição);
+     * a criação inicial continua a ser manual (POST normal).
+     */
+    Route::post('/noticias/autosave', [NewsEditorController::class, 'autosave'])
+        ->middleware(['can:news.manage', 'throttle:60,1'])
+        ->name('noticia-autosave');
     Route::get('/projetos/novo', [ProjectFormController::class, 'create'])->middleware('can:project.manage')->name('projeto-novo');
     Route::post('/projetos/novo', [ProjectFormController::class, 'store'])->middleware('can:project.manage')->name('projeto-novo.store');
 

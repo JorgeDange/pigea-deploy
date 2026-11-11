@@ -34,7 +34,7 @@
 <!-- swiper-slide -->
                                     <div class="swiper-slide">
                                         <div class="bg-wrap">
-                                            <div class="bg" data-bg="{{ asset($item->image) }}" data-swiper-parallax="40%"></div>
+                                            <div class="bg" data-bg="{{ image_url($item->image) }}" data-swiper-parallax="40%"></div>
                                             <div class="overlay"></div>
                                         </div>
                                         <div class="hero-item fl-wrap">
@@ -221,7 +221,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -242,7 +242,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -268,7 +268,7 @@
                                                             <div class="swiper-slide">
                                                                 <div class="grid-post-item  bold_gpi  fl-wrap">
                                                                     <div class="grid-post-media gpm_sing">
-                                                                        <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                         <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
                                                                         <div class="grid-post-media_title">
                                                                             <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
@@ -300,7 +300,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -321,7 +321,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -342,7 +342,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -363,7 +363,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -407,7 +407,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image) }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -431,7 +431,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image) }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -534,7 +534,7 @@
                                                                 <div class="{{ $loop->index === 0 ? 'grid-post-item     fl-wrap' : 'grid-post-item  bold_gpi  fl-wrap' }}">
                                                                     <div class="grid-post-media gpm_sing">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                                             <div class="overlay"></div>
                                                                         </div>
                                                                         <div class="grid-post-media_title">
@@ -662,7 +662,7 @@
 <!-- video-item  -->
                                                     <div class="video-item fl-wrap">
                                                         <div class="video-item-img fl-wrap">
-                                                            <img src="{{ asset($item->image) }}" class="respimg" alt="">
+                                                            <img src="{{ image_url($item->image) }}" class="respimg" alt="">
                                                             <a class="play-icon image-popup" href="https://www.youtube.com/watch?v=65YhmHsuD-M"><i class="fas fa-play"></i></a>
                                                         </div>
                                                         <div class="video-item-title">
@@ -681,7 +681,7 @@
 <!-- video-item  -->
                                                     <div class="video-item fl-wrap">
                                                         <div class="video-item-img fl-wrap">
-                                                            <img src="{{ asset($item->image) }}" class="respimg" alt="">
+                                                            <img src="{{ image_url($item->image) }}" class="respimg" alt="">
                                                             <a class="play-icon image-popup" href="https://vimeo.com/155428349"><i class="fas fa-play"></i></a>
                                                         </div>
                                                         <div class="video-item-title">
@@ -700,7 +700,7 @@
 <!-- video-item  -->
                                                     <div class="video-item fl-wrap">
                                                         <div class="video-item-img fl-wrap">
-                                                            <img src="{{ asset($item->image) }}" class="respimg" alt="">
+                                                            <img src="{{ image_url($item->image) }}" class="respimg" alt="">
                                                             <a class="play-icon image-popup" href="https://vimeo.com/108359069"><i class="fas fa-play"></i></a>
                                                         </div>
                                                         <div class="video-item-title">
@@ -719,7 +719,7 @@
 <!-- video-item  -->
                                                     <div class="video-item fl-wrap">
                                                         <div class="video-item-img fl-wrap">
-                                                            <img src="{{ asset($item->image) }}" class="respimg" alt="">
+                                                            <img src="{{ image_url($item->image) }}" class="respimg" alt="">
                                                             <a class="play-icon image-popup" href="https://www.youtube.com/watch?v=s-TySen2xLo"><i class="fas fa-play"></i></a>
                                                         </div>
                                                         <div class="video-item-title">
@@ -760,7 +760,7 @@
                                             <div class="list-post-media">
                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                     <div class="bg-wrap">
-                                                        <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                        <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                     </div>
                                                 </a>
                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -797,7 +797,7 @@
                                                     <div class="list-post-media">
                                                         <a href="{{ route('news.show', $item->slug) }}">
                                                             <div class="bg-wrap">
-                                                                <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                             </div>
                                                         </a>
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -821,7 +821,7 @@
                                                     <div class="list-post-media">
                                                         <a href="{{ route('news.show', $item->slug) }}">
                                                             <div class="bg-wrap">
-                                                                <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                             </div>
                                                         </a>
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -845,7 +845,7 @@
                                                     <div class="list-post-media">
                                                         <a href="{{ route('news.show', $item->slug) }}">
                                                             <div class="bg-wrap">
-                                                                <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                             </div>
                                                         </a>
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -869,7 +869,7 @@
                                                     <div class="list-post-media">
                                                         <a href="{{ route('news.show', $item->slug) }}">
                                                             <div class="bg-wrap">
-                                                                <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                             </div>
                                                         </a>
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -919,7 +919,7 @@
                                         <div class="swiper-slide">
                                             <div class="grid-post-item  bold_gpi  fl-wrap">
                                                 <div class="grid-post-media gpm_sing">
-                                                    <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                    <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
                                                     <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
                                                     <div class="grid-post-media_title">
                                                         <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>

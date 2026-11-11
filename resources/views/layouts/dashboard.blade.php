@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="{{ asset('css/color.css') }}">
   <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
   <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
+<link rel="stylesheet" href="{{ asset('css/article.css') }}">
   @livewireStyles
   @stack('styles')
 </head>
 <body class="dashboard-body">
+  <a class="skip-link" href="#conteudo-principal">Saltar para o conteúdo</a>
   <div class="dashboard-wrap">
     <!-- SIDEBAR -->
     @yield('sidebar')
@@ -26,7 +28,7 @@
           @yield('breadcrumb')
         </nav>
       </div>
-      <main class="dashboard-content">
+      <main class="dashboard-content" id="conteudo-principal" tabindex="-1">
         @yield('content')
       </main>
     </div>
@@ -36,6 +38,24 @@
   <form id="form-sair" action="{{ route('logout') }}" method="POST" hidden>
     @csrf
   </form>
+  {{-- Toast global (cms_v.md §5) — um único padrão; substitui o flash simples. --}}
+  <div class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  {{-- Modal de confirmação genérico para ações destrutivas (cms_v.md §5). --}}
+  <div class="dashboard-modal" id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="dashboard-modal-content">
+      <div class="dashboard-modal-header">
+        <h3 id="confirm-title">Confirmar ação</h3>
+        <button type="button" class="dashboard-modal-close js-modal-close" aria-label="Fechar"><i class="fa fa-times" aria-hidden="true"></i></button>
+      </div>
+      <div class="dashboard-modal-body">
+        <p id="confirm-message">Tem a certeza?</p>
+      </div>
+      <div class="dashboard-modal-footer">
+        <button type="button" class="btn-ghost js-modal-close">Cancelar</button>
+        <button type="button" class="btn-danger" id="confirm-action">Confirmar</button>
+      </div>
+    </div>
+  </div>
   <script src="{{ asset('js/jquery.min.js') }}"></script>
   <script src="{{ asset('js/plugins.js') }}"></script>
   <script src="{{ asset('js/dashboard.js') }}"></script>
