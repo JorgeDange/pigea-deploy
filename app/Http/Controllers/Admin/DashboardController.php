@@ -7,8 +7,6 @@ use App\Models\Banner;
 use App\Models\Company;
 use App\Models\News;
 use App\Models\PageView;
-use App\Models\Project;
-use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -22,7 +20,7 @@ use Illuminate\Support\Str;
 class DashboardController extends Controller
 {
     /** Admin (cms_pro.md §4.1): cartões de topo do dashboard. */
-    /** @return array{estatisticas: list<array{icone: string, numero: int, rotulo: string, rodape: string|null, href?: string}>, atividades: list<array{icone: string, titulo: string, texto: string, tempo: string|null}>, graficos: array{rotulos: list<string>, conteudos: list<int>, utilizadores: list<int>, provincias: array{rotulos: list<string>, valores: list<int>}, visitas7: list<int>, rotulos7: list<string>}} */
+    /** @return array{estatisticas: list<array{icone: string, numero: int, rotulo: string, rodape: string|null, href?: string}>, atividades: list<array{icone: string, titulo: string, texto: string, tempo: string|null, href: string}>, graficos: array{rotulos: list<string>, conteudos: list<int>, utilizadores: list<int>, provincias: array{rotulos: list<string>, valores: list<int>}, visitas7: list<int>, rotulos7: list<string>}} */
     public function index(): View
     {
         $agora = now();
@@ -66,52 +64,10 @@ class DashboardController extends Controller
         ]);
     }
 
-    /**
-     * Últimos registos por tipo — mesma lista de 5 itens do protótipo.
-     *
-     * @return list<array{icone: string, titulo: string, texto: string, tempo: string}>
-     */
+    /** @return list<array{icone: string, titulo: string, texto: string, tempo: string|null, href: string}> */
     protected function atividades(): array
     {
-        $itens = [];
-
-        if ($empresa = Company::pendente()->latest('created_at')->first()) {
-            $itens[] = [
-                'icone' => 'fa-building',
-                'titulo' => 'Empresa à espera de aprovação',
-                'texto' => $empresa->nome_empresa.' submeteu registo no diretório.',
-                'tempo' => $empresa->created_at?->diffForHumans(),
-            ];
-        }
-
-        if ($noticia = News::latest('created_at')->first()) {
-            $itens[] = [
-                'icone' => 'fa-newspaper',
-                'titulo' => 'Nova notícia submetida',
-                'texto' => '“'.$noticia->title.'” enviada para revisão.',
-                'tempo' => $noticia->created_at?->diffForHumans(),
-            ];
-        }
-
-        if ($utilizador = User::latest('created_at')->first()) {
-            $itens[] = [
-                'icone' => 'fa-user-plus',
-                'titulo' => 'Novo utilizador',
-                'texto' => $utilizador->name.' criou conta.',
-                'tempo' => $utilizador->created_at?->diffForHumans(),
-            ];
-        }
-
-        if ($projeto = Project::latest('created_at')->first()) {
-            $itens[] = [
-                'icone' => 'fa-handshake',
-                'titulo' => 'Nova oportunidade',
-                'texto' => '“'.$projeto->title.'” publicado em projetos.',
-                'tempo' => $projeto->created_at?->diffForHumans(),
-            ];
-        }
-
-        return $itens;
+        return \App\Support\NotificacoesPainel::obter();
     }
 
     /**
@@ -178,9 +134,8 @@ class DashboardController extends Controller
     }
 
     /**
-     * Expressão SQL "ano-mês" da coluna, por motor: MySQL/MariaDB usa
-     * DATE_FORMAT, SQLite usa strftime — o ambiente de desenvolvimento
-     * corre SQLite e, sem isto, o dashboard devolve 500 (produção usa MySQL).
+     * Expressão SQL "ano-mês" da coluna, por motor: MySQL usa
+     * DATE_FORMAT, SQLite usa strftime.
      */
     protected function expressaoMes(string $coluna): string
     {
@@ -204,8 +159,8 @@ class DashboardController extends Controller
     /**
      * Distribuição por província: onde está o conteúdo que tem província.
      *
-     * Das tabelas todas, só `news`, `projects` e `vacancies` têm a coluna
-     * `province`. Ordenado da mais para a menos representada.
+     * Das tabelas todas, só `news` e `projects` têm a coluna `province`.
+     * Ordenado da mais para a menos representada.
      */
     protected function provinciasDoConteudo(): array
     {
@@ -224,8 +179,6 @@ class DashboardController extends Controller
 
         arsort($contagem);
 
-        // Os valores são slugs ("cuando-cubango"); os rótulos seguem a mesma
-        // convenção dos filtros do painel — maiúsculas por palavra.
         return [
             'rotulos' => array_map(fn (string $p) => Str::headline($p), array_keys($contagem)),
             'valores' => array_values($contagem),

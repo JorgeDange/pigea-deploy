@@ -47,6 +47,16 @@ class AppServiceProvider extends ServiceProvider
         // tem de cobrir o maior bloco + os saltos que o precedem.
         View::share('listNews', $this->rows(News::class, 12));
         View::share('listProjects', $this->rows(Project::class, 12));
+
+        // Sino/modal de notificações (layouts.dashboard, em todas as páginas admin).
+        // Cache por pedido: obtido uma vez por request, não a cada render.
+        View::composer('layouts.dashboard', function ($view) {
+            static $obtida = null;
+            if ($obtida === null) {
+                $obtida = \App\Support\NotificacoesPainel::obter();
+            }
+            $view->with('adminNotificacoes', $obtida);
+        });
     }
 
     /**

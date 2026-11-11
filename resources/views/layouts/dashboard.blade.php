@@ -38,6 +38,21 @@
   <form id="form-sair" action="{{ route('logout') }}" method="POST" hidden>
     @csrf
   </form>
+  {{-- Modal de notificações (cms_v.md v11/11/2026) — o sino abre-o; mostra a mesma lista que o dashboard usa. --}}
+  <div class="dashboard-modal" id="notificacoes-modal" role="dialog" aria-modal="true" aria-labelledby="notificacoes-modal-title">
+    <div class="dashboard-modal-content">
+      <div class="dashboard-modal-header">
+        <h3 id="notificacoes-modal-title">Notificações</h3>
+        <button type="button" class="dashboard-modal-close js-modal-close" aria-label="Fechar notificações"><i class="fa fa-times" aria-hidden="true"></i></button>
+      </div>
+      <div class="dashboard-modal-body">
+        @include('partials.notificacoes', ['itens' => $adminNotificacoes ?? []])
+      </div>
+      <div class="dashboard-modal-footer">
+        <a href="{{ route('admin.index') }}" class="btn-ghost">Ir para o painel</a>
+      </div>
+    </div>
+  </div>
   {{-- Toast global (cms_v.md §5) — um único padrão; substitui o flash simples. --}}
   <div class="toast-region" aria-live="polite" aria-atomic="true"></div>
   {{-- Modal de confirmação genérico para ações destrutivas (cms_v.md §5). --}}

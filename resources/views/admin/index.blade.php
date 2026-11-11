@@ -71,21 +71,10 @@
 <div class="card">
     <div class="card-head">
         <h3 class="card-title">Atividade recente</h3>
+        <div class="card-actions"><button type="button" class="btn-secondary btn-sm js-modal-open" data-modal="notificacoes-modal"><i class="fa fa-bell"></i> Ver todas</button></div>
     </div>
     <div class="card-body">
-        <div class="notification-list">
-            @forelse ($atividades as $indice => $atividade)
-            <div class="notification-item">
-                <div class="notification-icon"><i class="fa {{ $atividade['icone'] }}"></i></div>
-                <div class="notification-content"><p><strong>{{ $atividade['titulo'] }}</strong> — {{ $atividade['texto'] }}</p></div>
-                <div class="notification-time">{{ $atividade['tempo'] }}</div>
-            </div>
-            @empty
-            <div class="notification-item">
-                <div class="notification-content"><p>Sem atividade recente.</p></div>
-            </div>
-            @endforelse
-        </div>
+        @include('partials.notificacoes', ['itens' => $atividades])
     </div>
 </div>
 

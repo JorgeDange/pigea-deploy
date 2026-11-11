@@ -5542,3 +5542,47 @@ h4.cart-title span {
 	font-weight: 500;
 	font-family: 'Poppins', sans-serif;
 }
+
+/* ===== Acessibilidade — botões e vínculos com fundo vermelho da marca (AA) =====
+   Evita herança de `color` do tema que poderia tornar o texto pouco legível
+   sobre .btn-primary / buttons coloridos red da marca. */
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus-visible,
+.btn-danger,
+.btn-danger:hover,
+.btn-danger:focus-visible,
+.gs_button,
+.gs_button:hover,
+.cc_btn,
+.to-top,
+.search-submit,
+.search-submit2,
+.subcribe-form .subscribe-button,
+.custom-form .log-submit-btn,
+.color-btn,
+.color-bg,
+.banner-widget_content h5:before,
+.section-title:before,
+.widget-title:before,
+.hero-section_title h2:before {
+    color: #fff;
+}
+
+.dark-btn:hover,
+.qty_btn .btn:hover,
+.qty_btn .btn:hover span,
+.qty_btn .btn:hover i {
+    color: #fff;
+}
+
+.btn-primary i,
+.btn-secondary i,
+.btn-danger i {
+    color: inherit;
+}
+
+.pagination a.current-page,
+.pagination a:hover {
+    color: #fff;
+}

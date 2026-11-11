@@ -24,6 +24,8 @@
 	line-height: 1.6;
 }
 
+/* Links do painel: vermelho da marca para navegacao-text-only.
+   Botoes/anchas e cujas classes incluem "btn" ficam fora \u2014 ja tem cor propria AA. */
 .dashboard-wrap a {
 	color: #C8102E;
 	text-decoration: none;
@@ -32,6 +34,37 @@
 
 .dashboard-wrap a:hover {
 	color: #A00D25;
+}
+
+/* Botões do painel também são <a> — não devem herdar o vermelho de texto.
+   Especificidade (0,2,1) vence ".dashboard-wrap a" (0,1,1) sem tocar em
+   `.sidebar-item a` nem em links de texto puro. */
+.dashboard-wrap a.btn-primary,
+.dashboard-wrap a.btn-danger,
+.dashboard-wrap a.btn-success {
+	color: #FFFFFF; /* AA: branco sobre vermelho de marca */
+}
+.dashboard-wrap a.btn-secondary {
+	color: #1A1A1A; /* AA: escuro sobre dourado */
+}
+.dashboard-wrap a.btn-ghost {
+	color: #666666; /* AA: cinza sobre branco */
+}
+
+.dashboard-wrap a.btn-primary:hover,
+.dashboard-wrap a.btn-danger:hover,
+.dashboard-wrap a.btn-success:hover {
+	color: #FFFFFF;
+}
+.dashboard-wrap a.btn-secondary:hover {
+	color: #1A1A1A;
+}
+.dashboard-wrap a.btn-ghost:hover {
+	color: #C8102E;
+}
+
+.dashboard-wrap a[class*="btn"] {
+	text-decoration: none;
 }
 
 .dashboard-wrap p {
@@ -1865,3 +1898,17 @@
 
 /* ===== Fase 11 - toggle «Ficheiro vs Link» da capa =================== */
 .cover-source { display: flex; gap: 18px; padding: 10px 2px 6px; border-bottom: 1px solid #F0F0F0; margin-bottom: 14px; }
+
+/* ===== Dashboard: correção dos gráficos (vaza do card) ================= */
+
+.chart-box { display: block; height: 280px !important; overflow: hidden; box-sizing: border-box !important; border-left: 0; }
+.chart-titulo { margin: 0 0 12px !important; text-align: left !important; }
+.chart-box canvas { display: block; width: 100% !important; height: 220px !important; max-width: 100% !important; border: 0; }
+.chart-box-principal { grid-column: 1 / -1; border-left: 3px solid #C8102E !important; height: 300px !important; }
+.chart-box-principal canvas { height: 240px !important; }
+.charts-grid { grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 1064px) { .charts-grid { grid-template-columns: 1fr; } .chart-box, .chart-box-principal { height: auto !important; } .chart-box canvas { height: 240px !important; } }
+
+.notification-item.notification-item-link { text-decoration: none; color: #1A1A1A; cursor: pointer; border-left: 3px solid transparent; }
+.notification-item-link:hover { background: #FDF3F5; border-left-color: #C8102E; }
+.notification-item-link:focus-visible { outline: 2px solid #C8102E; outline-offset: -2px; border-radius: 4px; }
