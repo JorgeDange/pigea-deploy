@@ -22,7 +22,9 @@
     <div class="dashboard-main">
       @include('components.dashboard-header')
       <div class="dashboard-breadcrumb">
-        @yield('breadcrumb')
+        <nav class="dashboard-breadcrumb-nav" aria-label="Caminho">
+          @yield('breadcrumb')
+        </nav>
       </div>
       <main class="dashboard-content">
         @yield('content')

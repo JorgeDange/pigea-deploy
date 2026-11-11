@@ -18,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,
         ]);
 
+        // Contador de visitas do portal (cms_pro.md): só paginas publicas,
+        // contado no `terminate`, depois da resposta — zero latência percebida.
+        $middleware->appendToGroup('web', \App\Http\Middleware\CountPublicVisits::class);
+
         // Proxy de confiança (nginx/Apache a terminar TLS à frente da app).
         //
         // O `TrustProxies` já vem na pilha global por omissão e lê

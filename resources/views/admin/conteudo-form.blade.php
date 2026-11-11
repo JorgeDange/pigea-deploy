@@ -7,7 +7,7 @@
 @endsection
 
 @section('breadcrumb')
-<ul><li><a href="{{ route('admin.index') }}">Admin</a></li><li><a href="{{ route($conf['lista']) }}">{{ $rotuloLista }}</a></li><li class="active">{{ $migalha }}</li></ul>
+<ol><li><a href="{{ route('admin.index') }}">Admin</a></li><li><a href="{{ route($conf['lista']) }}">{{ $rotuloLista }}</a></li><li class="active" aria-current="page">{{ $migalha }}</li></ol>
 @endsection
 
 @section('content')
@@ -40,6 +40,10 @@
                 @switch($campo['tipo'])
                   @case('text')
                     <input class="dashboard-form-input" type="text" name="{{ $campo['nome'] }}" placeholder="{{ $campo['placeholder'] ?? '' }}" value="{{ $campo['valor'] ?? '' }}" @required($campo['obrigatorio'] ?? false)>
+                    @break
+
+                  @case('url')
+                    <input class="dashboard-form-input" type="url" name="{{ $campo['nome'] }}" placeholder="{{ $campo['placeholder'] ?? '' }}" value="{{ $campo['valor'] ?? '' }}">
                     @break
 
                   @case('textarea')
@@ -91,7 +95,7 @@
                       <br><input type="file" name="{{ $campo['nome'] }}"></div>
                     @break
                 @endswitch
-                @error($campo['nome'])<p class="form-error">{{ $message }}</p>@enderror
+                @error($campo['nome'])<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 @endforeach
                 </div>

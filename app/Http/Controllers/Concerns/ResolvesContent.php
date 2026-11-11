@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Concerns;
 use App\Models\Directory;
 use App\Models\Event;
 use App\Models\Interview;
-use App\Models\Job;
 use App\Models\Legislation;
 use App\Models\News;
 use App\Models\Project;
@@ -27,7 +26,6 @@ trait ResolvesContent
         $models = [
             News::class,
             Project::class,
-            Job::class,
             Supplier::class,
             Event::class,
             Legislation::class,

@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Job;
 use App\Models\News;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Model;
@@ -38,7 +37,6 @@ class AppServiceProvider extends ServiceProvider
         // Fase 10.
         View::share('featuredNewsSlug', $this->featuredSlug(News::class));
         View::share('featuredProjectSlug', $this->featuredSlug(Project::class));
-        View::share('featuredJobSlug', $this->featuredSlug(Job::class));
 
         // Itens dos widgets laterais (mesma lista em todas as páginas, como no
         // protótipo, onde o widget é idêntico em todos os HTML).
@@ -49,7 +47,6 @@ class AppServiceProvider extends ServiceProvider
         // tem de cobrir o maior bloco + os saltos que o precedem.
         View::share('listNews', $this->rows(News::class, 12));
         View::share('listProjects', $this->rows(Project::class, 12));
-        View::share('listJobs', $this->rows(Job::class, 12));
     }
 
     /**

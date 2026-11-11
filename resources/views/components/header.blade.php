@@ -2,32 +2,36 @@
     <!-- top bar -->
     <div class="top-bar fl-wrap">
         <div class="container">
-            <div class="date-holder">
-                <span class="date_num"></span>
-                <span class="date_mounth"></span>
-                <span class="date_year"></span>
-            </div>
-            <div class="header_news-ticker-wrap">
-                <div class="hnt_title">Últimas Notícias :</div>
-                <div class="header_news-ticker fl-wrap">
-                    <ul>
-                        @foreach ($widgetNews->take(4) as $item)
-                            <li><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></li>
-                        @endforeach
-                    </ul>
-                </div>
-                <div class="n_contr-wrap">
-                    <div class="n_contr p_btn"><i class="fas fa-caret-left"></i></div>
-                    <div class="n_contr n_btn"><i class="fas fa-caret-right"></i></div>
-                </div>
-            </div>
+            {{-- Redes sociais (esquerda). Links ainda placeholder '#'; os URLs
+                 de gestão ficam nas Configurações do admin (facebook/instagram/
+                 linkedin/youtube) — ligação a implementar mais tarde. --}}
             <ul class="topbar-social">
                 <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
                 <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
                 <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                <li><a href="#" target="_blank"><i class="fab fa-vk"></i></a></li>
-                <li><a href="#" target="_blank"><i class="fab fa-pinterest-p"></i></a></li>
+                <li><a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
+                <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
             </ul>
+
+            {{-- Área de publicidade CENTRAL — banner horizontal (pedido do
+                 cliente, 11/11/2026). O componente renderiza o banner exibível
+                 mais recente; sem banner vigente não gera HTML e o centro fica
+                 livre. Posicionamento em css/topo.css. --}}
+            <div class="top-banner-area">
+                <x-banner-publicitario posicao="topo" />
+            </div>
+
+            {{-- Direita: data/hora + pesquisa. O ícone de pesquisa saiu do
+                 header-inner, onde ficava sob a barra full-width do mega menu
+                 (não visível/clicável) — pedido do cliente, 11/11/2026. --}}
+            <div class="topbar-direita">
+                <div class="date-holder">
+                    <span class="date_num"></span>
+                    <span class="date_mounth"></span>
+                    <span class="date_year"></span>
+                </div>
+                <div class="search_btn htact show_search-btn"><i class="far fa-search"></i></div>
+            </div>
         </div>
     </div>
     <!-- top bar end -->
@@ -36,21 +40,6 @@
             <!-- logo holder  -->
             <a href="{{ route('home') }}" class="logo-holder"><img src="{{ asset('images/logo.png') }}" alt="PIGEA"></a>
             <!-- logo holder end -->
-            <div class="search_btn htact show_search-btn"><i class="far fa-search"></i> <span class="header-tooltip">Pesquisar</span></div>
-            @auth
-                @php
-                    // Mesma lógica do RoleBasedHomeResponse: admin/editor → painel
-                    // admin, empresa → /painel-empresa, resto → /painel.
-                    // Os três ramos escrevem caminhos relativos — o do admin vem
-                    // do ADMIN_PATH (.env), ver config/app.php.
-                    $usuario = auth()->user();
-                    $painelUrl = $usuario->hasAnyRole(['admin', 'editor']) ? '/'.config('app.admin_path')
-                        : ($usuario->hasRole('company') ? '/painel-empresa' : '/painel');
-                @endphp
-                <a href="{{ $painelUrl }}" class="srf_btn htact"><i class="fal fa-user"></i> <span class="header-tooltip">O meu painel</span></a>
-            @else
-                <div class="srf_btn htact show-reg-form"><i class="fal fa-user"></i> <span class="header-tooltip">Entrar</span></div>
-            @endauth
             <!-- header-search-wrap -->
             <div class="header-search-wrap novis_sarch">
                 <div class="widget-inner">

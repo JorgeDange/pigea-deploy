@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Directory;
 use App\Models\Event;
 use App\Models\Interview;
-use App\Models\Job;
 use App\Models\Legislation;
 use App\Models\News;
 use App\Models\Project;
@@ -68,18 +66,6 @@ class ContentFormController extends Controller
         'expirada' => ['rejected', 'Expirada'],
     ];
 
-    private const ESTADOS_VAGA = [
-        'ativa' => ['published', 'Ativa'],
-        'em-analise' => ['draft', 'Em análise'],
-        'expirada' => ['rejected', 'Expirada'],
-    ];
-
-    private const ESTADOS_EMPRESA = [
-        'aprovada' => ['published', 'Aprovada'],
-        'pendente' => ['draft', 'Pendente'],
-        'rejeitada' => ['rejected', 'Rejeitada'],
-    ];
-
     /**
      * Rótulo da lista de origem, para o breadcrumb (Admin → Notícias → Nova).
      *
@@ -92,8 +78,6 @@ class ContentFormController extends Controller
         'legislacao' => 'Legislação',
         'noticias' => 'Notícias',
         'projetos' => 'Projetos',
-        'vagas' => 'Vagas',
-        'empresas' => 'Empresas',
     ];
 
     /**
@@ -150,7 +134,7 @@ class ContentFormController extends Controller
             'categoria' => 'news',
             'lista' => 'admin.noticias',
             'permissao' => 'news.manage',
-            'titulo' => null, // criação vive no NewsFormController
+            'titulo' => null, // criação vive no editor de notícias (Livewire + TinyMCE)
             'tituloEditar' => 'Editar notícia',
             'criavel' => false,
             'estados' => self::ESTADOS_CONTEUDO,
@@ -158,6 +142,10 @@ class ContentFormController extends Controller
                 ['input' => 'provincia', 'coluna' => 'province', 'rotulo' => 'Província', 'tipo' => 'select', 'opcoes' => [
                     'luanda' => 'Luanda', 'benguela' => 'Benguela', 'huila' => 'Huíla', 'namibe' => 'Namibe', 'nacional' => 'Nacional',
                 ]],
+                // Reestruturação (restrutura.md §3.4): vídeo e documento são
+                // APENAS link — validação url (regras por tipo 'text' com url?).
+                ['input' => 'video_link', 'coluna' => 'video_link', 'rotulo' => 'Link do vídeo', 'tipo' => 'url', 'placeholder' => 'https://… (YouTube/Vimeo)'],
+                ['input' => 'documento_link', 'coluna' => 'documento_link', 'rotulo' => 'Link do documento', 'tipo' => 'url', 'placeholder' => 'https://… (PDF/legislação)'],
                 ['input' => 'tags', 'coluna' => 'tags', 'rotulo' => 'Tags', 'tipo' => 'text', 'placeholder' => 'separadas por vírgula'],
                 ['input' => 'meta_title', 'coluna' => 'meta_title', 'rotulo' => 'SEO — meta title', 'tipo' => 'text', 'placeholder' => 'Título para os motores de busca (até 60 caracteres)'],
                 ['input' => 'meta_description', 'coluna' => 'meta_description', 'rotulo' => 'SEO — meta description', 'tipo' => 'textarea', 'linhas' => 2, 'placeholder' => 'Descrição para os motores de busca (até 160 caracteres)'],
@@ -188,39 +176,6 @@ class ContentFormController extends Controller
                 ['input' => 'operador', 'coluna' => 'operator', 'rotulo' => 'Operador', 'tipo' => 'text', 'placeholder' => 'Empresa operadora'],
                 ['input' => 'area', 'coluna' => 'area', 'rotulo' => 'Área (km²)', 'tipo' => 'number'],
             ],
-        ],
-        'vagas' => [
-            'modelo' => Job::class,
-            'categoria' => 'jobs',
-            'lista' => 'admin.vagas',
-            'permissao' => 'job.moderate',
-            'titulo' => null, // criação vive no painel-empresa (vaga-nova)
-            'tituloEditar' => 'Editar vaga',
-            'criavel' => false,
-            'estados' => self::ESTADOS_VAGA,
-            'extras' => [
-                ['input' => 'tipo', 'coluna' => 'contract_type', 'rotulo' => 'Tipo de contrato', 'tipo' => 'select', 'opcoes' => [
-                    'efetivo' => 'Efetivo', 'temporario' => 'Temporário', 'estagio' => 'Estágio', 'consultoria' => 'Consultoria',
-                ]],
-                ['input' => 'provincia', 'coluna' => 'province', 'rotulo' => 'Província', 'tipo' => 'select', 'opcoes' => [
-                    'luanda' => 'Luanda', 'benguela' => 'Benguela', 'huila' => 'Huíla', 'malanje' => 'Malanje', 'cuando-cubango' => 'Cuando Cubango',
-                ]],
-                ['input' => 'prazo', 'coluna' => 'deadline', 'rotulo' => 'Prazo', 'tipo' => 'date'],
-                ['input' => 'requisitos', 'coluna' => 'requirements', 'rotulo' => 'Requisitos', 'tipo' => 'textarea', 'linhas' => 4, 'placeholder' => 'Requisitos da vaga…'],
-                ['input' => 'responsabilidades', 'coluna' => 'responsibilities', 'rotulo' => 'Responsabilidades', 'tipo' => 'textarea', 'linhas' => 4, 'placeholder' => 'Responsabilidades da vaga…'],
-            ],
-        ],
-        'empresas' => [
-            'modelo' => Directory::class,
-            'categoria' => 'directory',
-            'lista' => 'admin.empresas',
-            'permissao' => 'company.moderate',
-            'titulo' => null, // as empresas entram pelo registo próprio
-            'tituloEditar' => 'Editar empresa',
-            'criavel' => false,
-            'estados' => self::ESTADOS_EMPRESA,
-            'rotuloTitulo' => 'Nome',
-            'extras' => [],
         ],
     ];
 
@@ -272,7 +227,6 @@ class ContentFormController extends Controller
         $modelo->title = $dados['titulo'];
         $modelo->slug = $this->slugUnico($conf['modelo'], $dados['slug'] ?? '', $dados['titulo']);
         $modelo->status = $status;
-        $modelo->comments_count = 0;
         $modelo->views_count = 0;
 
         $this->guardarImagem($modelo, $request);
@@ -288,8 +242,14 @@ class ContentFormController extends Controller
     |----------------------------------------------------------------------
     */
 
-    public function edit(string $tipo, int $id): View
+    public function edit(string $tipo, int $id): View|RedirectResponse
     {
+        // Notícias têm o editor próprio (CMS Pro §4.2, Livewire + TinyMCE) —
+        // nunca passam pelo formulário genérico.
+        if ($tipo === 'noticias') {
+            return redirect()->route('admin.noticia-editar', ['noticia' => $id]);
+        }
+
         $conf = $this->configuracao($tipo);
 
         Gate::authorize($conf['permissao']);
@@ -427,6 +387,7 @@ class ContentFormController extends Controller
                 'textarea' => ['nullable', 'string', 'max:2000'],
                 'number' => ['nullable', 'numeric', 'min:0'],
                 'date' => ['nullable', 'date'],
+                'url' => ['nullable', 'url', 'max:300'],
                 default => ['nullable', 'string', 'max:190'],
             };
         }
@@ -502,7 +463,7 @@ class ContentFormController extends Controller
 
         $antiga = $modelo->image;
 
-        // Pasta = nome da tabela, a mesma convenção de NewsFormController
+        // Pasta = nome da tabela, a mesma convenção dos outros forms do painel
         // (`news/`) e ProjectFormController (`projects/`).
         $modelo->image = 'storage/'.$request->file('imagem')->store($modelo->getTable(), 'public');
 

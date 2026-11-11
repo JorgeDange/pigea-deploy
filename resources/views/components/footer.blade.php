@@ -45,7 +45,6 @@
                         <div class="footer-widget-content">
                             <div class="footer-list footer-box fl-wrap">
                                 <ul>
-                                    <li> <a href="{{ route('jobs.index') }}">Empregos</a></li>
                                     <li> <a href="{{ route('training.index') }}">Formação</a></li>
                                     <li> <a href="{{ route('events.index') }}">Eventos</a></li>
                                 </ul>
@@ -62,8 +61,10 @@
                             <div class="footer-list footer-box fl-wrap">
                                 <ul>
                                     <li> <a href="{{ route('suppliers.index') }}">Fornecedores</a></li>
-                                    <li> <a href="{{ route('directory.index') }}">Diretório</a></li>
-                                    <li> <a href="{{ route('directory.index') }}">Oportunidades</a></li>
+                                    <li> <a href="{{ route('directory.index') }}">Directório</a></li>
+                                    <li> <a href="{{ route('projects.index') }}">Oportunidades</a></li>
+                                    <li> <a href="{{ route('registo-empresa') }}">Registar Empresa</a></li>
+                                    <li> <a href="{{ route('registo-profissional') }}">Registar Profissional</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -92,7 +93,7 @@
     </div>
     <div class="footer-bottom fl-wrap">
         <div class="container">
-            <div class="copyright"><span>&#169; 2026 PIGEA</span> — Todos os direitos reservados. | Desenvolvido por <a href="https://jorgedange.netlify.app/" target="_blank" rel="noopener">Jorge Dange</a></div>
+            <div class="copyright"><span>&#169; 2026 PIGEA</span> — Todos os direitos reservados. | Desenvolvido por <a href="https://qnbangola.ao/" target="_blank" rel="noopener">QNB Angola</a></div>
             <div class="to-top"> <i class="fas fa-caret-up"></i></div>
             <div class="subfooter-nav">
                 <ul>

@@ -11,7 +11,6 @@
                       "category":  "Investigação",
                       "published_at":  "2022-05-18",
                       "date_label":  "18 mai 2022",
-                      "comments_count":  6,
                       "views_count":  587,
                       "author_name":  "Ana Manuel",
                       "author_avatar":  "images/avatar/1.jpg"
@@ -25,7 +24,6 @@
                       "category":  "Água",
                       "published_at":  "2022-05-15",
                       "date_label":  "15 mai 2022",
-                      "comments_count":  5,
                       "views_count":  456,
                       "author_name":  "Carlos Neto",
                       "author_avatar":  "images/avatar/2.jpg"
@@ -39,7 +37,6 @@
                       "category":  "Internacional",
                       "published_at":  "2022-04-05",
                       "date_label":  "05 abril 2022",
-                      "comments_count":  55,
                       "views_count":  987,
                       "author_name":  "Helena José",
                       "author_avatar":  "images/avatar/3.jpg"
@@ -53,7 +50,6 @@
                       "category":  "Mineração",
                       "published_at":  "2022-03-11",
                       "date_label":  "11 março 2022",
-                      "comments_count":  58,
                       "views_count":  235,
                       "author_name":  "Paulo Fernando",
                       "author_avatar":  "images/avatar/4.jpg"
@@ -67,7 +63,6 @@
                       "category":  "Ambiente",
                       "published_at":  "2022-03-06",
                       "date_label":  "06 março 2022",
-                      "comments_count":  25,
                       "views_count":  164,
                       "author_name":  "Carlos Neto",
                       "author_avatar":  "images/avatar/2.jpg"
@@ -81,7 +76,6 @@
                       "category":  "Água",
                       "published_at":  "2022-03-03",
                       "date_label":  "03 março 2022",
-                      "comments_count":  4,
                       "views_count":  980,
                       "author_name":  "Carlos Neto",
                       "author_avatar":  "images/avatar/2.jpg"
@@ -95,7 +89,6 @@
                       "category":  "Internacional",
                       "published_at":  "2022-01-22",
                       "date_label":  "22 janeiro 2022",
-                      "comments_count":  32,
                       "views_count":  444,
                       "author_name":  "Helena José",
                       "author_avatar":  "images/avatar/3.jpg"
@@ -109,7 +102,6 @@
                       "category":  "Ambiente",
                       "published_at":  "2022-01-16",
                       "date_label":  "16 janeiro 2022",
-                      "comments_count":  67,
                       "views_count":  1234,
                       "author_name":  "Ana Manuel",
                       "author_avatar":  "images/avatar/1.jpg"
@@ -123,7 +115,6 @@
                       "category":  "Mineração",
                       "published_at":  "2022-03-11",
                       "date_label":  "11 março 2022",
-                      "comments_count":  58,
                       "views_count":  235,
                       "author_name":  "By Jessie Bond",
                       "author_avatar":  "images/avatar/4.jpg"
@@ -137,7 +128,6 @@
                       "category":  "Mineração",
                       "published_at":  "2022-03-11",
                       "date_label":  "11 março 2022",
-                      "comments_count":  58,
                       "views_count":  235,
                       "author_name":  "By Jessie Bond",
                       "author_avatar":  "images/avatar/4.jpg"
@@ -151,7 +141,6 @@
                       "category":  "Água",
                       "published_at":  "2022-05-15",
                       "date_label":  "15 may 2022",
-                      "comments_count":  5,
                       "views_count":  456,
                       "author_name":  "By Mark Rose",
                       "author_avatar":  "images/avatar/2.jpg"
@@ -165,7 +154,6 @@
                       "category":  "Água",
                       "published_at":  "2022-04-05",
                       "date_label":  "05 abril 2022",
-                      "comments_count":  55,
                       "views_count":  987,
                       "author_name":  "By Ann Kowalsky",
                       "author_avatar":  "images/avatar/3.jpg"
@@ -179,7 +167,6 @@
                       "category":  "Ambiente",
                       "published_at":  "2022-05-18",
                       "date_label":  "18 may 2022",
-                      "comments_count":  6,
                       "views_count":  587,
                       "author_name":  "By Jane Taylor",
                       "author_avatar":  "images/avatar/1.jpg"
@@ -193,7 +180,6 @@
                       "category":  "Ambiente",
                       "published_at":  "2022-05-15",
                       "date_label":  "15 may 2022",
-                      "comments_count":  5,
                       "views_count":  456,
                       "author_name":  "By Mark Rose",
                       "author_avatar":  "images/avatar/2.jpg"
@@ -207,7 +193,6 @@
                       "category":  "Ambiente",
                       "published_at":  "2022-04-05",
                       "date_label":  "05 abril 2022",
-                      "comments_count":  55,
                       "views_count":  987,
                       "author_name":  "By Ann Kowalsky",
                       "author_avatar":  "images/avatar/3.jpg"
@@ -221,7 +206,6 @@
                       "category":  "Ambiente",
                       "published_at":  "2022-03-11",
                       "date_label":  "11 março 2022",
-                      "comments_count":  58,
                       "views_count":  235,
                       "author_name":  "By Jessie Bond",
                       "author_avatar":  "images/avatar/4.jpg"
@@ -235,7 +219,6 @@
                       "category":  "Investigação",
                       "published_at":  "2022-05-18",
                       "date_label":  "18 may 2022",
-                      "comments_count":  6,
                       "views_count":  587,
                       "author_name":  "By Jane Taylor",
                       "author_avatar":  "images/avatar/1.jpg"
@@ -249,7 +232,6 @@
                       "category":  "Investigação",
                       "published_at":  "2022-05-15",
                       "date_label":  "15 may 2022",
-                      "comments_count":  5,
                       "views_count":  456,
                       "author_name":  "By Mark Rose",
                       "author_avatar":  "images/avatar/2.jpg"
@@ -263,7 +245,6 @@
                       "category":  "Investigação",
                       "published_at":  "2022-04-05",
                       "date_label":  "05 abril 2022",
-                      "comments_count":  55,
                       "views_count":  987,
                       "author_name":  "By Ann Kowalsky",
                       "author_avatar":  "images/avatar/3.jpg"
@@ -277,7 +258,6 @@
                       "category":  "Investigação",
                       "published_at":  "2022-03-11",
                       "date_label":  "11 março 2022",
-                      "comments_count":  58,
                       "views_count":  235,
                       "author_name":  "By Jessie Bond",
                       "author_avatar":  "images/avatar/4.jpg"

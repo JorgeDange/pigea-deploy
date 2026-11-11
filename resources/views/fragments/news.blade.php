@@ -18,7 +18,6 @@
                 <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                 <p>{{ $item->excerpt }}</p>
                 <ul class="post-opt">
-                    <li><i class="far fa-comments-alt"></i> {{ $item->comments_count }} </li>
                     <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                 </ul>
                 <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar) }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>

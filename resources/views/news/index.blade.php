@@ -40,6 +40,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- box-widget  end -->
+                                        <!-- Banner publicitario sidebar (FASE 6) -->
+                                        <x-banner-publicitario posicao="sidebar" wrapper />
                                         <!-- box-widget  end -->						
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
@@ -50,7 +53,7 @@
                                                     </div>
                                                     <div class="banner-widget_content">
                                                         <h5>Registe a sua empresa no diretório PIGEA e aceda a novas oportunidades de negócio.</h5>
-                                                        <a href="{{ route('company.register') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
+                                                        <a href="{{ route('registo-empresa') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -141,7 +144,6 @@
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -166,7 +168,6 @@
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>

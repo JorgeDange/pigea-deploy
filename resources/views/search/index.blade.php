@@ -57,7 +57,6 @@
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                         <p>{{ $item->excerpt }}</p>
                                                         <ul class="post-opt">
-                                                            <li><i class="far fa-comments-alt"></i> {{ $item->comments_count }} </li>
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
                                                         <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar) }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
@@ -93,7 +92,7 @@
                                                     </div>
                                                     <div class="banner-widget_content">
                                                         <h5>Registe a sua empresa no diretório PIGEA e aceda a novas oportunidades de negócio.</h5>
-                                                        <a href="{{ route('company.register') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
+                                                        <a href="{{ route('registo-empresa') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -184,7 +183,6 @@
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -209,7 +207,6 @@
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>

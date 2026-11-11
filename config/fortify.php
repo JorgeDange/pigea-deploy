@@ -165,7 +165,8 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        // Sem registo público (restrutura.md): a equipa interna é criada
+        // pelo admin no painel /admin.
         Features::resetPasswords(),
         // Features::emailVerification(),
         Features::updateProfileInformation(),

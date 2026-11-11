@@ -58,7 +58,7 @@
                                             </div>
                                             <div class="banner-widget_content">
                                                 <h5>Registe a sua empresa no diretório PIGEA e aceda a novas oportunidades de negócio.</h5>
-                                                <a href="{{ route('company.register') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
+                                                <a href="{{ route('registo-empresa') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
                                             </div>
                                         </div>
                                     </div>

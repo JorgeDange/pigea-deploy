@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Directory;
 use App\Models\Event;
 use App\Models\Interview;
-use App\Models\Job;
 use App\Models\Legislation;
 use App\Models\News;
 use App\Models\Project;
@@ -26,13 +24,15 @@ class SearchController extends Controller
     private const MODELOS = [
         News::class,
         Project::class,
-        Directory::class,
+        // FASE 8 (9–11/11/2026): Directory REMOVIDO do índice público — as 8
+        // entradas legadas de demonstração apareciam em /pesquisa sem passar
+        // pela aprovação do diretório (restrutura.md §5/§6). O modelo continua
+        // disponível para o admin (gestão dos registos legados).
         Technology::class,
         Supplier::class,
         Event::class,
         Interview::class,
         Research::class,
-        Job::class,
         Legislation::class,
         Training::class,
     ];

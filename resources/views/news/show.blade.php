@@ -35,7 +35,6 @@
                                             <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($post->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($post->author)->name }}</span></a></div>
                                             <span class="post-date"><i class="far fa-clock"></i> {{ $post->display_date }}</span>
                                             <ul class="post-opt">
-                                                <li><i class="far fa-comments-alt"></i> {{ $post->comments_count }} </li>
                                                 <li><i class="fal fa-eye"></i>  {{ $post->views_count }} </li>
                                             </ul>
                                         </div>
@@ -88,11 +87,6 @@
                                             </div>
                                             <div class="fs-wrap smpar fl-wrap">
                                                 <div class="fontSize"><span class="fs_title">Tamanho da letra: </span><input type="text" class="rage-slider" data-step="1" data-min="12" data-max="15" value="12"></div>
-                                                <div class="show-more-snopt smact"><i class="fal fa-ellipsis-v"></i></div>
-                                                <div class="show-more-snopt-tooltip">
-                                                    <a href="#comments" class="custom-scroll-link"> <i class="fas fa-comment-alt"></i> Escrever um comentário</a>
-                                                    <a href="#"> <i class="fas fa-exclamation-triangle"></i> Reportar</a>
-                                                </div>
                                                 <a class="print-btn" href="javascript:window.print()" data-microtip-position="bottom"><span>Imprimir</span><i class="fal fa-print"></i></a>
                                             </div>
                                             <div class="clearfix"></div>
@@ -229,88 +223,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--comments  -->
-                                        <div id="comments" class="single-post-comm fl-wrap">
-                                            <div class="pr-subtitle prs_big">Comentários <span>3</span></div>
-                                            <ul class="commentlist clearafix">
-                                                <li class="comment">
-                                                    <div class="comment-author">
-                                                        <img alt="" src="{{ asset('images/avatar/2.jpg') }}" width="50" height="50">
-                                                    </div>
-                                                    <div class="comment-body smpar">
-                                                        <h4><a href="#">Marta Fernandes</a></h4>
-                                                        <div class="box-widget-menu-btn smact"><i class="far fa-ellipsis-h"></i></div>
-                                                        <div class="show-more-snopt-tooltip bxwt">
-                                                            <a href="#"> <i class="fas fa-reply"></i> Responder</a>
-                                                            <a href="#"> <i class="fas fa-exclamation-triangle"></i> Reportar</a>
-                                                        </div>
-                                                        <div class="clearfix"></div>
-                                                        <p>O PIGEA promove a partilha de conhecimento entre profissionais, empresas e investigadores, contribuindo para uma mineração e gestão de recursos mais transparentes e sustentáveis.</p>
-                                                        <a class="comment-reply-link" href="#"><i class="fas fa-reply"></i> Responder</a>
-                                                        <div class="comment-meta"><i class="far fa-clock"></i> 02 de janeiro de 2020</div>
-                                                        <div class="comment-body_dec"></div>
-                                                    </div>
-                                                </li>
-                                                <li class="comment comment_reply">
-                                                    <div class="comment-author">
-                                                        <img alt="" src="{{ asset('images/avatar/4.jpg') }}" width="50" height="50">
-                                                    </div>
-                                                    <div class="comment-body smpar">
-                                                        <h4><a href="#">João Baptista</a></h4>
-                                                        <div class="box-widget-menu-btn smact"><i class="far fa-ellipsis-h"></i></div>
-                                                        <div class="show-more-snopt-tooltip bxwt">
-                                                            <a href="#"> <i class="fas fa-reply"></i> Responder</a>
-                                                            <a href="#"> <i class="fas fa-exclamation-triangle"></i> Reportar</a>
-                                                        </div>
-                                                        <div class="clearfix"></div>
-                                                        <p>Os conteúdos do PIGEA são elaborados a partir de fontes oficiais, instituições parceiras e profissionais do setor, e revistos pela equipa editorial antes da publicação.</p>
-                                                        <a class="comment-reply-link" href="#"><i class="fas fa-reply"></i> Responder</a>
-                                                        <div class="comment-meta"><i class="far fa-clock"></i> 02 de janeiro de 2020</div>
-                                                        <div class="comment-body_dec"></div>
-                                                    </div>
-                                                </li>
-                                                <li class="comment">
-                                                    <div class="comment-author">
-                                                        <img alt="" src="{{ asset('images/avatar/4.jpg') }}" width="50" height="50">
-                                                    </div>
-                                                    <div class="comment-body smpar">
-                                                        <h4><a href="#">João Baptista</a></h4>
-                                                        <div class="box-widget-menu-btn smact"><i class="far fa-ellipsis-h"></i></div>
-                                                        <div class="show-more-snopt-tooltip bxwt">
-                                                            <a href="#"> <i class="fas fa-reply"></i> Responder</a>
-                                                            <a href="#"> <i class="fas fa-exclamation-triangle"></i> Reportar</a>
-                                                        </div>
-                                                        <div class="clearfix"></div>
-                                                        <p>Esta informação faz parte da plataforma PIGEA, que reúne notícias, dados e oportunidades das geociências em Angola, com acesso gratuito a toda a comunidade.</p>
-                                                        <a class="comment-reply-link" href="#"><i class="fas fa-reply"></i> Responder</a>
-                                                        <div class="comment-meta"><i class="far fa-clock"></i> 02 de janeiro de 2020</div>
-                                                        <div class="comment-body_dec"></div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                            <div class="clearfix"></div>
-                                            <div id="addcom" class="clearafix">
-                                                <div class="pr-subtitle"> Deixar um Comentário <i class="fas fa-caret-down"></i></div>
-                                                <div class="comment-reply-form fl-wrap">
-                                                    <form id="add-comment" class="add-comment custom-form">
-                                                        <fieldset>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <input type="text" placeholder="Nome *" value="" />
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <input type="text" placeholder="Email *" value="" />
-                                                                </div>
-                                                            </div>
-                                                            <textarea placeholder="O seu comentário:"></textarea>
-                                                        </fieldset>
-                                                        <button class="btn float-btn color-btn">  Submit Comment <i class="fas fa-caret-right"></i> </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                            <!--end respond-->
-                                        </div>
-                                        <!--comments end -->					  
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -327,6 +239,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- box-widget  end -->
+                                        <!-- Banner publicitario sidebar (FASE 6) -->
+                                        <x-banner-publicitario posicao="sidebar" wrapper />
                                         <!-- box-widget  end -->						
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
@@ -337,7 +252,7 @@
                                                     </div>
                                                     <div class="banner-widget_content">
                                                         <h5>Registe a sua empresa no diretório PIGEA e aceda a novas oportunidades de negócio.</h5>
-                                                        <a href="{{ route('company.register') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
+                                                        <a href="{{ route('registo-empresa') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -428,7 +343,6 @@
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -453,7 +367,6 @@
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>

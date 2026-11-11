@@ -1,0 +1,94 @@
+/* ============================================================================
+   TOP-BAR (pedido do cliente — 11/11/2026)
+   ----------------------------------------------------------------------------
+   Layout da barra superior:
+     esquerda  redes sociais
+     centro    banner publicitário horizontal (área de publicidade)
+     direita   data/hora + ícone de pesquisa
+
+   O ícone de pesquisa saiu do header-inner (junto ao logo), onde ficava sob
+   a barra full-width do mega menu (.mega-menu, z-index 20) — não visível nem
+   clicável. O painel de pesquisa (.header-search-wrap) mantém-se no
+   header-inner; o JS do tema alterna por .show_search-btn, independente da
+   posição do botão.
+
+   Carregado DEPOIS de menu.css no layouts/app.blade.php — vence o tema sem
+   !important. Breakpoints alinhados com o tema (scripts.js muda em 1064px).
+   ============================================================================ */
+
+/* ---------- 1. Regras base (todos os tamanhos) ----------------------------- */
+
+/* Container da top-bar passa a ser a referência do banner centrado */
+.top-bar .container {
+	position: relative;
+}
+
+/* Redes sociais sempre à esquerda (o tema só as desloca à esquerda ≤1064px) */
+.topbar-social {
+	float: left;
+}
+
+/* Banner publicitário: centrado, ignorando os floats dos lados */
+.top-banner-area {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+}
+/* Banner horizontal limitado à altura da barra (70px) — imagem não estica */
+.top-banner-area .banner-publicitario img {
+	max-height: 46px;
+	width: auto;
+	max-width: 100%;
+}
+/* Rótulo "Publicidade" (pub.md §7) legível no fundo escuro da top-bar */
+.top-banner-area .banner-publicitario span {
+	color: #fff;
+}
+
+/* Grupo direito: data/hora + pesquisa em linha */
+.topbar-direita {
+	float: right;
+	display: flex;
+	align-items: center;
+}
+.topbar-direita .date-holder {
+	float: none;
+}
+/* Botão de pesquisa no fundo escuro da top-bar (tema usa #666 em fundo
+   claro no header-inner) */
+.top-bar .search_btn {
+	float: none;
+	color: #fff;
+	border-left-color: rgba(255, 255, 255, .2);
+	border-right-color: rgba(255, 255, 255, .2);
+}
+
+/* ---------- 2. 1065-1279px: banner ligeiramente menor ---------------------- */
+@media (max-width: 1279px) {
+	.top-banner-area .banner-publicitario img {
+		max-height: 40px;
+	}
+}
+
+/* ---------- 3. ≤1064px: hamburger do tema; banner compacto ----------------- */
+@media (max-width: 1064px) {
+	.top-banner-area .banner-publicitario img {
+		max-height: 32px;
+	}
+}
+
+/* ---------- 4. ≤700px: sem redes (espaço); data/hora + pesquisa + banner ---- */
+@media (max-width: 700px) {
+	.topbar-social {
+		display: none;
+	}
+}
+
+/* ---------- 5. ≤630px: banner mais compacto (tema força botões a 50px) ----- */
+@media (max-width: 630px) {
+	.top-banner-area .banner-publicitario img {
+		max-height: 26px;
+	}
+}

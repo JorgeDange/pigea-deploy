@@ -50,7 +50,7 @@ class SettingsController extends Controller
             'meta_description' => 'nullable|string|max:160',
         ],
         'email' => [
-            'template' => 'nullable|in:novo-registo,nova-candidatura,newsletter',
+            'template' => 'nullable|in:novo-registo,newsletter',
             'texto_email' => 'nullable|string|max:2000',
         ],
     ];

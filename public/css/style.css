@@ -251,63 +251,6 @@ blockquote:before {
 	font-size: 11px;
 	font-weight: 500;
 }
-.header_news-ticker-wrap {
-	float: left;
-	width: 650px;
-	position: relative;
-	padding:0 40px 0 130px;
-	height: 70px;
-	overflow: hidden;
-}
-.header_news-ticker-wrap:before {
-	content: '';
-	position: absolute;
-	top: 0;
-	height: 100%;
-	background: #222;
-	left: 130px;
-	right: 50px;
-}
-.header_news-ticker-wrap li {
-	float: left;
-	width: 100%;
-	height: 70px;
-	line-height: 70px;
-	text-align: left;
-	padding: 0 15px 0 30px;
-}
-.header_news-ticker-wrap li a {
-	color: #fff;
-}
-.hnt_title {
-	position: absolute;
-	left: 10px;
-	top: 20px;
-	width: 100px;
-	height: 30px;
-	line-height: 30px;
-	color: #fff;
-	font-weight: 600;
-	font-size: 11px;
-}
-.n_contr-wrap{
-	position: absolute;
-	right: 0;
-	width: 30px;
-	top: 50%;
-	height: 20px;
-	line-height: 20px;
-	cursor: pointer;
-	margin-top: -10px;
-}
-.n_contr {
-	float: left;
-	cursor: pointer;
-	font-size: 18px;
-}
-.p_btn {
-	margin-right: 14px;
-}
 .header-inner {
     background: #fff;
     height: 70px;
@@ -325,7 +268,7 @@ blockquote:before {
 	width: auto;
 	height:100%;
 }
-.show-cart , .srf_btn , .search_btn {
+.show-cart , .search_btn {
 	float:right;
 	font-size:16px;
 	color:#666;
@@ -343,7 +286,7 @@ blockquote:before {
 .search_btn {
 	border-right:1px solid #eee;
 }
-.show-cart i, .srf_btn i  , .search_btn i{
+.show-cart i, .search_btn i{
 	position: relative;
 	z-index: 2;
 }
@@ -361,7 +304,7 @@ blockquote:before {
 .sc_btn.scwllink:after  , .search_btn.scwllink2:after {
 	top:0;
 }
-.srf_btn , .search_btn  {
+.search_btn  {
 	margin-left:0;
 	font-size:14px;
 }
@@ -5165,7 +5108,7 @@ h4.cart-title span {
 }
 /*------  Responsive ------------------------------------------------------*/
 @media only screen and  (max-width: 1064px) {
-.aside-panel , .header_news-ticker-wrap  {
+.aside-panel  {
 	display: none;
 }
 .cen-align-container {
@@ -5423,10 +5366,10 @@ h4.cart-title span {
 	left: 10px;
     height: 15px;
 }
-.header-inner , .show-cart, .srf_btn, .search_btn , .nav-button-wrap{
+.header-inner , .show-cart, .search_btn , .nav-button-wrap{
     height: 50px;
 }
-.show-cart, .srf_btn, .search_btn , .nav-button-wrap {
+.show-cart, .search_btn , .nav-button-wrap {
     width: 50px;
     line-height: 50px;
 }
@@ -5606,4 +5549,10 @@ h4.cart-title span {
 	font-size: 13px;
 	font-weight: 500;
 	font-family: 'Poppins', sans-serif;
+}
+
+/* CMS Pro �?" estilos especiais do corpo de notícias (editor TinyMCE �?' público) */
+.texto-duas-colunas {
+	column-count: 2;
+	column-gap: 2em;
 }

@@ -3,15 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Directory;
-use App\Models\Event;
-use App\Models\Interview;
-use App\Models\Job;
-use App\Models\Legislation;
+use App\Models\Banner;
+use App\Models\Company;
 use App\Models\News;
+use App\Models\PageView;
 use App\Models\Project;
-use App\Models\Research;
-use App\Models\Training;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
@@ -25,17 +21,14 @@ use Illuminate\Support\Str;
  */
 class DashboardController extends Controller
 {
-    /** Modelos com estado de publicação (para "Conteúdo pendente"). */
-    protected array $modelosConteudo = [
-        News::class, Project::class, Event::class, Job::class,
-        Legislation::class, Research::class, Interview::class,
-        Training::class,
-    ];
-
+    /** Admin (cms_pro.md §4.1): cartões de topo do dashboard. */
+    /** @return array{estatisticas: list<array{icone: string, numero: int, rotulo: string, rodape: string|null, href?: string}>, atividades: list<array{icone: string, titulo: string, texto: string, tempo: string|null}>, graficos: array{rotulos: list<string>, conteudos: list<int>, utilizadores: list<int>, provincias: array{rotulos: list<string>, valores: list<int>}, visitas7: list<int>, rotulos7: list<string>}} */
     public function index(): View
     {
         $agora = now();
-        $pendentes = $this->pendentes();
+
+        $visitasHoje = (int) PageView::query()->where('date', $agora->toDateString())->value('visits');
+        $visitasTotal = (int) PageView::query()->sum('visits');
 
         $estatisticas = [
             [
@@ -45,41 +38,30 @@ class DashboardController extends Controller
                 'rodape' => '+'.News::published()->where('published_at', '>=', $agora->copy()->startOfMonth())->count().' este mês',
             ],
             [
-                'icone' => 'fa-map-marked-alt',
-                'numero' => Project::published()->count(),
-                'rotulo' => 'Projetos ativos',
-                'rodape' => '+'.Project::published()->where('published_at', '>=', $agora->copy()->startOfMonth())->count().' este mês',
-            ],
-            [
                 'icone' => 'fa-building',
-                'numero' => Directory::count(),
-                'rotulo' => 'Empresas registadas',
-                'rodape' => '+'.Directory::where('created_at', '>=', $agora->copy()->startOfMonth())->count().' este mês',
+                'numero' => Company::pendente()->count(),
+                'rotulo' => 'Empresas pendentes',
+                'rodape' => 'aprovação no diretório →',
+                'rodape_class' => 'pending',
+                'href' => route('admin.empresas'),
             ],
             [
-                'icone' => 'fa-briefcase',
-                'numero' => Job::published()->count(),
-                'rotulo' => 'Vagas ativas',
-                'rodape' => null,
+                'icone' => 'fa-eye',
+                'numero' => $visitasTotal,
+                'rotulo' => 'Visitas no Site',
+                'rodape' => $visitasHoje.' hoje',
             ],
             [
-                'icone' => 'fa-users',
-                'numero' => User::count(),
-                'rotulo' => 'Utilizadores',
-                'rodape' => '+'.User::where('created_at', '>=', $agora->copy()->startOfMonth())->count().' este mês',
-            ],
-            [
-                'icone' => 'fa-hourglass-half',
-                'numero' => count($pendentes),
-                'rotulo' => 'Conteúdo pendente',
-                'rodape' => 'requer aprovação',
+                'icone' => 'fa-bullhorn',
+                'numero' => Banner::ativos()->count(),
+                'rotulo' => 'Banners ativos',
+                'rodape' => 'visíveis no frontend',
             ],
         ];
 
         return view('admin.index', [
             'estatisticas' => $estatisticas,
             'atividades' => $this->atividades(),
-            'pendentes' => $pendentes,
             'graficos' => $this->graficos(),
         ]);
     }
@@ -93,11 +75,11 @@ class DashboardController extends Controller
     {
         $itens = [];
 
-        if ($empresa = Directory::latest('created_at')->first()) {
+        if ($empresa = Company::pendente()->latest('created_at')->first()) {
             $itens[] = [
                 'icone' => 'fa-building',
-                'titulo' => 'Nova empresa registada',
-                'texto' => $empresa->title.' aguarda aprovação no diretório.',
+                'titulo' => 'Empresa à espera de aprovação',
+                'texto' => $empresa->nome_empresa.' submeteu registo no diretório.',
                 'tempo' => $empresa->created_at?->diffForHumans(),
             ];
         }
@@ -120,15 +102,6 @@ class DashboardController extends Controller
             ];
         }
 
-        if ($vaga = Job::latest('created_at')->first()) {
-            $itens[] = [
-                'icone' => 'fa-briefcase',
-                'titulo' => 'Nova vaga publicada',
-                'texto' => '“'.$vaga->title.'” entrou no emprego científico.',
-                'tempo' => $vaga->created_at?->diffForHumans(),
-            ];
-        }
-
         if ($projeto = Project::latest('created_at')->first()) {
             $itens[] = [
                 'icone' => 'fa-handshake',
@@ -142,70 +115,48 @@ class DashboardController extends Controller
     }
 
     /**
-     * Registos ainda não publicados (tabela "Conteúdo pendente").
+     * Séries dos gráficos (cms_pro.md §4.1 — gráfico central de 7 dias de
+     * visitas + gráficos auxiliares já existentes no painel).
      *
-     * @return list<array{titulo: string, tipo: string, autor: string, submetido: string, modelo: string, id: int|string}>
-     */
-    protected function pendentes(): array
-    {
-        $rotulos = [
-            News::class => 'Notícia',
-            Project::class => 'Projeto',
-            Event::class => 'Evento',
-            Job::class => 'Vaga',
-            Legislation::class => 'Legislação',
-            Research::class => 'Investigação',
-            Interview::class => 'Entrevista',
-            Training::class => 'Formação',
-        ];
-
-        $pendentes = [];
-
-        foreach ($this->modelosConteudo as $modelo) {
-            foreach ($modelo::where('status', '!=', 'published')->latest('created_at')->limit(5)->get() as $registo) {
-                $pendentes[] = [
-                    'titulo' => $registo->title,
-                    'tipo' => $rotulos[$modelo] ?? 'Conteúdo',
-                    'autor' => $registo->author?->name ?? 'Registo público',
-                    'submetido' => $registo->created_at?->format('d/m/Y') ?? '—',
-                    'modelo' => $modelo,
-                    'id' => $registo->id,
-                    'ordenacao' => $registo->created_at?->getTimestamp() ?? 0,
-                ];
-            }
-        }
-
-        usort($pendentes, fn ($a, $b) => $b['ordenacao'] <=> $a['ordenacao']);
-
-        return array_slice($pendentes, 0, 5);
-    }
-
-    /**
-     * Séries dos 3 gráficos do protótipo — no `admin/index.html` todos vinham
-     * marcados "reservado para Chart.js"; aqui deixam de o estar.
-     *
-     * Os eixos x (linha e barras) têm **sempre** os 12 meses, com 0 nos meses
-     * sem registos: um eixo com meses em falta salta e faz parecer que há
-     * picos onde não há.
-     *
-     * As contagens usam `DATE_FORMAT` (MySQL/MariaDB) — é o único motor
-     * suportado pela aplicação (o `phpunit.xml` força `mysql`).
-     *
-     * @return array{rotulos: list<string>, conteudos: list<int>, utilizadores: list<int>, provincias: array{rotulos: list<string>, valores: list<int>}}
+     * @return array{rotulos7: list<string>, visitas7: list<int>, rotulos: list<string>, utilizadores: list<int>, provincias: array{rotulos: list<string>, valores: list<int>}}
      */
     protected function graficos(): array
     {
         $meses = $this->ultimosDozeMeses();
-
-        $publicados = $this->conteudoPublicadoPorMes();
         $utilizadores = $this->utilizadoresPorMes();
-        $provincias = $this->provinciasDoConteudo();
 
         return [
+            'rotulos7' => $this->ultimosSeteDias()['rotulos'],
+            'visitas7' => $this->ultimosSeteDias()['valores'],
             'rotulos' => $meses['rotulos'],
-            'conteudos' => array_map(fn ($mes) => $publicados[$mes] ?? 0, $meses['chaves']),
             'utilizadores' => array_map(fn ($mes) => $utilizadores[$mes] ?? 0, $meses['chaves']),
-            'provincias' => $provincias,
+            'provincias' => $this->provinciasDoConteudo(),
+        ];
+    }
+
+    /**
+     * Últimos 7 dias: chaves `Y-m-d` (para cruzar com `page_views.date`),
+     * rótulos dd/MM e a série correspondente — um dia sem registos conta 0,
+     * nunca falta nem salta no eixo.
+     *
+     * @return array{rotulos: list<string>, valores: list<int>}
+     */
+    protected function ultimosSeteDias(): array
+    {
+        $fim = now();
+
+        $chaves = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $chaves[] = $fim->copy()->subDays($i)->toDateString();
+        }
+
+        $mapa = PageView::query()
+            ->whereIn('date', $chaves)
+            ->pluck('visits', 'date');
+
+        return [
+            'rotulos' => array_map(fn ($chave) => (new \DateTime($chave))->format('d/m'), $chaves),
+            'valores' => array_map(fn ($chave) => (int) ($mapa[$chave] ?? 0), $chaves),
         ];
     }
 
@@ -227,31 +178,15 @@ class DashboardController extends Controller
     }
 
     /**
-     * Conteúdos publicados por mês, somados sobre **todas** as tabelas com
-     * estado de publicação (a mesma lista dos cartões e da tabela pendente).
-     *
-     * @return array<string, int> chave `Y-m` → contagem
+     * Expressão SQL "ano-mês" da coluna, por motor: MySQL/MariaDB usa
+     * DATE_FORMAT, SQLite usa strftime — o ambiente de desenvolvimento
+     * corre SQLite e, sem isto, o dashboard devolve 500 (produção usa MySQL).
      */
-    protected function conteudoPublicadoPorMes(): array
+    protected function expressaoMes(string $coluna): string
     {
-        $inicio = now()->subMonthsNoOverflow(11)->startOfMonth();
-        $contagem = [];
-
-        foreach ($this->modelosConteudo as $modelo) {
-            $tabela = $modelo::query()->getModel()->getTable();
-
-            DB::table($tabela)
-                ->whereNotNull('published_at')
-                ->where('published_at', '>=', $inicio)
-                ->selectRaw("DATE_FORMAT(published_at, '%Y-%m') as mes, count(*) as n")
-                ->groupBy('mes')
-                ->pluck('n', 'mes')
-                ->each(function ($n, $mes) use (&$contagem) {
-                    $contagem[$mes] = ($contagem[$mes] ?? 0) + (int) $n;
-                });
-        }
-
-        return $contagem;
+        return DB::connection()->getDriverName() === 'sqlite'
+            ? "strftime('%Y-%m', {$coluna})"
+            : "DATE_FORMAT({$coluna}, '%Y-%m')";
     }
 
     /** Novos utilizadores por mês (conta por `created_at` de criação de conta). */
@@ -259,7 +194,7 @@ class DashboardController extends Controller
     {
         return DB::table('users')
             ->where('created_at', '>=', now()->subMonthsNoOverflow(11)->startOfMonth())
-            ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as mes, count(*) as n")
+            ->selectRaw($this->expressaoMes('created_at')." as mes, count(*) as n")
             ->groupBy('mes')
             ->pluck('n', 'mes')
             ->map(fn ($n) => (int) $n)
@@ -276,7 +211,7 @@ class DashboardController extends Controller
     {
         $contagem = [];
 
-        foreach (['news', 'projects', 'vacancies'] as $tabela) {
+        foreach (['news', 'projects'] as $tabela) {
             DB::table($tabela)
                 ->whereNotNull('province')
                 ->selectRaw('province, count(*) as n')

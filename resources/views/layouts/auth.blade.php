@@ -17,7 +17,6 @@
   @yield('content')
   <script src="{{ asset('js/jquery.min.js') }}"></script>
   <script src="{{ asset('js/plugins.js') }}"></script>
-  <script src="{{ asset('js/dashboard.js') }}"></script>
   @stack('scripts')
 </body>
 </html>

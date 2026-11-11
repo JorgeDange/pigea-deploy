@@ -7,7 +7,7 @@
 @endsection
 
 @section('breadcrumb')
-<ul><li><a href="{{ route('admin.index') }}">Admin</a></li><li class="active">Entrevistas</li></ul>
+<ol><li><a href="{{ route('admin.index') }}">Admin</a></li><li class="active" aria-current="page">Entrevistas</li></ol>
 @endsection
 
 @section('content')

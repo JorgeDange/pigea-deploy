@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Job;
 use App\Models\News;
 use App\Models\Project;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -26,8 +25,7 @@ class PublicPagesTest extends TestCase
             'projetos' => ['/projetos'],
             'tecnologias' => ['/tecnologias'],
             'fornecedores' => ['/fornecedores'],
-            'diretório' => ['/diretorio'],
-            'empregos' => ['/empregos'],
+            'diretório' => ['/directorio'],
             'formação' => ['/formacao'],
             'legislação' => ['/legislacao'],
             'eventos' => ['/eventos'],
@@ -37,10 +35,8 @@ class PublicPagesTest extends TestCase
             'sobre' => ['/sobre'],
             'contactos' => ['/contactos'],
             'login' => ['/login'],
-            'registo' => ['/register'],
             'password esquecida' => ['/forgot-password'],
             'reset de password' => ['/reset-password/token-de-teste'],
-            'registo de empresa' => ['/registo-empresa'],
             'página 404 do protótipo' => ['/404'],
             'fragmento AJAX mineração' => ['/ajax/noticias-mineracao.html'],
             'fragmento AJAX água' => ['/ajax/noticias-agua.html'],
@@ -53,6 +49,14 @@ class PublicPagesTest extends TestCase
     public function test_pagina_publica_renderiza(string $uri): void
     {
         $this->get($uri)->assertOk();
+    }
+
+    /** Reestruturação (modificar.md §12): o URL antigo com uma r redireciona. */
+    public function test_url_antigo_diretorio_redireciona_para_o_novo(): void
+    {
+        $this->get('/diretorio')
+            ->assertRedirect('/directorio')
+            ->assertStatus(301);
     }
 
     public function test_home_mostra_noticias_reais_do_seeder(): void
@@ -79,15 +83,6 @@ class PublicPagesTest extends TestCase
         $this->get('/projetos/'.$projeto->slug)
             ->assertOk()
             ->assertSee($projeto->title);
-    }
-
-    public function test_detalhe_de_vaga_com_slug_real(): void
-    {
-        $vaga = Job::published()->orderBy('id')->first();
-
-        $this->get('/empregos/'.$vaga->slug)
-            ->assertOk()
-            ->assertSee($vaga->title);
     }
 
     public function test_slug_inexistente_devolve_404(): void

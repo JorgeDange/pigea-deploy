@@ -6,7 +6,6 @@
                 <option>Mais Recentes</option>
                 <option>Mais Lidos</option>
                 <option>Mais Vistos</option>
-                <option>Mais Comentados</option>
             </select>
         </div>
     </div>
@@ -34,7 +33,6 @@
                     <div class="grid-post-footer">
                         <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar) }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
                         <ul class="post-opt">
-                            <li><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</li>
                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                         </ul>
                     </div>

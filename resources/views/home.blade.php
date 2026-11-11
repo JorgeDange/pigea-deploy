@@ -275,7 +275,6 @@
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <span class="video-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                                             <ul class="post-opt">
-                                                                                <li><i class="far fa-comments-alt"></i>  {{ $item->comments_count }} </li>
                                                                                 <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                                             </ul>
                                                                         </div>
@@ -414,7 +413,6 @@
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -439,7 +437,6 @@
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -545,7 +542,6 @@
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <span class="video-date"><i class="far fa-clock"></i>{{ $item->display_date }}</span>
                                                                             <ul class="post-opt">
-                                                                                <li><i class="far fa-comments-alt"></i> {{ $item->comments_count }} </li>
                                                                                 <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                                             </ul>
                                                                         </div>
@@ -774,7 +770,6 @@
                                                 <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                 <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola: mineração, água, ambiente e investigação científica. Leia a notícia completa no PIGEA.  </p>
                                                 <ul class="post-opt">
-                                                    <li><i class="far fa-comments-alt"></i> {{ $item->comments_count }} </li>
                                                     <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                 </ul>
                                                 <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
@@ -813,7 +808,6 @@
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                         <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
                                                         <ul class="post-opt">
-                                                            <li><i class="far fa-comments-alt"></i> {{ $item->comments_count }} </li>
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
                                                         <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
@@ -838,7 +832,6 @@
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                         <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
                                                         <ul class="post-opt">
-                                                            <li><i class="far fa-comments-alt"></i>  {{ $item->comments_count }} </li>
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
                                                         <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
@@ -858,12 +851,11 @@
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
                                                     </div>
                                                     <div class="list-post-content">
-                                                        <a class="post-category-marker" href="{{ route('jobs.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
+                                                        <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                                         <h3><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h3>
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                         <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
                                                         <ul class="post-opt">
-                                                            <li><i class="far fa-comments-alt"></i>  {{ $item->comments_count }} </li>
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
                                                         <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
@@ -883,12 +875,11 @@
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
                                                     </div>
                                                     <div class="list-post-content">
-                                                        <a class="post-category-marker" href="{{ route('jobs.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
+                                                        <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                                         <h3><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h3>
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                         <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
                                                         <ul class="post-opt">
-                                                            <li><i class="far fa-comments-alt"></i>  {{ $item->comments_count }}</li>
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
                                                         <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
@@ -935,7 +926,6 @@
                                                         <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                         <span class="video-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                         <ul class="post-opt">
-                                                            <li><i class="far fa-comments-alt"></i>  {{ $item->comments_count }} </li>
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
                                                     </div>
@@ -958,7 +948,7 @@
   <div style="text-align:center;max-width:100%;margin:0 auto;">
    <h2 style="font-family:'Playfair Display',serif;font-size:34px;color:#fff;margin:0 0 14px;">Registe a sua empresa no diretório PIGEA</h2>
    <p style="text-align:center;font-family:Poppins,sans-serif;font-size:15px;color:#CFCFCF;margin:0 0 26px;text-align:center;">Aceda a novas oportunidades de negócio, projetos e parceiros das geociências em Angola.</p>
-   <a href="{{ route('company.register') }}" style="display:inline-block;background:#C8102E;color:#fff;padding:15px 36px;border-radius:4px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.03em;">Registar Empresa</a>
+   <a href="{{ route('registo-empresa') }}" style="display:inline-block;background:#C8102E;color:#fff;padding:15px 36px;border-radius:4px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.03em;">Registar Empresa</a>
   </div>
  </div>
 </section>

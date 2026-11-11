@@ -58,34 +58,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    /** Candidaturas do utilizador (`painel-utilizador-candidaturas`). */
-    public function applications()
-    {
-        return $this->hasMany(Application::class);
-    }
-
-    /** Vagas marcadas como guardadas (`painel-utilizador-guardadas`). */
-    public function savedJobs()
-    {
-        return $this->hasMany(SavedJob::class);
-    }
-
-    /** Notificações do painel (`painel-utilizador-notificações`). */
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class);
-    }
-
-    /** Ficha privada da empresa (se role company). */
-    public function companyProfile()
-    {
-        return $this->hasOne(CompanyProfile::class);
-    }
-
-    /** Oportunidades publicadas pela empresa. */
-    public function opportunities()
-    {
-        return $this->hasMany(Opportunity::class);
-    }
 }

@@ -3,20 +3,16 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Directory;
 
+/**
+ * Página do Directório (restrutura.md §6) — a listagem com abas
+ * "Empresas" / "Artigos/Documentos" e a pesquisa vivem no componente
+ * Livewire `DirectoryListing` (empresas aprovadas; NIF nunca apresentado).
+ */
 class DirectoryController extends Controller
 {
     public function index()
     {
-        $items = Directory::published()
-            ->with(['category', 'author'])
-            ->orderBy('id')
-            ->paginate(8);
-
-        $categories = Category::where('type', 'directory')->get();
-
-        return view('directory.index', compact('items', 'categories'));
+        return view('directory.index');
     }
 }

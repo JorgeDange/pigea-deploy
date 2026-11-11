@@ -2,14 +2,14 @@
   <div class="dashboard-filters">
     @foreach ($conf['filtros'] as $filtro)
       @if (($filtro['campo'] ?? '') === 'categoria')
-      <select name="{{ $filtro['nome'] }}" wire:model.live="filtros.{{ $filtro['nome'] }}">
+      <select name="{{ $filtro['nome'] }}" wire:model.live="filtros.{{ $filtro['nome'] }}" aria-label="Filtrar por {{ $filtro['nome'] }}">
         <option value="">{{ $filtro['rotulo'] }}</option>
         @foreach ($categorias as $categoria)
         <option value="{{ $categoria->id }}">{{ $categoria->name }}</option>
         @endforeach
       </select>
       @elseif (!empty($filtro['campo']))
-      <select name="{{ $filtro['nome'] }}" wire:model.live="filtros.{{ $filtro['nome'] }}">
+      <select name="{{ $filtro['nome'] }}" wire:model.live="filtros.{{ $filtro['nome'] }}" aria-label="Filtrar por {{ $filtro['nome'] }}">
         <option value="">{{ $filtro['rotulo'] }}</option>
         @foreach ($filtro['opcoes'] ?? [] as $opcao)
         <option value="{{ $opcao }}">{{ $opcao }}</option>
@@ -30,7 +30,7 @@
   </div>
   <div class="table-wrap">
     <table class="dashboard-table">
-      <thead><tr>@foreach ($conf['colunas'] as $coluna)<th>{{ $coluna['rotulo'] }}</th>@endforeach<th>Ações</th></tr></thead>
+      <thead><tr>@foreach ($conf['colunas'] as $coluna)<th scope="col">{{ $coluna['rotulo'] }}</th>@endforeach<th scope="col">Ações</th></tr></thead>
       <tbody>
         @forelse ($registos as $registo)
         <tr wire:key="registo-{{ $registo->id }}">
@@ -62,10 +62,10 @@
       </tbody>
     </table>
   </div>
-  <div class="dashboard-pagination">
+  <nav class="dashboard-pagination" aria-label="Paginação">
     @for ($pagina = 1; $pagina <= $registos->lastPage(); $pagina++)
-    <a href="#" wire:click="gotoPage({{ $pagina }})" @class(['active' => $pagina === $registos->currentPage()])>{{ $pagina }}</a>
+    <a href="#" wire:click="gotoPage({{ $pagina }})" @class(['active' => $pagina === $registos->currentPage()]) aria-current="page">{{ $pagina }}</a>
     @endfor
-    <a href="#" wire:click="gotoPage({{ min($registos->currentPage() + 1, $registos->lastPage()) }})">»</a>
+    <a href="#" wire:click="gotoPage({{ min($registos->currentPage() + 1, $registos->lastPage()) }})" aria-label="Página seguinte">»</a>
   </div>
 </div>

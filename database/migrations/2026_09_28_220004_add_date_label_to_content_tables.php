@@ -9,7 +9,6 @@ return new class extends Migration
     private const TABLES = [
         'news',
         'projects',
-        'vacancies',
         'suppliers',
         'events',
         'legislation',

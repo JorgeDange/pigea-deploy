@@ -4,17 +4,21 @@ namespace App\Http\Responses;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
-use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 
 /**
- * Redireciona após login/registo consoante a role do utilizador.
+ * Redireciona após login consoante a role do utilizador.
  *
  * Usa redirect()->intended(): o URL pretendido é guardado pela própria
  * aplicação (sessão, mesma origem), logo não é um vetor de open redirect.
  * A proteção contra acesso indevido fica na camada de autorização (middleware
  * `role:`) — não aqui.
+ *
+ * Reestruturação (restrutura.md): só a equipa interna (admin/editor) tem
+ * login — empresas e profissionais submetem formulários públicos e não são
+ * utilizadores do sistema. O binding de RegisterResponse foi removido junto
+ * com o registo público (Fortify sem `Features::registration()`).
  */
-class RoleBasedHomeResponse implements LoginResponseContract, RegisterResponseContract
+class RoleBasedHomeResponse implements LoginResponseContract
 {
     public function toResponse($request)
     {
@@ -28,7 +32,7 @@ class RoleBasedHomeResponse implements LoginResponseContract, RegisterResponseCo
     protected function homeFor(?Authenticatable $user): string
     {
         if ($user === null || ! method_exists($user, 'hasAnyRole')) {
-            return '/painel';
+            return '/';
         }
 
         if ($user->hasAnyRole(['admin', 'editor'])) {
@@ -36,10 +40,6 @@ class RoleBasedHomeResponse implements LoginResponseContract, RegisterResponseCo
             return '/'.config('app.admin_path');
         }
 
-        if ($user->hasRole('company')) {
-            return '/painel-empresa';
-        }
-
-        return '/painel';
+        return '/';
     }
 }

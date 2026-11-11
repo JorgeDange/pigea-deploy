@@ -16,6 +16,9 @@
         <link type="text/css" rel="stylesheet" href="{{ asset('css/plugins.css') }}">
         <link type="text/css" rel="stylesheet" href="{{ asset('css/style.css') }}">
         <link type="text/css" rel="stylesheet" href="{{ asset('css/color.css') }}">
+        {{-- FASE 5.1 — Mega Menu (menu.md): depois do tema, para poder sobrepô-lo --}}
+        <link type="text/css" rel="stylesheet" href="{{ asset('css/menu.css') }}">
+        <link type="text/css" rel="stylesheet" href="{{ asset('css/topo.css') }}">
         <!--=============== favicons ===============-->
         <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
         @stack('styles')
@@ -54,15 +57,14 @@
                 @include('components.cookie-bar')
                 <!-- cookie-info-bar end -->
             @endif
-            <!--register form -->
-            @include('components.auth-modal')
-            <!--register form end -->
         </div>
         <!-- Main end -->
         <!--=============== scripts  ===============-->
         <script src="{{ asset('js/jquery.min.js') }}"></script>
         <script src="{{ asset('js/plugins.js') }}"></script>
         <script src="{{ asset('js/scripts.js') }}"></script>
+        {{-- FASE 5.1 — acordeão mobile do Mega Menu (desktop é 100% CSS) --}}
+        <script src="{{ asset('js/menu.js') }}" defer></script>
         @stack('scripts')
     </body>
 </html>

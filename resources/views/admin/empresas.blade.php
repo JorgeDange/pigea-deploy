@@ -7,14 +7,17 @@
 @endsection
 
 @section('breadcrumb')
-<ul><li><a href="{{ route('admin.index') }}">Admin</a></li><li class="active">Empresas</li></ul>
+<ol><li><a href="{{ route('admin.index') }}">Admin</a></li><li class="active" aria-current="page">Empresas</li></ol>
 @endsection
 
 @section('content')
 <div class="card">
   <div class="card-head">
-    <h3 class="card-title">Empresas</h3>
+    <h3 class="card-title">Diretório de Empresas</h3>
   </div>
-  <livewire:admin.content-table tipo="empresas" />
+  {{-- Moderação (restrutura.md §5.3): as empresas entram pelo formulário
+       público /registo-empresa com status pendente e são aprovadas/rejeitadas
+       daqui — as aprovadas ficam visíveis no diretório público (Fase 5). --}}
+  <livewire:admin.companies-table />
 </div>
 @endsection

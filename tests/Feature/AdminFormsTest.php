@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
+use App\Models\News;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -20,14 +22,21 @@ class AdminFormsTest extends TestCase
 
     public function test_criar_noticia_valida_guarda_na_bd(): void
     {
+        $categoria = Category::where('type', 'news')->firstOrFail();
+
         $this->actingAs($this->admin())
-            ->post(route('admin.noticia-nova.store', [], false), [
+            ->post(route('admin.noticia-editor.store'), [
                 'titulo' => 'Notícia de Teste PHPUnit',
-                'estado' => 'publicar',
-                'excerto' => 'Resumo de teste.',
-                'conteudo' => 'Corpo da notícia de teste.',
+                'acao' => 'publicar',
+                'conteudo' => '<p>Corpo da notícia de teste.</p>',
+                'categoria' => $categoria->id,
             ])
-            ->assertRedirect();
+            ->assertRedirect(route('admin.noticias'))
+            ->assertSessionHas('estado', 'Notícia publicada!');
+
+        $this->get(route('admin.noticias'))
+            ->assertOk()
+            ->assertSee('Notícia publicada!');
 
         $this->assertDatabaseHas('news', [
             'title' => 'Notícia de Teste PHPUnit',
@@ -36,10 +45,33 @@ class AdminFormsTest extends TestCase
         ]);
     }
 
+    public function test_guardar_rascunho_devolve_ao_editor_aberto(): void
+    {
+        $resposta = $this->actingAs($this->admin())
+            ->post(route('admin.noticia-editor.store'), [
+                'titulo' => 'Rascunho PHPUnit',
+                'acao' => 'rascunho',
+            ]);
+
+        $noticia = News::where('title', 'Rascunho PHPUnit')->firstOrFail();
+
+        // O redator fica no editor, já no registo recém-criado (fluxo "guardar e continuar")
+        $resposta->assertRedirect(route('admin.noticia-editar', ['noticia' => $noticia->id]));
+        $resposta->assertSessionHas('estado', 'Rascunho guardado.');
+
+        $this->assertDatabaseHas('news', [
+            'title' => 'Rascunho PHPUnit',
+            'status' => 'draft',
+        ]);
+    }
+
     public function test_criar_noticia_sem_titulo_devolve_erros(): void
     {
         $this->actingAs($this->admin())
-            ->post(route('admin.noticia-nova.store', [], false), ['titulo' => ''])
+            ->post(route('admin.noticia-editor.store'), [
+                'titulo' => '',
+                'acao' => 'publicar',
+            ])
             ->assertSessionHasErrors('titulo');
 
         $this->assertDatabaseMissing('news', ['title' => '']);

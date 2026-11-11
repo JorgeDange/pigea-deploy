@@ -22,7 +22,6 @@ return [
     'close'           => 'Fechar',
     'collapse'        => 'Colapso',
     'collapse_all'    => 'Recolher todos',
-    'comment'         => 'Comente',
     'confirm'         => 'confirme',
     'connect'         => 'Conectar',
     'create'          => 'Criar',

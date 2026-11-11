@@ -50,7 +50,6 @@ class NewsFilter extends Component
 
                 return match ($this->ordem) {
                     'Mais Lidos', 'Mais Vistos' => $query->orderByDesc('views_count')->orderByDesc('id'),
-                    'Mais Comentados' => $query->orderByDesc('comments_count')->orderByDesc('id'),
                     default => $query->orderByDesc('published_at')->orderByDesc('id'),
                 };
             })

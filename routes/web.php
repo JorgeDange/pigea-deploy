@@ -1,20 +1,19 @@
 <?php
 
+use App\Models\News;
+use App\Http\Controllers\Admin\NewsEditorController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\BannerFormController;
 use App\Http\Controllers\Admin\ContentFormController;
-use App\Http\Controllers\Admin\NewsFormController;
+use App\Http\Controllers\Admin\DocumentFormController;
 use App\Http\Controllers\Admin\ProjectFormController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserFormController;
-use App\Http\Controllers\Auth\CompanyRegisterController;
 use App\Http\Controllers\CspReportController;
-use App\Http\Controllers\Painel\EmpresaController;
-use App\Http\Controllers\Painel\UtilizadorController;
 use App\Http\Controllers\Frontend\DirectoryController;
 use App\Http\Controllers\Frontend\EventController;
 use App\Http\Controllers\Frontend\FragmentController;
 use App\Http\Controllers\Frontend\InterviewController;
-use App\Http\Controllers\Frontend\JobController;
 use App\Http\Controllers\Frontend\LegislationController;
 use App\Http\Controllers\Frontend\NewsController;
 use App\Http\Controllers\Frontend\ProjectController;
@@ -54,15 +53,12 @@ Route::get('/projetos/{slug}', [ProjectController::class, 'show'])->name('projec
 // Diretórios de conteúdo
 Route::get('/tecnologias', [TechnologyController::class, 'index'])->name('technologies.index');
 Route::get('/fornecedores', [SupplierController::class, 'index'])->name('suppliers.index');
-Route::get('/diretorio', [DirectoryController::class, 'index'])->name('directory.index');
+// Directório (restrutura.md §6 — ortografia do cliente). O URL antigo
+// /diretorio (uma r) redireciona para não partir links já indexados.
+Route::get('/directorio', [DirectoryController::class, 'index'])->name('directory.index');
+Route::redirect('/diretorio', '/directorio', 301);
 
-// Emprego e formação
-Route::get('/empregos', [JobController::class, 'index'])->name('jobs.index');
-Route::get('/empregos/{slug}', [JobController::class, 'show'])->name('jobs.show');
-// Formulário "Formulário de Candidatura" de `emprego-single.html` (público:
-// visitante sem sessão candidata-se com nome+email; autenticado fica ligado
-// à conta).
-Route::post('/empregos/{slug}/candidatura', [JobController::class, 'candidatar'])->name('jobs.candidatura');
+// Formação
 Route::get('/formacao', [TrainingController::class, 'index'])->name('training.index');
 
 // Recursos
@@ -78,9 +74,12 @@ Route::get('/pesquisa', [SearchController::class, 'index'])->name('search.index'
 Route::view('/sobre', 'about')->name('about');
 Route::view('/contactos', 'contacts')->name('contacts');
 
-// Registo de empresa (o registo de utilizador normal é o do Fortify, em /register)
-Route::view('/registo-empresa', 'auth.company-register')->name('company.register');
-Route::post('/registo-empresa', [CompanyRegisterController::class, 'store'])->name('company.register.store');
+// Registo público no Diretório (restrutura.md §4 — sem login; a submissão
+// cria o registo com status `pendente` para aprovação no /admin). As vistas
+// embutem os componentes Livewire RegistoEmpresa/RegistoProfissional.
+// throttle:30,1 — anti-spam por IP (sem captcha; a moderação fica no /admin).
+Route::view('/registo-empresa', 'registo-empresa')->middleware('throttle:30,1')->name('registo-empresa');
+Route::view('/registo-profissional', 'registo-profissional')->middleware('throttle:30,1')->name('registo-profissional');
 
 // Página 404 do protótipo — é também a vista usada pelo handler de exceções.
 Route::view('/404', 'errors.404')->name('errors.404');
@@ -91,42 +90,6 @@ Route::post('/csp-report', CspReportController::class)
     ->middleware('throttle:60,1')
     ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class])
     ->name('csp.report');
-
-// Painéis público-privados (fase.md §4.7 — Fases 9–10). O `RoleBasedHomeResponse`
-// já remete para /painel, /painel-empresa ou /admin consoante a role.
-//
-// Fase 13: além do `role:` do grupo, cada rota exige a permissão Spatie
-// concreta (`can:`) — o papel abre a porta, a permissão autoriza a ação.
-Route::middleware(['auth', 'role:user'])->prefix('painel')->name('user.')->group(function () {
-    Route::get('/', [UtilizadorController::class, 'dashboard'])->name('dashboard');
-    Route::get('/perfil', [UtilizadorController::class, 'perfil'])->middleware('can:profile.manage')->name('perfil');
-    Route::post('/perfil', [UtilizadorController::class, 'guardarPerfil'])->middleware('can:profile.manage')->name('perfil.guardar');
-    Route::get('/candidaturas', function () { return view('painel-utilizador.candidaturas'); })->middleware('can:job.apply')->name('candidaturas');
-    Route::get('/guardadas', [UtilizadorController::class, 'guardadas'])->middleware('can:job.save')->name('guardadas');
-    Route::post('/guardadas/remover/{job}', [UtilizadorController::class, 'removerGuardada'])->middleware('can:job.save')->name('guardadas.remover');
-    Route::post('/guardar/{job}', [UtilizadorController::class, 'alternarGuardada'])->middleware('can:job.save')->name('guardar');
-    Route::get('/notificacoes', [UtilizadorController::class, 'notificacoes'])->middleware('can:notification.manage')->name('notificacoes');
-    Route::post('/notificacoes/ler-todas', [UtilizadorController::class, 'marcarLidas'])->middleware('can:notification.manage')->name('notificacoes.ler-todas');
-    Route::get('/definicoes', [UtilizadorController::class, 'definicoes'])->middleware('can:profile.manage')->name('definicoes');
-    Route::post('/definicoes/seguranca', [UtilizadorController::class, 'guardarSeguranca'])->middleware('can:profile.manage')->name('definicoes.seguranca');
-    Route::post('/definicoes/privacidade', [UtilizadorController::class, 'guardarPrivacidade'])->middleware('can:profile.manage')->name('definicoes.privacidade');
-});
-
-Route::middleware(['auth', 'role:company'])->prefix('painel-empresa')->name('company.')->group(function () {
-    Route::get('/', [EmpresaController::class, 'dashboard'])->name('dashboard');
-    Route::get('/perfil', [EmpresaController::class, 'perfil'])->middleware('can:company.profile')->name('perfil');
-    Route::post('/perfil', [EmpresaController::class, 'guardarPerfil'])->middleware('can:company.profile')->name('perfil.guardar');
-    Route::get('/vagas', function () { return view('painel-empresa.vagas'); })->middleware('can:job.manage')->name('vagas');
-    Route::get('/vagas/nova', [EmpresaController::class, 'vagaNova'])->middleware('can:job.manage')->name('vaga-nova');
-    Route::post('/vagas/nova', [EmpresaController::class, 'guardarVaga'])->middleware('can:job.manage')->name('vaga-nova.guardar');
-    Route::post('/vagas/eliminar/{job}', [EmpresaController::class, 'eliminarVaga'])->middleware('can:job.manage')->name('vagas.eliminar');
-    Route::get('/candidaturas', function () { return view('painel-empresa.candidaturas'); })->middleware('can:application.receive')->name('candidaturas');
-    Route::get('/oportunidades', [EmpresaController::class, 'oportunidades'])->middleware('can:opportunity.manage')->name('oportunidades');
-    Route::post('/oportunidades/eliminar/{oportunidade}', [EmpresaController::class, 'eliminarOportunidade'])->middleware('can:opportunity.manage')->name('oportunidades.eliminar');
-    Route::get('/estatisticas', [EmpresaController::class, 'estatisticas'])->name('estatisticas');
-    Route::get('/definicoes', [EmpresaController::class, 'definicoes'])->middleware('can:company.profile')->name('definicoes');
-    Route::post('/definicoes/seguranca', [EmpresaController::class, 'guardarSeguranca'])->middleware('can:company.profile')->name('definicoes.seguranca');
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -145,7 +108,11 @@ Route::middleware(['auth', 'role:company'])->prefix('painel-empresa')->name('com
 | denunciaria o novo caminho).
 |
 */
-Route::middleware(['auth', 'role:admin'])->prefix(config('app.admin_path'))->name('admin.')->group(function () {
+// A equipa interna (restrutura.md: roles apenas admin + editor) entra no
+// painel; o `can:` granular de cada rota decide o que cada role vê
+// (editor: conteúdo + documentos/banners; moderação/utilizadores/configs
+// continuam exclusivos do admin — Fase 7, ModeracaoDiretorioTest).
+Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'))->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::view('/noticias', 'admin.noticias')->middleware('can:news.manage')->name('noticias');
     Route::view('/eventos', 'admin.eventos')->middleware('can:event.manage')->name('eventos');
@@ -154,7 +121,6 @@ Route::middleware(['auth', 'role:admin'])->prefix(config('app.admin_path'))->nam
     Route::view('/legislacao', 'admin.legislacao')->middleware('can:legislation.manage')->name('legislacao');
     Route::view('/projetos', 'admin.projetos')->middleware('can:project.manage')->name('projetos');
     Route::view('/empresas', 'admin.empresas')->middleware('can:company.moderate')->name('empresas');
-    Route::view('/vagas', 'admin.vagas')->middleware('can:job.moderate')->name('vagas');
     Route::view('/utilizadores', 'admin.utilizadores')->middleware('can:user.manage')->name('utilizadores');
     // Modal "Adicionar utilizador": no protótipo o `<form>` não tinha `action`
     // (o botão era `type="button"` morto no rodapé do modal). Mesma permissão
@@ -163,11 +129,25 @@ Route::middleware(['auth', 'role:admin'])->prefix(config('app.admin_path'))->nam
         ->middleware('can:user.manage')
         ->name('utilizador.novo');
 
-    // Páginas de criação (Fase 8): o `<form>` do protótipo não tinha `action`;
-    // aqui validam e criam o registo (as duas únicas páginas de formulário do
-    // painel admin — não existe página de edição no protótipo).
-    Route::get('/noticias/nova', [NewsFormController::class, 'create'])->middleware('can:news.manage')->name('noticia-nova');
-    Route::post('/noticias/nova', [NewsFormController::class, 'store'])->middleware('can:news.manage')->name('noticia-nova.store');
+    /**
+     * Editor de notícias (cms_pro.md §4.2 — "o ecrã mais importante").
+     * Blade tradicional (sem Livewire) para evitar o bug de morph incremental
+     * do Livewire destruir o DOM do TinyMCE.
+     */
+    Route::get('/noticias/nova', [NewsEditorController::class, 'create'])
+        ->middleware('can:news.manage')
+        ->name('noticia-nova');
+    Route::post('/noticias/nova', [NewsEditorController::class, 'store'])
+        ->middleware('can:news.manage')
+        ->name('noticia-editor.store');
+    Route::get('/noticias/{noticia}/editar', [NewsEditorController::class, 'edit'])
+        ->middleware('can:news.manage')
+        ->whereNumber('noticia')
+        ->name('noticia-editar');
+    Route::put('/noticias/{noticia}', [NewsEditorController::class, 'update'])
+        ->middleware('can:news.manage')
+        ->whereNumber('noticia')
+        ->name('noticia-editor.update');
     Route::get('/projetos/novo', [ProjectFormController::class, 'create'])->middleware('can:project.manage')->name('projeto-novo');
     Route::post('/projetos/novo', [ProjectFormController::class, 'store'])->middleware('can:project.manage')->name('projeto-novo.store');
 
@@ -179,6 +159,35 @@ Route::middleware(['auth', 'role:admin'])->prefix(config('app.admin_path'))->nam
     Route::post('/configuracoes/redes', [SettingsController::class, 'redes'])->middleware('can:settings.manage')->name('configuracoes.redes');
     Route::post('/configuracoes/seo', [SettingsController::class, 'seo'])->middleware('can:settings.manage')->name('configuracoes.seo');
     Route::post('/configuracoes/email', [SettingsController::class, 'email'])->middleware('can:settings.manage')->name('configuracoes.email');
+
+    /*
+    |----------------------------------------------------------------------
+    | Reestruturação (restrutura.md §5.3-5.6) — Diretório e Publicidade
+    |----------------------------------------------------------------------
+    |
+    | Empresas: a página admin.empresas passou a moderar o novo modelo
+    | `Company` (componente Livewire CompaniesTable) — submissão pública →
+    | pendente → aprovar/rejeitar. Profissionais: mesmo mecanismo.
+    | Documentos e Banners: CRUD completo (equipa interna apenas).
+    |
+    | ANTES das rotas genéricas `/{tipo}/novo` para ganhar o matching
+    | (os whereIn do genérico não incluem estes tipos, mas a ordem explícita
+    | evita depender do comportamento de constraint falhada).
+    |
+    */
+    Route::view('/profissionais', 'admin.profissionais')->middleware('can:company.moderate')->name('profissionais');
+
+    Route::view('/documentos', 'admin.documentos')->middleware('can:document.manage')->name('documentos');
+    Route::get('/documentos/novo', [DocumentFormController::class, 'create'])->middleware('can:document.manage')->name('documentos.novo');
+    Route::post('/documentos/novo', [DocumentFormController::class, 'store'])->middleware('can:document.manage')->name('documentos.novo.store');
+    Route::get('/documentos/{id}/editar', [DocumentFormController::class, 'edit'])->middleware('can:document.manage')->whereNumber('id')->name('documentos.editar');
+    Route::put('/documentos/{id}', [DocumentFormController::class, 'update'])->middleware('can:document.manage')->whereNumber('id')->name('documentos.atualizar');
+
+    Route::view('/banners', 'admin.banners')->middleware('can:banner.manage')->name('banners');
+    Route::get('/banners/novo', [BannerFormController::class, 'create'])->middleware('can:banner.manage')->name('banners.novo');
+    Route::post('/banners/novo', [BannerFormController::class, 'store'])->middleware('can:banner.manage')->name('banners.novo.store');
+    Route::get('/banners/{id}/editar', [BannerFormController::class, 'edit'])->middleware('can:banner.manage')->whereNumber('id')->name('banners.editar');
+    Route::put('/banners/{id}', [BannerFormController::class, 'update'])->middleware('can:banner.manage')->whereNumber('id')->name('banners.atualizar');
 
     /*
     |----------------------------------------------------------------------

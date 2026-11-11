@@ -1,11 +1,16 @@
 /* ==========================================================================
-   PIGEA — Dashboard / Painéis (comportamentos)
-   Sem backend: os formulários são apenas demonstrativos (pré-Laravel).
+   PIGEA — Dashboard / Painéis
+   ----------------------------------------------------------------------------
+   Apenas os handlers com elementos vivos no frontend/admin. Tudo o resto do
+   protótipo (formulários "demo estático" que interceptaram os submits — o
+   P0 —, tabs de autenticação, registo público, "marcar todas lidas", remover
+   itens, filtros de demonstração) foi removido na Fase 8; os formulários
+   submetem normalmente no Laravel e a porta pública de entrada é /login.
    ========================================================================== */
 $(function () {
     'use strict';
 
-    /* ---------- Sidebar (mobile) ---------- */
+    /* ---------- Sidebar (mobile) — dashboard-header.blade.php ---------- */
     $(document).on('click', '.sidebar-toggle', function () {
         $('.dashboard-wrap').toggleClass('sidebar-open');
     });
@@ -15,90 +20,41 @@ $(function () {
         }
     });
 
-    /* ---------- Tabs de autenticação (Entrar / Registar) ---------- */
-    $(document).on('click', '.auth-tabs button', function () {
-        var url = $(this).data('href');
-        if (url) {
-            window.location.href = url;
-        }
-    });
-
-    /* ---------- Formulários (demo estático) ---------- */
-    $(document).on('submit', 'form.auth-form, form.dashboard-form', function (e) {
-        if (this.id === 'registoform') {
-            return; /* tratado pelo handler específico abaixo */
-        }
-        var form = this;
-        if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
-            return true; /* deixa o browser validar */
-        }
-        e.preventDefault();
-        var $msg = $(form).find('.dashboard-msg');
-        if (!$msg.length) {
-            $msg = $('<div class="dashboard-msg"></div>');
-            $(form).append($msg);
-        }
-        $msg.removeClass('is-error').text('Demo estático — guardado com sucesso. A integração com o Laravel ficará disponível na Fase 3.').stop(true, true).fadeIn(200);
-        return false;
-    });
-
-    /* ---------- Registo de empresa (mantém a mensagem do protótipo) ---------- */
-    $(document).on('submit', '#registoform', function () {
-        var form = this;
-        if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
-            form.reportValidity();
-            return false;
-        }
-        $('#message').hide().html('<div class="form-ok">Registo enviado com sucesso! A equipa PIGEA analisará os dados e entrará em contacto através do email indicado.</div>').slideDown('slow');
-        form.reset();
-        return false;
-    });
-    $(document).on('keyup', '#registoform input, #registoform select, #registoform textarea', function () {
-        $('#message').slideUp(1500);
-    });
-
-    /* ---------- Notificações ---------- */
-    $(document).on('click', '.js-mark-all-read', function () {
-        $('.notification-item.unread').removeClass('unread');
-        $('.badge').text('0');
-        return false;
-    });
-
-    /* ---------- Modal ---------- */
+    /* ---------- Modais ("Adicionar utilizador" e pré-visualização) ---------- */
     $(document).on('click', '.js-modal-open', function () {
         var id = $(this).data('modal');
-        $('#' + id).addClass('open');
+        var $modal = $('#' + id);
+        $('.dashboard-modal.open').removeClass('open'); // só um aberto de cada vez
+        $modal.addClass('open').attr('tabindex', '-1').focus();
+        $modal.data('trigger', this); // guarda o botão de origem para nele devolver o foco
         return false;
     });
-    $(document).on('click', '.js-modal-close', function () {
-        $(this).closest('.dashboard-modal').removeClass('open');
+
+    $(document).on('click', '.js-modal-close, [data-role="fechar-modal"]', function () {
+        var $modal = $(this).closest('.dashboard-modal');
+        $modal.removeClass('open');
+        var trigger = $modal.data('trigger');
+        if (trigger) $(trigger).focus(); else $('.js-modal-open:focus').focus();
         return false;
     });
     $(document).on('click', '.dashboard-modal', function (e) {
         if (e.target === this) {
-            $(this).removeClass('open');
+            var $modal = $(this);
+            $modal.removeClass('open');
+            // Mesmo contrato das outras duas rotas de fecho (× e Escape):
+            // o foco volta ao botão que abriu o modal.
+            var trigger = $modal.data('trigger');
+            if (trigger) $(trigger).focus();
         }
     });
-
-    /* ---------- Remover itens (guardadas / listas) ---------- */
-    $(document).on('click', '.js-remove-item', function () {
-        $(this).closest('.job-card, .notification-item, tr').fadeOut(250, function () {
-            $(this).remove();
-        });
-        return false;
-    });
-
-    /* ---------- Filtros demonstrativos ---------- */
-    $(document).on('change', '.dashboard-filters select, .dashboard-filters input', function () {
-        var $wrap = $(this).closest('.card, .dashboard-content');
-        var $empty = $wrap.find('.filter-empty');
-        if (!$empty.length) {
-            $empty = $('<div class="filter-empty dashboard-msg is-error" style="display:block">Sem resultados para o filtro selecionado (dados de demonstração).</div>');
-            $wrap.find('.dashboard-filters').after($empty);
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape') {
+            var $open = $('.dashboard-modal.open');
+            if ($open.length) {
+                $open.removeClass('open');
+                var trigger = $open.last().data('trigger');
+                if (trigger) $(trigger).focus();
+            }
         }
-        $empty.show();
-        setTimeout(function () {
-            $empty.fadeOut(300);
-        }, 1600);
     });
 });
