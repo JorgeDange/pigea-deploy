@@ -93,23 +93,32 @@
             plugins: { legend: { display: false } }
         };
 
-        // Gráfico central do cms_pro.md: linha de visitas dos últimos 7 dias.
-        // O eixo x tem sempre os 7 dias — dias sem registo vêm a 0.
-        new Chart(document.getElementById('grafico-visitas7'), {
-            type: 'line',
-            data: {
-                labels: @json($graficos['rotulos7']),
-                datasets: [{
-                    label: 'Visitas',
-                    data: @json($graficos['visitas7']),
-                    borderColor: '#C8102E',
-                    backgroundColor: 'rgba(200, 16, 46, .12)',
-                    fill: true,
-                    tension: .35
-                }]
-            },
-            options: opcoes
-        });
+        // Visitas dos últimos 7 dias — se TUDO for 0, mostra nota vazia
+        // em vez de uma linha plana em 0 (paridade com o gráfico de províncias).
+        const visitas7 = @json($graficos['visitas7']);
+
+        if (visitas7.every((v) => Number(v) === 0)) {
+            const nota = document.createElement('p');
+            nota.className = 'chart-vazio';
+            nota.textContent = 'Sem visitas registadas ainda.';
+            document.getElementById('grafico-visitas7').replaceWith(nota);
+        } else {
+            new Chart(document.getElementById('grafico-visitas7'), {
+                type: 'line',
+                data: {
+                    labels: @json($graficos['rotulos7']),
+                    datasets: [{
+                        label: 'Visitas',
+                        data: visitas7,
+                        borderColor: '#C8102E',
+                        backgroundColor: 'rgba(200, 16, 46, .12)',
+                        fill: true,
+                        tension: .35
+                    }]
+                },
+                options: opcoes
+            });
+        }
 
         const meses = @json($graficos['rotulos']);
 
@@ -126,8 +135,8 @@
             options: opcoes
         });
 
-        // Pie callado quando não há províncias com conteúdo — um gráfico vazio
-        // não comunica nada; mostra uma nota em vez disso.
+        // Pie callado quando não há províncias com conteúdo — em vez de can­vas
+        // branco/removido por confuso, mostra só a nota.
         const provincias = @json($graficos['provincias']);
 
         if (provincias.valores.length) {
@@ -147,8 +156,10 @@
                 }
             });
         } else {
-            document.getElementById('grafico-provincias')
-                .insertAdjacentHTML('afterend', '<p class="chart-vazio">Sem províncias registadas no conteúdo.</p>');
+            const nota = document.createElement('p');
+            nota.className = 'chart-vazio';
+            nota.textContent = 'Sem províncias registadas no conteúdo publicado.';
+            document.getElementById('grafico-provincias').replaceWith(nota);
         }
     });
 </script>

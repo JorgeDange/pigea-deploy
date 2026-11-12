@@ -191,6 +191,21 @@
                                 @error('categoria')<p class="form-error" id="erro-categoria" role="alert">{{ $message }}</p>@enderror
                             </div>
 
+                            <div class="dashboard-form-group">
+                                <label class="dashboard-form-label" for="provincia">Província <small class="form-label-hint">(opcional — usada no gráfico do painel)</small></label>
+                                <select class="dashboard-form-select" id="provincia" name="provincia" aria-describedby="erro-provincia">
+                                    <option value="">Sem província</option>
+                                    @php
+                                        $provincias = ['luanda' => 'Luanda', 'benguela' => 'Benguela', 'huila' => 'Huíla', 'namibe' => 'Namibe', 'nacional' => 'Nacional'];
+                                        $provinciaAtual = old('provincia', $noticia?->province);
+                                    @endphp
+                                    @foreach ($provincias as $valor => $rotulo)
+                                        <option value="{{ $valor }}" {{ $provinciaAtual === $valor ? 'selected' : '' }}>{{ $rotulo }}</option>
+                                    @endforeach
+                                </select>
+                                @error('provincia')<p class="form-error" id="erro-provincia" role="alert">{{ $message }}</p>@enderror
+                            </div>
+
                             @php
                                 $fonteAtual = old('capa_fonte', ($noticia && $noticia->image && str_starts_with($noticia->image, 'http')) ? 'link' : 'ficheiro');
                             @endphp

@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\News;
 use App\Models\PageView;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -25,8 +26,14 @@ class DashboardController extends Controller
     {
         $agora = now();
 
+        // visitas hoje muda a cada visita — não vai para cache; o total é
+        // agregado sobre uma tabela de 1 linha/dia, mas guarda 5 min de graça.
         $visitasHoje = (int) PageView::query()->where('date', $agora->toDateString())->value('visits');
-        $visitasTotal = (int) PageView::query()->sum('visits');
+        $visitasTotal = Cache::remember(
+            'dashboard.visitas_total',
+            now()->addMinutes(5),
+            fn () => (int) PageView::query()->sum('visits')
+        );
 
         $estatisticas = [
             [
@@ -157,7 +164,8 @@ class DashboardController extends Controller
     }
 
     /**
-     * Distribuição por província: onde está o conteúdo que tem província.
+     * Distribuição por província: apenas conteúdo PUBLICADO com província
+     * preenchida (rascunhos e despublicados não contam para o gráfico).
      *
      * Das tabelas todas, só `news` e `projects` têm a coluna `province`.
      * Ordenado da mais para a menos representada.
@@ -169,6 +177,7 @@ class DashboardController extends Controller
         foreach (['news', 'projects'] as $tabela) {
             DB::table($tabela)
                 ->whereNotNull('province')
+                ->where('status', 'published')
                 ->selectRaw('province, count(*) as n')
                 ->groupBy('province')
                 ->pluck('n', 'province')
@@ -179,8 +188,16 @@ class DashboardController extends Controller
 
         arsort($contagem);
 
+        $rotulos = [
+            'luanda' => 'Luanda',
+            'benguela' => 'Benguela',
+            'huila' => 'Huíla',
+            'namibe' => 'Namibe',
+            'nacional' => 'Nacional',
+        ];
+
         return [
-            'rotulos' => array_map(fn (string $p) => Str::headline($p), array_keys($contagem)),
+            'rotulos' => array_map(fn (string $p) => $rotulos[$p] ?? Str::headline($p), array_keys($contagem)),
             'valores' => array_values($contagem),
         ];
     }

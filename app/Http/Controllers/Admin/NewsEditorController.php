@@ -146,6 +146,7 @@ class NewsEditorController extends Controller
             'conteudo' => ['nullable', 'string', 'max:2097152'],
             'subtitulo' => ['nullable', 'string', 'max:500'],
             'categoria' => ['nullable', 'integer', Rule::exists('categories', 'id')->where('type', 'news')],
+            'provincia' => ['nullable', Rule::in(['luanda', 'benguela', 'huila', 'namibe', 'nacional'])],
         ]);
 
         $novo = empty($dados['id']);
@@ -280,6 +281,7 @@ class NewsEditorController extends Controller
             'slug' => ['nullable', 'string', 'max:190', Rule::unique('news', 'slug')->ignore($noticia?->id)],
             'conteudo' => ['nullable', 'string'],
             'categoria' => ['nullable', 'integer', Rule::exists('categories', 'id')->where('type', 'news')],
+            'provincia' => ['nullable', Rule::in(['luanda', 'benguela', 'huila', 'namibe', 'nacional'])],
             'tags' => ['nullable', 'string', 'max:250'],
             'image_alt' => ['nullable', 'string', 'max:250'],
             'image_caption' => ['nullable', 'string', 'max:250'],
@@ -445,6 +447,9 @@ class NewsEditorController extends Controller
             'category_id' => $tem('categoria')
                 ? ($dados['categoria'] ?? null)
                 : $atual?->category_id,
+            'province' => $tem('provincia')
+                ? (trim((string) ($dados['provincia'] ?? '')) ?: null)
+                : $atual?->province,
             'tags' => $tem('tags')
                 ? (trim((string) ($dados['tags'] ?? '')) ?: null)
                 : $atual?->tags,

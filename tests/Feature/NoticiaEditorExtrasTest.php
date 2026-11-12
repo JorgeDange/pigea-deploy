@@ -78,6 +78,43 @@ class NoticiaEditorExtrasTest extends TestCase
         $this->assertDatabaseMissing('news', ['title' => 'Notícia com capa final']);
     }
 
+    public function test_provincia_e_gravada_no_editor(): void
+    {
+        $categoria = Category::where('type', 'news')->firstOrFail();
+
+        $this->actingAs($this->admin())
+            ->post(route('admin.noticia-editor.store'), [
+                'titulo' => 'Notícia com província Huíla',
+                'acao' => 'publicar',
+                'conteudo' => '<p>Corpo.</p>',
+                'categoria' => $categoria->id,
+                'provincia' => 'huila',
+            ])
+            ->assertRedirect(route('admin.noticias'));
+
+        $this->assertDatabaseHas('news', [
+            'title' => 'Notícia com província Huíla',
+            'province' => 'huila',
+        ]);
+    }
+
+    public function test_provincia_invalida_e_rejeitada(): void
+    {
+        $categoria = Category::where('type', 'news')->firstOrFail();
+
+        $this->actingAs($this->admin())
+            ->post(route('admin.noticia-editor.store'), [
+                'titulo' => 'Notícia província inválida',
+                'acao' => 'publicar',
+                'conteudo' => '<p>Corpo.</p>',
+                'categoria' => $categoria->id,
+                'provincia' => 'atlantide',
+            ])
+            ->assertSessionHasErrors('provincia');
+
+        $this->assertDatabaseMissing('news', ['title' => 'Notícia província inválida']);
+    }
+
     public function test_categoria_outros_e_selecionada_e_gravada(): void
     {
         $outros = Category::where('type', 'news')->where('slug', 'outros')->firstOrFail();
