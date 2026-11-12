@@ -147,12 +147,8 @@ if (! $temTabelas) {
         $executar('db:seed --force');
     }
 
-    // Permissões em falta (RoleSeeder: Fase 6/7 acrescentou document.manage e
-    // banner.manage — a contagem antiga <18 não apanhava a BD velha, que tinha
-    // 18 permissões antigas e nenhuma das novas → 403 nos CRUD de documentos e
-    // banners, 11/11/2026). Idempotente: só cria o que falta e volta a sync
-    // todas ao admin.
-    if ((int) $pdo->query("SELECT COUNT(*) FROM permissions WHERE name IN ('document.manage', 'banner.manage')")->fetchColumn() < 2) {
+    // Permissões em falta — inclui video.manage (mód Vídeos, 12/11/2026).
+    if ((int) $pdo->query("SELECT COUNT(*) FROM permissions WHERE name IN ('document.manage', 'banner.manage', 'video.manage')")->fetchColumn() < 3) {
         $executar('db:seed --class=RoleSeeder --force');
     }
 

@@ -26,6 +26,7 @@
         ]],
         ['rotulo' => 'Produção', 'itens' => [
             ['chave' => 'noticias', 'nome' => 'Notícias', 'icone' => 'fa-newspaper', 'rota' => 'admin.noticias', 'can' => 'news.manage'],
+            ['chave' => 'videos', 'nome' => 'Vídeos', 'icone' => 'fa-video', 'rota' => 'admin.videos', 'can' => 'video.manage'],
         ]],
         ['rotulo' => 'Diretório', 'itens' => [
             ['chave' => 'empresas', 'nome' => 'Empresas', 'icone' => 'fa-building', 'rota' => 'admin.empresas', 'can' => 'company.moderate'],

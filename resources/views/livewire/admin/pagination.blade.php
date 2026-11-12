@@ -6,9 +6,10 @@
     $atual = max(1, (int) $registos->currentPage());
     $ultima = max(1, (int) $registos->lastPage());
 
-    // janela: primeira página, atual±1 e última — sem duplicados, ordenado
+    // janela: primeira página, atual±1 e última — sem duplicados, ordenado.
+    // $ultima <= 2: sem range (range(2,0) devolveria [2,1,0] — bug de page count).
     $paginas = collect([1])
-        ->merge(range(max(2, $atual - 1), min($ultima - 1, $atual + 1)))
+        ->merge($ultima > 2 ? range(max(2, $atual - 1), min($ultima - 1, $atual + 1)) : [])
         ->when($ultima > 1, fn ($c) => $c->push($ultima))
         ->unique()
         ->sort()

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\News;
 use App\Models\Project;
+use App\Models\Video;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -42,6 +43,14 @@ class AppServiceProvider extends ServiceProvider
         // protótipo, onde o widget é idêntico em todos os HTML).
         View::share('widgetNews', $this->widgetNews());
 
+        // Slides do hero da home — as 4 mais recentes publicadas (ordem por id desc).
+        View::share('heroNews', $this->heroNews());
+
+        // Vídeos para as secções de vídeo da home (módulo Vídeos — admin).
+        View::composer('home', function ($view) {
+            $view->with('videosHome', $this->videosHome());
+        });
+
         // Listas de cartões `list-post` (relacionados, destaques, categorias).
         // A home usa 11 itens distintos (skip/take por bloco), por isso o limite
         // tem de cobrir o maior bloco + os saltos que o precedem.
@@ -66,6 +75,31 @@ class AppServiceProvider extends ServiceProvider
     {
         try {
             return News::published()->with(['category', 'author'])->orderBy('id')->take(8)->get();
+        } catch (Throwable) {
+            return collect();
+        }
+    }
+
+    /**
+     * Vídeos da home (módulo Vídeos) — as 6 mais recentes, ordenadas por
+     * published_at/desc. Composição direcionada à vista `home` apenas.
+     */
+    private function videosHome()
+    {
+        try {
+            return Video::query()->orderByDesc('published_at')->orderByDesc('id')->take(6)->get();
+        } catch (Throwable) {
+            return collect();
+        }
+    }
+
+    /**
+     * Slides do hero da home — as 4 mais recentes (id desc), publicadas.
+     */
+    private function heroNews()
+    {
+        try {
+            return News::published()->with(['category', 'author'])->orderByDesc('id')->take(4)->get();
         } catch (Throwable) {
             return collect();
         }

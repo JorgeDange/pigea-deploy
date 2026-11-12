@@ -30,9 +30,7 @@ class RoleSeeder extends Seeder
         'editor' => [
             'news.manage', 'project.manage', 'event.manage',
             'legislation.manage', 'research.manage', 'interview.manage',
-            // Reestruturação (restrutura.md §5.5-5.6): a equipa interna gere
-            // os documentos do diretório e a publicidade (banners).
-            'document.manage', 'banner.manage',
+            'document.manage', 'banner.manage', 'video.manage',
         ],
     ];
 

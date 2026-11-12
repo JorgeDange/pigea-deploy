@@ -488,84 +488,49 @@
                         </div>
                     </section>
                     <!-- section end -->
-                    <!-- section   -->
+                    <!-- Vídeos do módulo admin | Vídeos (vídeos por link) -->
+@php
+    $videosHome = isset($videosHome) ? collect($videosHome) : collect();
+@endphp
+@if ($videosHome->count())
                     <section class="dark-bg no-bottom-padding">
                         <div class="container">
                             <div class="main-video-wrap fl-wrap">
                                 <div class="video-main-cont">
+                                    @php $videoPrincipal = $videosHome->first(); @endphp
                                     <div class="video-section-title fl-wrap">
                                         <h2>Vídeo em Destaque</h2>
                                         <h4>Mantenha-se atualizado</h4>
-                                        <a href="{{ route('news.index') }}">Ver tudo <i class="fas fa-caret-right"></i></a>
                                     </div>
-                                    <a class="video-holder vh-main fl-wrap  image-popup"  href="#">
+                                    <a class="video-holder vh-main fl-wrap image-popup" href="{{ $videoPrincipal->url }}">
                                         <div class="bg"></div>
                                         <div class="overlay"></div>
                                         <div class="big_prom"> <i class="fas fa-play"></i></div>
                                     </a>
                                     <div class="video-holder-title fl-wrap">
-                                        <div class="video-holder-title_item"><a href="#"></a></div>
-                                        <span class="video-date"><i class="far fa-clock"></i> <strong></strong></span>
-                                        <a class="post-category-marker" href="{{ route('news.index') }}"></a>
+                                        <div class="video-holder-title_item"><a href="{{ $videoPrincipal->url }}">{{ $videoPrincipal->titulo }}</a></div>
+                                        <span class="video-date"><i class="far fa-clock"></i> <strong>{{ optional($videoPrincipal->published_at)->translatedFormat('d M Y') }}</strong></span>
+                                        @if ($videoPrincipal->resumo)
+                                        <p style="color:#D8D8D8;font-size:12px;margin-top:10px;max-width:340px;">{{ mb_strlen($videoPrincipal->resumo) > 160 ? mb_substr($videoPrincipal->resumo, 0, 160) . '…' : $videoPrincipal->resumo }}</p>
+                                        @endif
                                     </div>
                                     <div class="vh-preloader"><div class="vh-pl-box"><img src="{{ asset('images/logo.png') }}" alt="PIGEA" class="vh-pl-logo"><span class="vh-pl-bar"></span></div></div>
                                 </div>
-                                <!-- video-links-wrap   -->
                                 <div class="video-links-wrap">
-                                    <!-- video-item  -->
-                                    <div class="video-item video-item_active fl-wrap" data-url="noticia-single.html" data-video-link="https://www.youtube.com/watch?v=VLoqKdRxPSc">
+                                    @foreach ($videosHome->skip(1)->take(4) as $video)
+                                    <div class="video-item fl-wrap{{ $loop->first ? ' video-item_active' : '' }}" data-url="{{ $video->url }}" data-video-link="{{ $video->url }}">
                                         <div class="video-item-img fl-wrap">
-                                            <img src="{{ asset('images/all/33.jpg') }}" class="respimg" alt="">
+                                            <img src="{{ $video->thumb() ?? asset('images/video-placeholder.jpg') }}" class="respimg" alt="{{ $video->titulo }}">
                                             <div class="play-icon"><i class="fas fa-play"></i></div>
                                         </div>
                                         <div class="video-item-title">
-                                            <h4>Luanda mantém-se o polo das geociências em Angola</h4>
-                                            <span class="video-date"><i class="far fa-clock"></i> <strong>25may 2022</strong></span>
+                                            <h4>{{ $video->titulo }}</h4>
+                                            <span class="video-date"><i class="far fa-clock"></i> <strong>{{ optional($video->published_at)->translatedFormat('d M Y') }}</strong></span>
                                         </div>
-                                        <a class="post-category-marker" href="{{ route('news.index') }}">Ambiente</a>
+                                        <a class="post-category-marker" href="{{ $video->url }}">Vídeo</a>
                                     </div>
-                                    <!--video-item end   -->
-                                    <!-- video-item  -->
-                                    <div class="video-item fl-wrap" data-url="noticia-single.html" data-video-link="https://www.youtube.com/watch?v=K-6tPkm6cZA">
-                                        <div class="video-item-img fl-wrap">
-                                            <img src="{{ asset('images/all/43.jpg') }}" class="respimg" alt="">
-                                            <div class="play-icon"><i class="fas fa-play"></i></div>
-                                        </div>
-                                        <div class="video-item-title">
-                                            <h4>Sensor em destaque</h4>
-                                            <span class="video-date"><i class="far fa-clock"></i> <strong>20april 2022</strong></span>
-                                        </div>
-                                        <a class="post-category-marker" href="{{ route('news.index') }}">Água</a>
-                                    </div>
-                                    <!--video-item end   -->									
-                                    <!-- video-item  -->
-                                    <div class="video-item fl-wrap" data-url="posts-ingle2.html" data-video-link="https://vimeo.com/390742893">
-                                        <div class="video-item-img fl-wrap">
-                                            <img src="{{ asset('images/all/3.jpg') }}" class="respimg" alt="">
-                                            <div class="play-icon"><i class="fas fa-play"></i></div>
-                                        </div>
-                                        <div class="video-item-title">
-                                            <h4>Mais empregos e crescimento económico no setor mineiro</h4>
-                                            <span class="video-date"><i class="far fa-clock"></i><strong> 14december 2021</strong></span>
-                                        </div>
-                                        <a class="post-category-marker" href="{{ route('news.index') }}">Mineração</a>
-                                    </div>
-                                    <!--video-item end   -->	
-                                    <!-- video-item  -->
-                                    <div class="video-item fl-wrap" data-url="noticia-single.html" data-video-link="https://www.youtube.com/watch?v=vgVr_OpEVMQ">
-                                        <div class="video-item-img fl-wrap">
-                                            <img src="{{ asset('images/all/42.jpg') }}" class="respimg" alt="">
-                                            <div class="play-icon"><i class="fas fa-play"></i></div>
-                                        </div>
-                                        <div class="video-item-title">
-                                            <h4>A investigação científica sobe de nível</h4>
-                                            <span class="video-date"><i class="far fa-clock"></i> <strong>05december 2021</strong></span>
-                                        </div>
-                                        <a class="post-category-marker" href="{{ route('news.index') }}">Ambiente</a>
-                                    </div>
-                                    <!--video-item end   -->											
+                                    @endforeach
                                 </div>
-                                <!-- video-links-wrap end   -->
                             </div>
                         </div>
                         <div class="video_carousel-wrap fl-wrap">
@@ -575,97 +540,37 @@
                                         <h4>Vídeos Populares</h4>
                                         <div class="vc-pagination pag-style"></div>
                                     </div>
-                                    <!-- fw-carousel  -->
                                     <div class="video_carousel  lightgallery">
                                         <div class="swiper-container">
                                             <div class="swiper-wrapper">
-                                                <!-- swiper-slide-->  
+                                                @foreach ($videosHome as $video)
                                                 <div class="swiper-slide">
-                                                    @foreach ($listProjects->take(1) as $item)
-<!-- video-item  -->
                                                     <div class="video-item fl-wrap">
                                                         <div class="video-item-img fl-wrap">
-                                                            <img src="{{ image_url($item->image) }}" class="respimg" alt="">
-                                                            <a class="play-icon image-popup" href="https://www.youtube.com/watch?v=65YhmHsuD-M"><i class="fas fa-play"></i></a>
+                                                            <img src="{{ $video->thumb() ?? asset('images/video-placeholder.jpg') }}" class="respimg" alt="{{ $video->titulo }}">
+                                                            <a class="play-icon image-popup" href="{{ $video->url }}"><i class="fas fa-play"></i></a>
                                                         </div>
                                                         <div class="video-item-title">
-                                                            <h4><a href="{{ route('projects.show', $item->slug) }}">{{ $item->title }}</a></h4>
-                                                            <span class="video-date"><i class="far fa-clock"></i> 05december 2021</span>
+                                                            <h4><a href="{{ $video->url }}">{{ $video->titulo }}</a></h4>
+                                                            <span class="video-date"><i class="far fa-clock"></i> <strong>{{ optional($video->published_at)->translatedFormat('d M Y') }}</strong></span>
                                                         </div>
-                                                        <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
+                                                        <a class="post-category-marker" href="{{ $video->url }}">Vídeo</a>
                                                     </div>
-                                                    <!--video-item end   -->
-@endforeach
                                                 </div>
-                                                <!-- swiper-slide end-->  
-                                                <!-- swiper-slide-->  
-                                                <div class="swiper-slide">
-                                                    @foreach ($listProjects->take(1) as $item)
-<!-- video-item  -->
-                                                    <div class="video-item fl-wrap">
-                                                        <div class="video-item-img fl-wrap">
-                                                            <img src="{{ image_url($item->image) }}" class="respimg" alt="">
-                                                            <a class="play-icon image-popup" href="https://vimeo.com/155428349"><i class="fas fa-play"></i></a>
-                                                        </div>
-                                                        <div class="video-item-title">
-                                                            <h4><a href="{{ route('projects.show', $item->slug) }}">{{ $item->title }}</a></h4>
-                                                            <span class="video-date"><i class="far fa-clock"></i> 05december 2021</span>
-                                                        </div>
-                                                        <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
-                                                    </div>
-                                                    <!--video-item end   -->
-@endforeach
-                                                </div>
-                                                <!-- swiper-slide end-->  									
-                                                <!-- swiper-slide-->  
-                                                <div class="swiper-slide">
-                                                    @foreach ($listProjects->take(1) as $item)
-<!-- video-item  -->
-                                                    <div class="video-item fl-wrap">
-                                                        <div class="video-item-img fl-wrap">
-                                                            <img src="{{ image_url($item->image) }}" class="respimg" alt="">
-                                                            <a class="play-icon image-popup" href="https://vimeo.com/108359069"><i class="fas fa-play"></i></a>
-                                                        </div>
-                                                        <div class="video-item-title">
-                                                            <h4><a href="{{ route('projects.show', $item->slug) }}">{{ $item->title }}</a></h4>
-                                                            <span class="video-date"><i class="far fa-clock"></i> 05december 2021</span>
-                                                        </div>
-                                                        <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
-                                                    </div>
-                                                    <!--video-item end   -->
-@endforeach
-                                                </div>
-                                                <!-- swiper-slide end-->  									
-                                                <!-- swiper-slide-->  
-                                                <div class="swiper-slide">
-                                                    @foreach ($listProjects->take(1) as $item)
-<!-- video-item  -->
-                                                    <div class="video-item fl-wrap">
-                                                        <div class="video-item-img fl-wrap">
-                                                            <img src="{{ image_url($item->image) }}" class="respimg" alt="">
-                                                            <a class="play-icon image-popup" href="https://www.youtube.com/watch?v=s-TySen2xLo"><i class="fas fa-play"></i></a>
-                                                        </div>
-                                                        <div class="video-item-title">
-                                                            <h4><a href="{{ route('projects.show', $item->slug) }}">{{ $item->title }}</a></h4>
-                                                            <span class="video-date"><i class="far fa-clock"></i> 05december 2021</span>
-                                                        </div>
-                                                        <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
-                                                    </div>
-                                                    <!--video-item end   -->
-@endforeach
-                                                </div>
-                                                <!-- swiper-slide end-->  									
+                                                @endforeach
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- fw-carousel end -->								
                                     <div class="cc-prev cc_btn"><i class="fas fa-caret-left"></i></div>
                                     <div class="cc-next cc_btn"><i class="fas fa-caret-right"></i></div>
                                 </div>
                             </div>
                         </div>
                     </section>
-                    <!-- section end -->
+                    <!-- section end   -->
+@endif
+
+
                     <!-- section  -->
                     <section>
                         <div class="container">
