@@ -291,70 +291,11 @@
                                         </div>
                                         <!-- box-widget  end -->						
                                         <!-- box-widget -->
-                                        <div class="box-widget fl-wrap">
-                                            <div class="widget-title">Siga-nos</div>
-                                            <div class="box-widget-content">
-                                                <div class="social-widget">
-                                                    <a href="#" target="_blank" class="facebook-soc">
-                                                    <i class="fab fa-facebook-f"></i>
-                                                    <span class="soc-widget-title">Curtidas</span>
-                                                    <span class="soc-widget_counter">2640</span>
-                                                    </a>
-                                                    <a href="#" target="_blank" class="twitter-soc">
-                                                    <i class="fab fa-twitter"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 
-                                                    <a href="#" target="_blank" class="youtube-soc">
-                                                    <i class="fab fa-youtube"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 												
-                                                    <a href="#" target="_blank" class="instagram-soc">
-                                                    <i class="fab fa-instagram"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 														
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- box-widget  end -->						
+@include('components.redes-sociais')
+						
                                         <!-- box-widget -->
-                                        <div class="box-widget fl-wrap">
-                                            <div class="box-widget-content">
-                                                <div class="single-grid-slider slider_widget">
-                                                    <div class="slider_widget_title">Escolha da Equipa</div>
-                                                    <div class="swiper-container">
-                                                        <div class="swiper-wrapper">
-                                                            @foreach ($listNews->take(3) as $item)
-<!-- swiper-slide-->  
-                                                            <div class="swiper-slide">
-                                                                <div class="{{ $loop->index === 0 ? 'grid-post-item     fl-wrap' : 'grid-post-item  bold_gpi  fl-wrap' }}">
-                                                                    <div class="grid-post-media gpm_sing">
-                                                                        <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
-                                                                            <div class="overlay"></div>
-                                                                        </div>
-                                                                        <div class="grid-post-media_title">
-                                                                            <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
-                                                                            <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
-                                                                            <span class="video-date"><i class="far fa-clock"></i>{{ $item->display_date }}</span>
-                                                                            <ul class="post-opt">
-                                                                                <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
-                                                                            </ul>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- swiper-slide end-->
-@endforeach										
-                                                        </div>
-                                                        <div class="sgs-pagination sgs_hor "></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- box-widget  end -->	
+@include('components.destaque', ['contexto' => 'sidebar'])
+	
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
                                             <div class="box-widget-content">

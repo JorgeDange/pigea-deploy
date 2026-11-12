@@ -91,22 +91,43 @@ $(function () {
         el.remove();
     });
 
-    /* Modal de confirmação genérico */
-    $(document).on('click', '.js-confirm', function () {
-        var $btn = $(this);
-        $('#confirm-title').text($btn.data('confirm-title') || 'Confirmar ação');
-        $('#confirm-message').text($btn.data('confirm-message') || 'Tem a certeza?');
-        $('#confirm-action').text($btn.data('confirm-text') || 'Confirmar');
-        $('#confirm-action').data('form-id', $btn.data('confirm-form') || '');
+    /* Modal de confirmação genérico (sem alert/confirm nativos).
+       window.PIGEAConfirm abre #confirm-modal e regista a ação a executar
+       no clique de «Confirmar». `.js-confirm` é o atalho para submissão de
+       formulários; `.js-confirm-livewire` (banner.js) para ações
+       Livewire. */
+    var confirmAcaoPendente = null;
+
+    window.PIGEAConfirm = function (title, message, confirmText, onConfirm) {
+        $('#confirm-title').text(title || 'Confirmar ação');
+        $('#confirm-message').text(message || 'Tem a certeza?');
+        $('#confirm-action').text(confirmText || 'Confirmar');
+        confirmAcaoPendente = typeof onConfirm === 'function' ? onConfirm : null;
         $('#confirm-modal').addClass('open').attr('tabindex', '-1').focus();
         return false;
+    };
+
+    $(document).on('click', '.js-confirm', function () {
+        var $btn = $(this);
+        window.PIGEAConfirm(
+            $btn.data('confirm-title') || 'Confirmar ação',
+            $btn.data('confirm-message') || 'Tem a certeza?',
+            $btn.data('confirm-text') || 'Confirmar',
+            function () {
+                var formId = $btn.data('confirm-form') || '';
+                var form = formId ? document.getElementById(formId) : null;
+                if (form) form.submit();
+            }
+        );
+        return false;
     });
+
     $(document).on('click', '#confirm-action', function () {
-        var formId = $(this).data('form-id');
         $('#confirm-modal').removeClass('open');
-        if (formId) {
-            var form = document.getElementById(formId);
-            if (form) form.submit();
+        if (confirmAcaoPendente) {
+            var acao = confirmAcaoPendente;
+            confirmAcaoPendente = null;
+            acao();
         }
     });
 

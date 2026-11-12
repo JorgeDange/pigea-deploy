@@ -11,6 +11,8 @@
         'documentos.editar' => 'documentos',
         'banners.novo'     => 'banners',
         'banners.editar'   => 'banners',
+        'destaques.novo'   => 'destaques',
+        'destaques.editar' => 'destaques',
         'conteudo.editar'  => $rotaAtual === 'admin.conteudo.editar' && request('tipo') === 'noticias' ? 'noticias' : '',
     ][$ativa] ?? $ativa;
 
@@ -31,6 +33,7 @@
         ]],
         ['rotulo' => 'Comercial', 'itens' => [
             ['chave' => 'banners', 'nome' => 'Publicidade', 'icone' => 'fa-bullhorn', 'rota' => 'admin.banners', 'can' => 'banner.manage'],
+            ['chave' => 'destaques', 'nome' => 'Destaques', 'icone' => 'fa-star', 'rota' => 'admin.destaques', 'can' => 'banner.manage'],
         ]],
     ];
 

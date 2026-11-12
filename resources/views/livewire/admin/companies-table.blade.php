@@ -30,7 +30,7 @@
               @if ($empresa->status !== 'pendente')
               <button class="icon-btn" title="Voltar a pendente" wire:click="restabelecer({{ $empresa->id }})"><i class="fa fa-undo"></i></button>
               @endif
-              <button class="icon-btn danger" title="Eliminar" wire:click="eliminar({{ $empresa->id }})" wire:confirm="Eliminar o registo de «{{ $empresa->nome_empresa }}»? Esta ação não pode ser desfeita."><i class="fa fa-trash"></i></button>
+              <button class="icon-btn danger js-confirm-livewire" title="Eliminar" data-action="eliminar" data-args='[{{ $empresa->id }}]' data-title="Eliminar este registo?" data-message="Eliminar o registo de «{{ $empresa->nome_empresa }}»? Esta ação não pode ser desfeita." data-confirm-text="Eliminar"><i class="fa fa-trash"></i></button>
             </div>
           </td>
         </tr>

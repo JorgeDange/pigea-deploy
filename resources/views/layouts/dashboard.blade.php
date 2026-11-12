@@ -74,6 +74,8 @@
   <script src="{{ asset('js/jquery.min.js') }}"></script>
   <script src="{{ asset('js/plugins.js') }}"></script>
   <script src="{{ asset('js/dashboard.js') }}"></script>
+  {{-- Fase 16 — window.PIGEAConfirm + .js-confirm/livewire intercept (publicidade) --}}
+  <script src="{{ asset('js/admin/banner.js') }}"></script>
   @livewireScripts
   @stack('scripts')
 </body>

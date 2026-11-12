@@ -14,11 +14,12 @@ use Illuminate\Validation\Rule;
 /**
  * CRUD da Publicidade — banners (restrutura.md §5.6).
  *
- * A imagem é `imagem_url`: aceita **upload OU link** (restrutura.md §1 —
- * "Imagens suportam Upload e Link"). O Spatie Media fica APENAS em News
- * (restrutura.md §7.5), por isso o upload é guardado no disco `public`
- * (pasta `banners/`) e o caminho gravado na coluna, como os demais uploads
- * do painel (NewsFormController, ProjectFormController).
+ * A imagem é `imagem_url`: aceita **upload assíncrono** (via XHR em
+ * banner.js → PublicidadeImagemController) ou link externo. A imagem
+ * chega aqui SEMPRE como `imagem_link`:
+ *  - string `storage/…` (upload interno, validada em normalizarUrlImagem);
+ *  - URL http(s) externa;
+ *  - vazio = remover a imagem atual.
  */
 class BannerFormController extends Controller
 {
@@ -78,8 +79,7 @@ class BannerFormController extends Controller
     {
         $regras = [
             'titulo' => ['required', 'string', 'max:190'],
-            'imagem_link' => ['nullable', 'url:http,https', 'max:300'],
-            'imagem_upload' => ['nullable', 'file', 'image', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
+            'imagem_link' => ['nullable', 'string', 'max:2048'],
             'link_destino' => ['nullable', 'url:http,https', 'max:300'],
             'posicao' => ['required', Rule::in(['topo', 'sidebar', 'rodape'])],
             'data_inicio' => ['nullable', 'date'],
@@ -87,24 +87,63 @@ class BannerFormController extends Controller
             'ativo' => ['nullable', 'boolean'],
         ];
 
-        // FASE 7 (bug apanhado por teste): na CRIAÇÃO o banner tem de nascer
-        // com imagem — upload OU link. Na EDIÇÃO, sem nenhum dos dois mantém
-        // a imagem atual (guardarImagem já o trata).
+        // Na CRIAÇÃO o banner tem de nascer com imagem. Na EDIÇÃO, sem
+        // imagem_link preenchido mantém a atual.
         if ($banner === null) {
-            $regras['imagem_link'][] = 'required_without:imagem_upload';
+            $regras['imagem_link'][] = 'required';
         }
 
-        return $request->validate($regras, [
+        $dados = $request->validate($regras, [
             'titulo.required' => 'Indique o título do banner.',
-            'imagem_link.required_without' => 'Envie um ficheiro de imagem OU indique o link da imagem.',
-            'imagem_link.url' => 'O link da imagem tem de ser um URL válido (ex.: https://…).',
-            'imagem_upload.image' => 'O ficheiro de imagem não é válido.',
-            'imagem_upload.mimes' => 'A imagem tem de ser PNG, JPG ou WebP (máx. 4MB).',
-            'imagem_upload.max' => 'A imagem não pode exceder 4MB.',
+            'imagem_link.required' => 'Envie um ficheiro de imagem OU indique o link da imagem.',
             'link_destino.url' => 'O link de destino tem de ser um URL válido (ex.: https://…).',
             'posicao.required' => 'Selecione a posição do banner.',
             'data_fim.after_or_equal' => 'A data de fim tem de ser posterior ou igual à data de início.',
         ]);
+
+        $dados['imagem_link'] = $this->normalizarUrlImagem($dados['imagem_link'] ?? null);
+
+        return $dados;
+    }
+
+    /**
+     * Aceita:
+     *  - URL externo (http/https);
+     *  - caminho interno `storage/{publicidade|banners|destaques}/AAAA/MM/…`,
+     *    gravado por nós no disco `public`.
+     */
+    private function normalizarUrlImagem(?string $url): ?string
+    {
+        if ($url === null) {
+            return null;
+        }
+
+        $url = trim($url);
+
+        if ($url === '') {
+            return '';
+        }
+
+        if (str_starts_with($url, 'storage/')) {
+            if (preg_match('#^storage/(publicidade|banners|destaques|media/banners)/[0-9]{4}/[0-9]{2}/[A-Za-z0-9_.-]+\.[A-Za-z0-9]{2,5}$#', $url)) {
+                $relativo = substr($url, strlen('storage/'));
+                if (Storage::disk('public')->exists($relativo)) {
+                    return $url;
+                }
+            }
+            throw \Illuminate\Validation\ValidationException::withMessages(['imagem_link' => 'A imagem enviada expirou ou não é acessível. Carregue novamente.']);
+        }
+
+        // Imagens do tema (`images/all/…`) ou qualquer caminho relativo, tal como já vem nas seeds.
+        if (! preg_match('#^(https?:|//)#i', $url) && ! str_starts_with($url, 'storage/')) {
+            return $url;
+        }
+
+        if (filter_var($url, FILTER_VALIDATE_URL) && preg_match('#^https?://#i', $url)) {
+            return $url;
+        }
+
+        throw \Illuminate\Validation\ValidationException::withMessages(['imagem_link' => 'O link da imagem tem de ser um URL válido (ex.: https://…).']);
     }
 
     private function dados(array $validados): array
@@ -120,27 +159,37 @@ class BannerFormController extends Controller
     }
 
     /**
-     * Grava a imagem: prioridade ao upload; sem upload mantém a atual (edição).
-     * O upload substitui o ficheiro anterior se fôr nosso (prefixo `storage/`).
+     * Com o upload assíncrono, a imagem chega como caminho interno ou URL
+     * externa no campo `imagem_link`. Sem nada preenchido mantém a atual;
+     * string vazia = remoção explícita.
      */
     private function guardarImagem(Banner $banner, Request $request): void
     {
-        if (! $request->hasFile('imagem_upload')) {
-            // Sem upload: com link indicado (criação ou edição) grava o link;
-            // sem nenhum dos dois mantém a imagem atual (edição).
-            if (filled($request->input('imagem_link'))) {
-                $this->apagarImagemLocal($banner->imagem_url);
-                $banner->imagem_url = $request->input('imagem_link');
+        $link = $request->input('imagem_link');
+
+        if ($link === null) {
+            return;
+        }
+
+        $link = trim($link);
+
+        if ($link === '') {
+            if ($banner->exists) {
+                $antigo = $banner->imagem_url;
+                $banner->imagem_url = null;
+                $this->apagarImagemLocal($antigo);
             }
 
             return;
         }
 
-        $antiga = $banner->imagem_url;
+        if ($banner->exists && $link === $banner->imagem_url) {
+            return; // nada mudou
+        }
 
-        $banner->imagem_url = 'storage/'.$request->file('imagem_upload')->store('banners', 'public');
-
-        $this->apagarImagemLocal($antiga);
+        $antigo = $banner->imagem_url;
+        $banner->imagem_url = $link;
+        $this->apagarImagemLocal($antigo);
     }
 
     private function apagarImagemLocal(?string $url): void

@@ -82,7 +82,8 @@ class MenuSeeder extends Seeder
             ],
         ],
         'academia' => [
-            'tipo' => 'menu',
+            'tipo' => 'news', // Fase 14: promovada a notícias
+            'slugs' => ['Investigação' => 'investigacao-academia'],
             'itens' => [
                 'Cursos e formação',
                 'Workshops e webinars',
@@ -92,7 +93,7 @@ class MenuSeeder extends Seeder
             ],
         ],
         'oportunidades' => [
-            'tipo' => 'menu',
+            'tipo' => 'news', // Fase 14: promovada a notícias
             'itens' => [
                 'Emprego',
                 'Estágios',
@@ -125,15 +126,18 @@ class MenuSeeder extends Seeder
     public function run(): void
     {
         foreach (self::GRUPOS as $grupo => $conf) {
-            // As subcategorias de notícias penduram na categoria de notícias
-            // do próprio grupo (ContentSeeder garante-a).
+            // As subcategorias de notícias penduram na top-level news do
+            // próprio grupo (ContentSeeder para mineracao/petroleo/geociencias;
+            // migração Fase 14 para academia/oportunidades).
             $pai = $conf['tipo'] === 'news'
                 ? Category::query()->where('type', 'news')->where('slug', $grupo)->first()
                 : null;
 
             foreach ($conf['itens'] as $i => $nome) {
+                $slug = $conf['slugs'][$nome] ?? Str::slug($nome);
+
                 Category::updateOrCreate(
-                    ['menu_group' => $grupo, 'slug' => Str::slug($nome)],
+                    ['menu_group' => $grupo, 'slug' => $slug],
                     [
                         'name' => $nome,
                         'type' => $conf['tipo'],

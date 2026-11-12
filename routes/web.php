@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\NewsEditorController;
 use App\Http\Controllers\Admin\NoticiaImagemController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BannerFormController;
+use App\Http\Controllers\Admin\DestaquesController;
+use App\Http\Controllers\Admin\PublicidadeImagemController;
 use App\Http\Controllers\Admin\ContentFormController;
 use App\Http\Controllers\Admin\DocumentFormController;
 use App\Http\Controllers\Admin\ProjectFormController;
@@ -219,6 +221,21 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
     Route::post('/banners/novo', [BannerFormController::class, 'store'])->middleware('can:banner.manage')->name('banners.novo.store');
     Route::get('/banners/{id}/editar', [BannerFormController::class, 'edit'])->middleware('can:banner.manage')->whereNumber('id')->name('banners.editar');
     Route::put('/banners/{id}', [BannerFormController::class, 'update'])->middleware('can:banner.manage')->whereNumber('id')->name('banners.atualizar');
+
+    /*
+    | FASE 15 — Destaques publicitários rotativos (destaque.js, autoplay 4s):
+    | CRUD próprio com escopo de colocação (site / inicio / sidebar).
+    | Reutiliza a capacidade `banner.manage` (comercial, equipa interna).
+    */
+    Route::post('/banner/imagem', [PublicidadeImagemController::class, 'store'])->middleware('can:banner.manage')->name('banner.imagem.store');
+
+    Route::get('/destaques', [DestaquesController::class, 'index'])->middleware('can:banner.manage')->name('destaques');
+    Route::get('/destaques/novo', [DestaquesController::class, 'create'])->middleware('can:banner.manage')->name('destaques.novo');
+    Route::post('/destaques', [DestaquesController::class, 'store'])->middleware('can:banner.manage')->name('destaques.novo.store');
+    Route::get('/destaques/{id}/editar', [DestaquesController::class, 'edit'])->middleware('can:banner.manage')->whereNumber('id')->name('destaques.editar');
+    Route::put('/destaques/{id}', [DestaquesController::class, 'update'])->middleware('can:banner.manage')->whereNumber('id')->name('destaques.atualizar');
+    Route::patch('/destaques/{id}/toggle', [DestaquesController::class, 'toggle'])->middleware('can:banner.manage')->whereNumber('id')->name('destaques.toggle');
+    Route::delete('/destaques/{id}', [DestaquesController::class, 'destroy'])->middleware('can:banner.manage')->whereNumber('id')->name('destaques.destroy');
 
     /*
     |----------------------------------------------------------------------

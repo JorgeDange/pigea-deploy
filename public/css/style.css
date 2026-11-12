@@ -5582,7 +5582,306 @@ h4.cart-title span {
     color: inherit;
 }
 
+/* ===== Fase 15 â€” widget Â«Escolha da EquipaÂ»: banner publicitÃ¡rio rotativo (pub.md) ===== */
+/* O widget mantÃ©m a estrutura/tamanho do protÃ³tipo (.single-grid-slider slider_widget,
+   .grid-post-media gpm_sing, .sgs-pagination). SÃ³ o slide Ã© diferente quando
+   hÃ¡ destaque ativo â€” ver o componente destaque.blade.php. */
+/* especificidade 0,2,0+ para vencer o tema .grid-post-media a (0,1,2) */
+.destaque-equipa-slide .destaque-link,
+.destaque-equipa-slide a.destaque-link,
+.grid-post-media.destaque-equipa-slide .destaque-link {
+	display: block;
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+}
+.destaque-equipa-slide .destaque-tag,
+.grid-post-media.destaque-equipa-slide .destaque-tag {
+	position: absolute;
+	z-index: 10;
+	top: 12px;
+	left: 12px;
+	font-size: 10px;
+	font-family: Poppins, sans-serif;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #fff;
+	background: rgba(0, 0, 0, .55);
+	padding: 3px 9px;
+	border-radius: 3px;
+	pointer-events: none;
+}
+
+/* Pagination dots dos slides de destaque (herda o desenho do tema, com
+   contraste garantido sobre imagens claras) */
+.destaque-slider .sgs-pagination .swiper-pagination-bullet {
+	background: #fff;
+	opacity: .65;
+	box-shadow: 0 0 0 3px rgba(0, 0, 0, .25);
+}
+.destaque-slider .sgs-pagination .swiper-pagination-bullet-active {
+	opacity: 1;
+	background: #C8102E;
+}
+
 .pagination a.current-page,
-.pagination a:hover {
+.pagination a:hover,
+.gs_button:hover {
     color: #fff;
+}
+
+/* ===== Fase 15 — widget «Siga-nos»: nome público da conta (não é contador) ===== */
+.social-widget .soc-widget-handle {
+    display: block;
+    font-size: 13px;
+    color: #1A1A1A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.social-widget .soc-widget-estatico {
+    float: left;
+    width: 48%;
+    margin: 0 2% 2% 0;
+    padding: 20px 4px 0 66px;
+    position: relative;
+    height: 60px;
+    border-radius: 2px;
+    background: #f5f5f5;
+    border: 1px solid #eee;
+    display: block;
+}
+.social-widget .soc-widget-estatico i {
+    font-size: 15px;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 6px;
+    background: #fff;
+    left: 8px;
+    top: 50%;
+    margin-top: -20px;
+    box-shadow: 0 5px 5px rgb(0 0 0 / .06);
+}
+
+/* ===== Directorio publico - reforcos minimos (apenas classes existentes do tema) =====
+   - Chip de areas de atuacao dentro de .directorio-listing passa a usar a marca
+     (vermelho #C8102E), como faz a regra color.css .list-post-content .post-category-marker.
+   - .empty-state espelha o bloco identico de dashboard.css, porque o layout publico
+     (layouts/app.blade.php) nao carrega esse ficheiro. Classe NAO nova: ja existe.
+   - Foco vermelho no campo de filtro, igual ao foco dos inputs do dashboard.
+   ================================================================================ */
+.directorio-listing .post-category-marker {
+	background: #C8102E;
+	color: #FFFFFF;
+	display: inline-block;
+	margin: 0 6px 6px 0;
+}
+.directorio-listing .filter-search:focus {
+	border-color: #C8102E;
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(200, 16, 46, .12);
+}
+.directorio-listing .empty-state { text-align: center; padding: 42px 24px; border: 1px dashed #E0E0E0; border-radius: 8px; background: #FFFFFF; }
+.directorio-listing .empty-state-icon { font-size: 40px; color: #A0A0A0; margin-bottom: 10px; }
+.directorio-listing .empty-state-title { font-family: 'Playfair Display', serif; font-size: 18px; color: #1A1A1A; margin: 0 0 6px; }
+.directorio-listing .empty-state-text { color: #666666; font-size: 13px; line-height: 1.55; margin: 0 auto 14px; max-width: 420px; }
+
+/* ===== Directorio publico — Fase 17 · reorganização visual (limpeza de sobras inline) =====
+   Pedido do cliente: eliminar os estilos inline aplicados erradamente nos cards e nos
+   elementos da página; separar visualmente os dois CTAs da sidebar; colocar um banner
+   publicitário na mesma; reorganizar Empresas/Documentos mantendo o agrupamento por card.
+
+   Tudo aqui usa apenas classes existentes no tema (box-widget, box-widget-content,
+   author-widget, pr-subtitle, banner-widget, banner-widget_content, post-category-marker,
+   tabs-widget/tabs-menu, filter-search, pagination, footer-social, empty-state) mais
+   seletores de estrutura (filhos diretos). Dois hooks novos, ambos documentados no
+   relatório (directorio-v2):
+     - .directorio-sidebar  (wrapper da coluna col-md-4 / sidebar do /directorio) —
+       mesmo padrão do hook .directorio-listing introduzido na Fase 15;
+     - .directorio-icone    (caixa escura com ícone dourado dos documentos — lei/artigo/
+       documento).
+   Paleta herdada do tema, sem hex novos: vermelho #C8102E, dourado #F2A900, tinta
+   #292929 / #1A1A1A, texto #494949 / #666666, linhas #eee / #E0E0E0, superfícies #fff.
+   Zero sombras novas: os cards usam apenas borda 1px #eee (como o resto do tema).
+   ================================================================================ */
+
+/* --- Sidebar esquerda (col-md-4): separação dos CTAs + banner abaixo ---------- */
+.directorio-sidebar .box-widget {
+	padding-left: 0;              /* anula o recuo de 30px pensado para sidebars à direita */
+	margin-bottom: 24px;          /* separação visual entre os CTAs (antes ficavam colados) */
+}
+.directorio-sidebar .box-widget:last-child { margin-bottom: 0; }
+.directorio-sidebar > .box-widget-content { margin-bottom: 28px; }  /* respiro após o texto intro */
+.directorio-sidebar .banner-widget_content p {
+	color: #FFFFFF;             /* texto branco sobre o gradiente escuro do .banner-widget */
+	padding-bottom: 0;
+}
+
+/* --- Conteúdo: cartões iguais por linha — a .row do tema é block/floats (BS3);
+       aqui ela vira flex-wrap para distribuir 2 colunas e igualar alturas por linha --- */
+.directorio-listing .row {
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: -15px;
+	margin-right: -15px;
+}
+.directorio-listing .row > .col-md-6 {
+	flex: 0 0 50%;
+	max-width: 50%;
+	display: flex;
+	flex-direction: column;
+	float: none;               /* anula o float:left do Bootstrap 3 — o flex manda */
+}
+.directorio-listing .row > .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+.directorio-listing .row > .col-md-6 > .box-widget-content {
+	flex: 1 1 auto;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	background: #FFFFFF;
+	border: 1px solid #eee;
+	border-radius: 4px;
+	margin-bottom: 22px;         /* espaço vertical consistente entre as linhas de cards */
+	padding: 20px;               /* respiro interno uniforme */
+}
+
+/* --- Card (media row: avatar/ícone + conteúdo) — semântica do tema, sem inline --- */
+.directorio-listing .author-widget {
+	display: flex;
+	gap: 16px;
+	align-items: flex-start;
+	width: 100%;
+	height: 100%;
+}
+.directorio-listing .author-widget > div:first-child { flex: 0 0 56px; }
+.directorio-listing .author-widget > div:first-child > div {
+	width: 56px;
+	height: 56px;
+	border-radius: 4px;
+	background: #C8102E;          /* avatar vermelho da empresa (mantido) */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.directorio-listing .author-widget > div:first-child > div > span {
+	font-family: 'Playfair Display', serif;
+	font-size: 19px;
+	font-weight: 700;
+	color: #FFFFFF;
+	letter-spacing: .04em;
+	line-height: 1;
+}
+/* caixa do ícone de documento: tratamento unificado ouro-sobre-escuro (lei/artigo/documento).
+   Mesma especificidade do seletor do avatar (.directorio-listing .author-widget > div:first-child > div),
+   por isso entra com :first-child no lugar do avatar para vencer a regra base. */
+.directorio-listing .author-widget > div:first-child > div.directorio-icone {
+	background: #1A1A1A;
+}
+.directorio-listing .directorio-icone > i {
+	font-size: 22px;
+	color: #F2A900;
+}
+
+.directorio-listing .author-widget > div:last-child {
+	flex: 1 1 auto;
+	min-width: 0;                /* permite truncar conteúdo longo sem rebentar o layout */
+	display: flex;
+	flex-direction: column;
+	text-align: left;
+}
+
+/* título do card — Poppins 600, mesma escala nos dois tipos de card */
+.directorio-listing .author-widget h4 {
+	margin: 2px 0 6px;
+	font-size: 15px;
+	line-height: 1.4;
+	font-weight: 600;
+	color: #292929;
+}
+
+/* linha de estado solta (ex.: "Empresa aprovada") — cinza pequeno com check dourado;
+   exclui os post-category-marker (chips de área / tipo de documento) */
+.directorio-listing .author-widget > div:last-child > span:not(.post-category-marker) {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	align-self: flex-start;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .08em;
+	color: #666666;
+	margin-bottom: 10px;
+}
+.directorio-listing .author-widget > div:last-child > span:not(.post-category-marker) > i {
+	color: #F2A900;
+}
+
+/* chips (áreas de atuação) alinhados ao início da coluna */
+.directorio-listing .author-widget > div:last-child > .post-category-marker {
+	align-self: flex-start;
+	margin-bottom: 10px;
+}
+/* chip do tipo de documento (é sempre o 1.º filho direto nos cards de documento;
+   os cards de empresa começam pelo h4) — tratamento ouro-sobre-escuro para
+   acompanhar a caixa do ícone, sem inventar classes */
+.directorio-listing .author-widget > div:last-child > span.post-category-marker:first-child {
+	background: #1A1A1A;
+	color: #F2A900;
+}
+
+/* corpo de texto do card */
+.directorio-listing .author-widget p {
+	margin: 0 0 4px;
+	font-size: 12px;
+	line-height: 1.55;
+	color: #494949;
+	padding-bottom: 0;           /* anula o padding-bottom 10px do p do tema */
+	text-align: left;
+}
+.directorio-listing .author-widget p > i {
+	color: #C8102E;
+	width: 15px;
+}
+
+/* rodapé do card: filete #eee + cola no fundo (margin-top auto) — redes sociais ou Download */
+.directorio-listing .author-widget > div:last-child > div:last-child {
+	margin-top: auto;
+	padding-top: 12px;
+	border-top: 1px solid #eee;
+}
+.directorio-listing .footer-social { margin-top: 0; }   /* dentro do card não precisa do respiro 22px do tema */
+
+/* --- Abas e filtro de pesquisa — movimento de inline para o stylesheet -------- */
+.directorio-listing .tabs-widget { margin-bottom: 18px; }
+.directorio-listing .tabs-menu a i { margin-right: 8px; }
+.directorio-listing .filter-search {
+	width: 100%;
+	height: 46px;
+	border: 1px solid #E0E0E0;
+	border-radius: 4px;
+	background: #FFFFFF;
+	padding: 0 16px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 13px;
+	color: #292929;
+	margin-bottom: 22px;
+	box-sizing: border-box;
+}
+.directorio-listing .filter-search::placeholder { color: #A0A0A0; }
+
+/* --- Mobile/tablet: < 992px o cartão ocupa a linha inteira (como col-md-6 → col-md-12) -- */
+@media (max-width: 991px) {
+	.directorio-listing .row > .col-md-6 { flex-basis: 100%; max-width: 100%; }
+}
+@media (max-width: 767px) {
+	.directorio-listing .row > .col-md-6 > .box-widget-content { padding: 16px; margin-bottom: 16px; }
+	.directorio-listing .author-widget { gap: 12px; }
+	.directorio-listing .author-widget > div:first-child { flex-basis: 48px; }
+	.directorio-listing .author-widget > div:first-child > div { width: 48px; height: 48px; }
+	.directorio-listing .author-widget > div:first-child > div > span { font-size: 16px; }
+	.directorio-sidebar .box-widget { margin-bottom: 18px; }
 }

@@ -22,7 +22,7 @@
           <td>
             <div class="row-actions">
               <button class="icon-btn" title="Editar" wire:click="editar({{ $documento->id }})"><i class="fa fa-pen"></i></button>
-              <button class="icon-btn danger" title="Eliminar" wire:click="eliminar({{ $documento->id }})" wire:confirm="Eliminar «{{ $documento->titulo }}»? Esta ação não pode ser desfeita."><i class="fa fa-trash"></i></button>
+              <button class="icon-btn danger js-confirm-livewire" title="Eliminar" data-action="eliminar" data-args='[{{ $documento->id }}]' data-title="Eliminar este registo?" data-message="Eliminar «{{ $documento->titulo }}»? Esta ação não pode ser desfeita." data-confirm-text="Eliminar"><i class="fa fa-trash"></i></button>
             </div>
           </td>
         </tr>

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Livewire\Frontend\DirectoryListing;
 use App\Models\Company;
 use App\Models\DirectoryDocument;
+use App\Models\Professional;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -84,6 +85,72 @@ class DirectorioPublicoTest extends TestCase
         $documentos = $teste->viewData('documentos');
         $this->assertTrue($documentos->getCollection()->contains(fn ($d) => $d->titulo === 'TEST Guia de Prospeção'));
         $this->assertStringContainsString('https://pigea.ao/docs/guia.pdf', $teste->html());
+    }
+
+    public function test_aba_profissionais_apenas_aprovados(): void
+    {
+        Professional::create([
+            'nome_completo' => 'TEST Eng.ª Ana Exemplo',
+            'formacao_academica' => 'Mestrado em Engenharia de Minas — ISPTEC',
+            'contactos' => '+244 900 555',
+            'areas_atuacao' => ['Mineração'],
+            'status' => 'aprovado',
+        ]);
+        Professional::create([
+            'nome_completo' => 'TEST Oculto Pendente',
+            'formacao_academica' => 'x',
+            'contactos' => 'x',
+            'areas_atuacao' => ['Água'],
+            'status' => 'pendente',
+        ]);
+        Professional::create([
+            'nome_completo' => 'TEST Oculto Rejeitado',
+            'formacao_academica' => 'x',
+            'contactos' => 'x',
+            'areas_atuacao' => ['Água'],
+            'status' => 'rejeitado',
+        ]);
+
+        $teste = Livewire::test(DirectoryListing::class)->call('mostrar', 'profissionais');
+
+        $nomes = $teste->viewData('profissionais')->getCollection()->pluck('nome_completo');
+
+        // Seed de demonstração tem 2 aprovados ("Eng. Mário Cassoma", "Dr. Isabel Ferreira");
+        // o teste adiciona o seu — todos os pendentes/rejeitados ficam de fora.
+        $this->assertTrue($nomes->contains('TEST Eng.ª Ana Exemplo'));
+        $this->assertFalse($nomes->contains('TEST Oculto Pendente'));
+        $this->assertFalse($nomes->contains('TEST Oculto Rejeitado'));
+
+        $html = $teste->html();
+        $this->assertStringContainsString('TEST Eng.ª Ana Exemplo', $html);
+        $this->assertStringContainsString('Profissional aprovado', $html);
+        $this->assertStringNotContainsString('TEST Oculto Pendente', $html);
+        $this->assertStringNotContainsString('TEST Oculto Rejeitado', $html);
+    }
+
+    public function test_aba_profissionais_busca_por_formacao_e_area(): void
+    {
+        Professional::create([
+            'nome_completo' => 'TEST Busca Formação',
+            'formacao_academica' => 'Mestrado em Engenharia de Minas',
+            'contactos' => 'x',
+            'areas_atuacao' => ['Mineração'],
+            'status' => 'aprovado',
+        ]);
+        Professional::create([
+            'nome_completo' => 'TEST Busca Outra',
+            'formacao_academica' => 'Licenciatura em Geodesia',
+            'contactos' => 'x',
+            'areas_atuacao' => ['Ambiente'],
+            'status' => 'aprovado',
+        ]);
+
+        $profissionais = Livewire::test(DirectoryListing::class)
+            ->set('busca', 'Minas')
+            ->viewData('profissionais');
+
+        $this->assertTrue($profissionais->getCollection()->contains(fn ($p) => $p->nome_completo === 'TEST Busca Formação'));
+        $this->assertFalse($profissionais->getCollection()->contains(fn ($p) => $p->nome_completo === 'TEST Busca Outra'));
     }
 
     public function test_aba_invalida_e_ignorada(): void

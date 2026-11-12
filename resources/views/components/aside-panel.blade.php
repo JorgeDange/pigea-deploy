@@ -1,9 +1,22 @@
+@php
+    // Atalhos fixos do painel lateral global (ícones). Contagens são
+    // calculadas na sidebar de /noticias, não aqui — este painel é só navegação.
+    $categoriasSidebar = [
+        ['rotulo' => 'Mineração', 'icone' => 'far fa-podium', 'slug' => 'mineracao'],
+        ['rotulo' => 'Água', 'icone' => 'far fa-tint', 'slug' => 'agua'],
+        ['rotulo' => 'Ambiente', 'icone' => 'far fa-leaf', 'slug' => 'ambiente'],
+        ['rotulo' => 'Investigação', 'icone' => 'far fa-flask', 'slug' => 'investigacao'],
+        ['rotulo' => 'Internacional', 'icone' => 'far fa-globe', 'slug' => 'internacional'],
+    ];
+@endphp
 <div class="aside-panel">
     <ul>
-        <li> <a href="{{ route('news.index', ['cat' => 'mineracao']) }}"><i class="far  fa-podium"></i><span>Mineração</span></a></li>
-        <li> <a href="{{ route('news.index', ['cat' => 'agua']) }}"><i class="far fa-tint"></i><span>Água</span></a></li>
-        <li> <a href="{{ route('news.index', ['cat' => 'ambiente']) }}"><i class="far fa-leaf"></i><span>Ambiente</span></a></li>
-        <li> <a href="{{ route('news.index', ['cat' => 'investigacao']) }}"><i class="far fa-flask"></i><span>Investigação</span></a></li>
-        <li> <a href="{{ route('news.index', ['cat' => 'internacional']) }}"><i class="far fa-globe"></i><span>Internacional</span></a></li>
+        @foreach ($categoriasSidebar as $categoriaSidebar)
+        <li>
+            <a href="{{ route('news.index', ['cat' => $categoriaSidebar['slug']]) }}">
+                <i class="{{ $categoriaSidebar['icone'] }}"></i><span>{{ $categoriaSidebar['rotulo'] }}</span>
+            </a>
+        </li>
+        @endforeach
     </ul>
 </div>

@@ -44,7 +44,12 @@ class BannersFrontendTest extends TestCase
         $this->assertStringContainsString('https://anunciante.teste.ao', $html);
         $this->assertStringContainsString('Publicidade', $html);
         $this->assertStringContainsString('alt="TEST Topo Vigente"', $html);
-        $this->assertStringContainsString('loading="lazy"', $html);
+        // 2026-11-12: o banner do TOPO passou a `loading="eager"` - é above-the-fold
+        // na barra superior e, neste ambiente (Chromium), imagens `loading="lazy"`
+        // NUNCA chegam a carregar (verificado: pedido nunca emitido; página de
+        // teste isolada confirma que qualquer <img loading="lazy"> fica a 0x0).
+        // Sidebar/rodapé mantêm `lazy` (abaixo da dobra).
+        $this->assertStringContainsString('loading="eager"', $html);
     }
 
     public function test_banner_expirado_nao_renderiza(): void

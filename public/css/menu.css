@@ -82,6 +82,10 @@
 	padding: 20px 26px 26px;
 	opacity: 0;
 	visibility: hidden;
+	/* Os painéis são full-width e sobrepostos — sem isto, o painel escondido
+	   que vem por último no DOM apanha o rato mesmo acima do painel aberto
+	   (irmãos sobrepostos: o último pintado ganha o hit test). */
+	pointer-events: none;
 	transform: translateY(8px);
 	transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
 }
@@ -90,6 +94,14 @@
 }
 /* Grelha de 3 colunas (menu.md §3) */
 .mega-menu .mm-grelha {
+	position: static;   /* tema força (.nav-holder nav li ul) absolute/top53px/z-index — devolver ao fluxo */
+	visibility: visible;
+	opacity: 1;
+	background: none;   /* tema define #292929 — devolver ao painel branco */
+	min-width: 0;
+	top: auto;
+	left: auto;
+	z-index: auto;
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 10px 12px;
@@ -98,6 +110,8 @@
 	padding: 0;
 }
 .mega-menu .mm-link {
+	float: none;
+	width: auto;
 	display: flex;
 	align-items: center;
 	gap: 9px;
@@ -115,6 +129,10 @@
 	font-size: 11px;
 	transition: color .15s linear;
 }
+.mega-menu .mm-grelha-item {
+	float: none;          /* tema força float:left — o grid não precisa */
+	height: auto;
+}
 .mega-menu .mm-link:hover {
 	background: #e6f0ff;
 	color: #0a3d7a;
@@ -122,13 +140,16 @@
 .mega-menu .mm-link:hover i {
 	color: #2f6bd8;
 }
-/* Abre por hover E por foco (teclado) — desktop */
+/* Abre por intenção (JS, classe .mm-hover — hover-intent com atraso) ou por
+   foco (teclado) — desktop. O :hover instantâneo foi removido de propósito:
+   passagens diagonais pelo topo trocavam o painel e atiravam o alvo ao ar. */
 @media (min-width: 1065px) {
-	.mega-menu .mm-item:hover .mm-panel,
+	.mega-menu .mm-item.mm-hover .mm-panel,
 	.mega-menu .mm-item:focus-within .mm-panel {
 		opacity: 1;
 		visibility: visible;
 		transform: none;
+		pointer-events: auto; /* o painel aberto apanha o rato; os outros não */
 	}
 }
 
@@ -228,6 +249,7 @@
 		border-top: none;
 		padding: 2px 22px 14px;
 		background: #fbfcfe;
+		pointer-events: auto;
 	}
 	.mega-menu .mm-item.mm-aberto .mm-panel {
 		display: block;

@@ -25,7 +25,7 @@
           <td>{{ $rotulos[$utilizador->getRoleNames()->first()] ?? '—' }}</td>
           <td><span class="status-badge {{ $badges[$utilizador->status ?? 'pending'][0] ?? 'pending' }}">{{ $badges[$utilizador->status ?? 'pending'][1] ?? $utilizador->status }}</span></td>
           <td>{{ $utilizador->last_login_at?->format('d/m/Y · H:i') ?? '—' }}</td>
-          <td><div class="row-actions"><button class="icon-btn " title="Bloquear" wire:click="bloquear({{ $utilizador->id }})"><i class="fa fa-ban"></i></button><button class="icon-btn danger" title="Eliminar" wire:click="eliminar({{ $utilizador->id }})" wire:confirm="Eliminar este utilizador? Esta ação não pode ser desfeita."><i class="fa fa-trash"></i></button></div></td>
+          <td><div class="row-actions"><button class="icon-btn " title="Bloquear" wire:click="bloquear({{ $utilizador->id }})"><i class="fa fa-ban"></i></button><button class="icon-btn danger js-confirm-livewire" title="Eliminar" data-action="eliminar" data-args='[{{ $utilizador->id }}]' data-title="Eliminar este registo?" data-message="Eliminar este utilizador? Esta ação não pode ser desfeita." data-confirm-text="Eliminar"><i class="fa fa-trash"></i></button></div></td>
         </tr>
         @empty
         <tr><td colspan="6">Nenhum utilizador encontrado.</td></tr>

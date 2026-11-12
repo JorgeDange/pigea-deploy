@@ -28,19 +28,31 @@
 	float: left;
 }
 
-/* Banner publicitário: centrado, ignorando os floats dos lados */
+/* Banner publicitário: centrado, ignorando os floats dos lados.
+   Largura EXPLÍCITA (não shrink-to-fit): contida, uma box absoluta em
+   `shrink-to-fit` colapsa para a largura do rótulo (~73px) quando a imagem
+   ainda não carregou (0×0) - foi isso que fez a área "não aparecer". */
 .top-banner-area {
 	position: absolute;
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
 	text-align: center;
+	width: min(560px, 46vw);
 }
-/* Banner horizontal limitado à altura da barra (70px) — imagem não estica */
+/* Banner horizontal limitado à altura da barra (70px) - imagem não estica.
+   Largura/altura DEFINIDAS (`!important` para vencer o `height:auto`/`max-width`
+   inline do componente): um <img> com height:auto e ainda por carregar tem
+   caixa 0×0 -> nunca "intersecta" o viewport -> com loading="lazy" o Chrome
+   NUNCA faz o pedido e a área fica só com o rótulo. object-fit:contain
+   preserva o aspect ratio (sem distorção). */
 .top-banner-area .banner-publicitario img {
+	width: 100% !important;
+	height: 46px !important;
 	max-height: 46px;
-	width: auto;
-	max-width: 100%;
+	object-fit: contain;
+	object-position: center;
+	margin: 0 auto;
 }
 /* Rótulo "Publicidade" (pub.md §7) legível no fundo escuro da top-bar */
 .top-banner-area .banner-publicitario span {

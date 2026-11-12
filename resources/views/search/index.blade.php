@@ -128,34 +128,7 @@
                                         </div>
                                         <!-- box-widget  end -->						
                                         <!-- box-widget -->
-                                        <div class="box-widget fl-wrap">
-                                            <div class="widget-title">Siga-nos</div>
-                                            <div class="box-widget-content">
-                                                <div class="social-widget">
-                                                    <a href="#" target="_blank" class="facebook-soc">
-                                                    <i class="fab fa-facebook-f"></i>
-                                                    <span class="soc-widget-title">Curtidas</span>
-                                                    <span class="soc-widget_counter">2640</span>
-                                                    </a>
-                                                    <a href="#" target="_blank" class="twitter-soc">
-                                                    <i class="fab fa-twitter"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 
-                                                    <a href="#" target="_blank" class="youtube-soc">
-                                                    <i class="fab fa-youtube"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 												
-                                                    <a href="#" target="_blank" class="instagram-soc">
-                                                    <i class="fab fa-instagram"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a>														
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- box-widget  end -->						
+                                        @include('components.redes-sociais')						
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
                                             <div class="box-widget-content">

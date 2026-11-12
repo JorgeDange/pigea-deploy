@@ -34,17 +34,16 @@ final class MenuCategorias
         'mineracao' => ['rotulo' => 'Mineração', 'rota' => 'news.index', 'params' => ['cat' => 'mineracao']],
         'petroleo-e-gas' => ['rotulo' => 'Petróleo e Gás', 'rota' => 'news.index', 'params' => ['cat' => 'petroleo-e-gas']],
         'geociencias' => ['rotulo' => 'Geociências', 'rota' => 'news.index', 'params' => ['cat' => 'geociencias']],
-        'academia' => ['rotulo' => 'Academia', 'rota' => 'training.index'],
-        'oportunidades' => ['rotulo' => 'Oportunidades', 'rota' => 'projects.index'],
+        'academia' => ['rotulo' => 'Academia', 'rota' => 'news.index', 'params' => ['cat' => 'academia']],
+        'oportunidades' => ['rotulo' => 'Oportunidades', 'rota' => 'news.index', 'params' => ['cat' => 'oportunidades']],
         'directorio' => ['rotulo' => 'Directório', 'rota' => 'directory.index'],
         'sobre' => ['rotulo' => 'Sobre Nós', 'rota' => 'about'],
     ];
 
     /**
      * Destino das subcategorias de navegação (`type='menu'`): slug →
-     * [rota, params]. AJUSTÁVEL — restrutura.md §6 só define 2 abas no
-     * diretório (Empresas/Artigos), pelo que "Profissionais" fica na
-     * página do diretório até decisão do cliente.
+     * [rota, params]. AJUSTÁVEL — restrutura.md §6 define abas no
+     * diretório (Empresas/Profissionais/Artigos).
      *
      * @var array<string, array<string, array{0: string, 1?: array}>>
      */
@@ -52,7 +51,7 @@ final class MenuCategorias
         'inicio' => [
             'destaques' => ['home'],
             'noticias-recentes' => ['news.index'],
-            'empresas-em-destaque' => ['directory.index'],
+            'empresas-em-destaque' => ['directory.index', ['aba' => 'empresas']],
             'oportunidades' => ['projects.index'],
         ],
         'noticias' => [
@@ -62,22 +61,24 @@ final class MenuCategorias
             'eventos' => ['events.index'],
         ],
         'academia' => [
-            'cursos-e-formacao' => ['training.index'],
-            'workshops-e-webinars' => ['events.index'],
-            'artigos-cientificos' => ['research.index'],
-            'livros-e-publicacoes' => ['research.index'],
-            'investigacao' => ['research.index'],
+            // Promoted to type=news in Fase 14 — fall back to /noticias?cat=<slug>
+            'cursos-e-formacao' => ['news.index', ['cat' => 'cursos-e-formacao']],
+            'workshops-e-webinars' => ['news.index', ['cat' => 'workshops-e-webinars']],
+            'artigos-cientificos' => ['news.index', ['cat' => 'artigos-cientificos']],
+            'livros-e-publicacoes' => ['news.index', ['cat' => 'livros-e-publicacoes']],
+            'investigacao-academia' => ['news.index', ['cat' => 'investigacao-academia']],
         ],
         'oportunidades' => [
-            'emprego' => ['projects.index'],
-            'estagios' => ['projects.index'],
-            'bolsas-de-estudo' => ['projects.index'],
-            'concursos' => ['projects.index'],
-            'consultorias' => ['projects.index'],
+            // Promoted to type=news in Fase 14 — fall back to /noticias?cat=<slug>
+            'emprego' => ['news.index', ['cat' => 'emprego']],
+            'estagios' => ['news.index', ['cat' => 'estagios']],
+            'bolsas-de-estudo' => ['news.index', ['cat' => 'bolsas-de-estudo']],
+            'concursos' => ['news.index', ['cat' => 'concursos']],
+            'consultorias' => ['news.index', ['cat' => 'consultorias']],
         ],
         'directorio' => [
             'empresas' => ['directory.index', ['aba' => 'empresas']],
-            'profissionais' => ['directory.index'],
+            'profissionais' => ['directory.index', ['aba' => 'profissionais']],
             'dados-geoespaciais' => ['directory.index', ['aba' => 'documentos']],
             'equipamentos-e-servicos' => ['suppliers.index'],
         ],
@@ -146,7 +147,7 @@ final class MenuCategorias
             str_starts_with($rota, 'events.') => 'noticias',
             str_starts_with($rota, 'training.') => 'academia',
             str_starts_with($rota, 'research.') => 'academia',
-            str_starts_with($rota, 'projects.') => 'oportunidades',
+            str_starts_with($rota, 'projects.') => 'noticias',
             str_starts_with($rota, 'directory.') => 'directorio',
             str_starts_with($rota, 'suppliers.') => 'directorio',
             $rota === 'about' => 'sobre',
@@ -163,6 +164,12 @@ final class MenuCategorias
                 ->where('slug', $cat)
                 ->value('menu_group');
 
+            // Top-levels Academia/Oportunidades (promovidas a news) não têm
+            // menu_group (não são itens do Mega Menu) — mapear pelo slug.
+            if (! is_string($grupo) || $grupo === '') {
+                $grupo = isset(self::GRUPOS[$cat]) ? $cat : null;
+            }
+
             if (is_string($grupo) && isset(self::GRUPOS[$grupo])) {
                 $ativo = $grupo;
             }
@@ -174,24 +181,27 @@ final class MenuCategorias
     /**
      * URL de uma subcategoria.
      *
+     * Regra: DESTINOS ganha SEMPRE (as categorias de menu_group
+     * com destino conhecido são páginas do site; a mudança para
+     * type=news não as faz ficar a apontar para /noticias?cat=…).
+     *
      * @param  array{rotulo: string, rota: string, params?: array}  $confGrupo
      * @param  string  $linkGrupo  link da própria secção (fallback)
      */
     private static function url(Category $categoria, array $confGrupo, string $linkGrupo): string
     {
-        // Subcategoria de notícias → filtro real do NewsFilter.
+        $destino = self::DESTINOS[$categoria->menu_group][$categoria->slug] ?? null;
+
+        if ($destino !== null) {
+            return route($destino[0], $destino[1] ?? []);
+        }
+
+        // Sem destino conhecido: se for type=news, vai para o filtro.
         if ($categoria->type === 'news') {
             return route('news.index', ['cat' => $categoria->slug]);
         }
 
-        $destino = self::DESTINOS[$categoria->menu_group][$categoria->slug] ?? null;
-
-        if ($destino === null) {
-            // Categoria de menu sem destino mapeado → página da secção
-            // (a nova subcategoria criada pelo admin nunca parte o menu).
-            return $linkGrupo;
-        }
-
-        return route($destino[0], $destino[1] ?? []);
+        // Sem destino conhecido e sem type=news: fallback para a página da secção.
+        return $linkGrupo;
     }
 }

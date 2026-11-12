@@ -43,11 +43,7 @@
                                     <div class="contact-social fl-wrap">
                                         <span class="cs-title">Siga-nos: </span>
                                         <ul>
-                                            <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                                            <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
-                                            <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                            <li><a href="#" target="_blank"><i class="fab fa-vk"></i></a></li>
-                                            <li><a href="#" target="_blank"><i class="fab fa-pinterest-p"></i></a></li>
+                                            @include('components.social-icons')
                                         </ul>
                                     </div>
                                     <!-- box-widget -->

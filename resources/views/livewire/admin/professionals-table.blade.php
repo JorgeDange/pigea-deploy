@@ -30,7 +30,7 @@
               @if ($profissional->status !== 'pendente')
               <button class="icon-btn" title="Voltar a pendente" wire:click="restabelecer({{ $profissional->id }})"><i class="fa fa-undo"></i></button>
               @endif
-              <button class="icon-btn danger" title="Eliminar" wire:click="eliminar({{ $profissional->id }})" wire:confirm="Eliminar o registo de «{{ $profissional->nome_completo }}»? Esta ação não pode ser desfeita."><i class="fa fa-trash"></i></button>
+              <button class="icon-btn danger js-confirm-livewire" title="Eliminar" data-action="eliminar" data-args='[{{ $profissional->id }}]' data-title="Eliminar este registo?" data-message="Eliminar o registo de «{{ $profissional->nome_completo }}»? Esta ação não pode ser desfeita." data-confirm-text="Eliminar"><i class="fa fa-trash"></i></button>
             </div>
           </td>
         </tr>

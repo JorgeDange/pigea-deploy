@@ -88,7 +88,7 @@ class MegaMenuTest extends TestCase
 
     public function test_grupos_de_navegacao_sao_type_menu_sem_pai(): void
     {
-        foreach (['inicio', 'noticias', 'academia', 'oportunidades', 'directorio', 'sobre'] as $grupo) {
+        foreach (['inicio', 'noticias', 'directorio', 'sobre'] as $grupo) {
             $subcategorias = Category::where('menu_group', $grupo)->get();
 
             $this->assertTrue(
@@ -98,6 +98,23 @@ class MegaMenuTest extends TestCase
             $this->assertTrue(
                 $subcategorias->every(fn (Category $c) => $c->parent_id === null),
                 "As subcategorias de navegação de {$grupo} não têm pai."
+            );
+        }
+    }
+
+    public function test_academia_oportunidades_sao_type_news_penduram_na_top_level(): void
+    {
+        foreach (['academia', 'oportunidades'] as $grupo) {
+            // Top-level (news, sem menu_group para NÃO entrar no Mega Menu).
+            $top = Category::where('type', 'news')->whereNull('parent_id')->where('slug', $grupo)->firstOrFail();
+            $this->assertNull($top->menu_group, 'Top-level não devia ter menu_group (não é item do Mega Menu).');
+
+            // Os 5 filhos do grupo são news e penduram da top-level.
+            $filhos = Category::where('menu_group', $grupo)->get();
+            $this->assertCount(5, $filhos, "Grupo {$grupo} devia ter 5 filhos.");
+            $this->assertTrue(
+                $filhos->every(fn (Category $c) => $c->type === 'news' && $c->parent_id === $top->id),
+                "As subcategorias de {$grupo} deviam ser type=news penduradas na top-level."
             );
         }
     }
@@ -138,7 +155,9 @@ class MegaMenuTest extends TestCase
         $this->assertSame('Início', $grupos['inicio']['rotulo']);
         $this->assertSame(route('home'), $grupos['inicio']['link']);
         $this->assertSame(route('news.index', ['cat' => 'mineracao']), $grupos['mineracao']['link']);
-        $this->assertSame(route('training.index'), $grupos['academia']['link']);
+        // Academia e Oportunidades foram promovidas a type=news — topo aponta para o filtro.
+        $this->assertSame(route('news.index', ['cat' => 'academia']), $grupos['academia']['link']);
+        $this->assertSame(route('news.index', ['cat' => 'oportunidades']), $grupos['oportunidades']['link']);
         $this->assertSame(route('directory.index'), $grupos['directorio']['link']);
         $this->assertSame(route('about'), $grupos['sobre']['link']);
     }
@@ -163,19 +182,21 @@ class MegaMenuTest extends TestCase
         $this->assertSame(route('events.index'), $urls['eventos']);
 
         $urls = $grupos['academia']['sublinks']->pluck('url', 'slug');
-        $this->assertSame(route('training.index'), $urls['cursos-e-formacao']);
-        $this->assertSame(route('research.index'), $urls['artigos-cientificos']);
+        $this->assertSame(route('news.index', ['cat' => 'cursos-e-formacao']), $urls['cursos-e-formacao']);
+        $this->assertSame(route('news.index', ['cat' => 'artigos-cientificos']), $urls['artigos-cientificos']);
 
         $urls = $grupos['directorio']['sublinks']->pluck('url', 'slug');
         $this->assertSame(route('directory.index', ['aba' => 'empresas']), $urls['empresas']);
+        $this->assertSame(route('directory.index', ['aba' => 'profissionais']), $urls['profissionais']);
         $this->assertSame(route('suppliers.index'), $urls['equipamentos-e-servicos']);
 
         $urls = $grupos['sobre']['sublinks']->pluck('url', 'slug');
         $this->assertSame(route('contacts'), $urls['contactos']);
 
-        // Oportunidades pós-reestruturação vive na página de projetos.
-        foreach ($grupos['oportunidades']['sublinks'] as $sublink) {
-            $this->assertSame(route('projects.index'), $sublink['url']);
+        // Oportunidades promovidas a news — cada sublink filtra a sua categoria.
+        $urls = $grupos['oportunidades']['sublinks']->pluck('url', 'slug');
+        foreach (['emprego', 'estagios', 'bolsas-de-estudo', 'concursos', 'consultorias'] as $slug) {
+            $this->assertSame(route('news.index', ['cat' => $slug]), $urls[$slug]);
         }
     }
 
@@ -232,6 +253,24 @@ class MegaMenuTest extends TestCase
 
         $this->assertStringContainsString('mm-grupo-geociencias mm-item-ativo', $html);
         $this->assertStringNotContainsString('mm-grupo-inicio mm-item-ativo', $html);
+    }
+
+    public function test_filtro_de_subcategoria_de_grupo_promovido_acende_o_grupo(): void
+    {
+        $academia = $this->get('/noticias?cat=cursos-e-formacao')->getContent();
+        $this->assertStringContainsString('mm-grupo-academia mm-item-ativo', $academia);
+
+        $oportunidades = $this->get('/noticias?cat=emprego')->getContent();
+        $this->assertStringContainsString('mm-grupo-oportunidades mm-item-ativo', $oportunidades);
+    }
+
+    public function test_filtro_de_grupo_promovido_acende_o_item_de_topo(): void
+    {
+        $academia = $this->get('/noticias?cat=academia')->getContent();
+        $this->assertStringContainsString('mm-grupo-academia mm-item-ativo', $academia);
+
+        $oportunidades = $this->get('/noticias?cat=oportunidades')->getContent();
+        $this->assertStringContainsString('mm-grupo-oportunidades mm-item-ativo', $oportunidades);
     }
 
     public function test_filtro_de_grupo_de_topo_continua_a_acender_o_item(): void

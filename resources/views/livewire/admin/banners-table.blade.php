@@ -29,7 +29,7 @@
             <div class="row-actions">
               <button class="icon-btn {{ $banner->ativo ? 'danger' : '' }}" title="{{ $banner->ativo ? 'Desativar' : 'Ativar' }}" wire:click="alternarAtivo({{ $banner->id }})"><i class="fa {{ $banner->ativo ? 'fa-toggle-on' : 'fa-toggle-off' }}"></i></button>
               <button class="icon-btn" title="Editar" wire:click="editar({{ $banner->id }})"><i class="fa fa-pen"></i></button>
-              <button class="icon-btn danger" title="Eliminar" wire:click="eliminar({{ $banner->id }})" wire:confirm="Eliminar «{{ $banner->titulo }}»? Esta ação não pode ser desfeita."><i class="fa fa-trash"></i></button>
+              <button class="icon-btn danger js-confirm-livewire" title="Eliminar" data-action="eliminar" data-args='[{{ $banner->id }}]' data-title="Eliminar este registo?" data-message="Eliminar «{{ $banner->titulo }}»? Esta ação não pode ser desfeita." data-confirm-text="Eliminar"><i class="fa fa-trash"></i></button>
             </div>
           </td>
         </tr>

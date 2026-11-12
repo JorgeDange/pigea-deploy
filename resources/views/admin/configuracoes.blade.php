@@ -90,7 +90,6 @@
         <div class="card">
           <div class="card-head">
             <h3 class="card-title">Redes sociais</h3>
-            
           </div>
           <div class="card-body">
 <form class="dashboard-form" action="{{ route('admin.configuracoes.redes') }}" method="post">
@@ -98,27 +97,50 @@
               <div class="dashboard-form-row">
                 <div class="dashboard-form-col">
               <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Facebook</label>
-                <input class="dashboard-form-input" type="text" name="facebook" placeholder="https://facebook.com/…" value="{{ old('facebook', $definicoes['facebook'] ?? '') }}">
+                <label class="dashboard-form-label" for="facebook">Facebook (link)</label>
+                <input class="dashboard-form-input" type="text" id="facebook" name="facebook" placeholder="https://facebook.com/pigea.ao" value="{{ old('facebook', $definicoes['facebook'] ?? '') }}">
                 @error('facebook')<p class="form-error" role="alert">{{ $message }}</p>@enderror
-              </div>              <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Instagram</label>
-                <input class="dashboard-form-input" type="text" name="instagram" placeholder="https://instagram.com/…" value="{{ old('instagram', $definicoes['instagram'] ?? '') }}">
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="facebook_nome">Nome público da conta (Facebook)</label>
+                <input class="dashboard-form-input" type="text" id="facebook_nome" name="facebook_nome" placeholder="pigea.ao" value="{{ old('facebook_nome', $definicoes['facebook_nome'] ?? '') }}">
+                @error('facebook_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="instagram">Instagram (link)</label>
+                <input class="dashboard-form-input" type="text" id="instagram" name="instagram" placeholder="https://instagram.com/pigea.ao" value="{{ old('instagram', $definicoes['instagram'] ?? '') }}">
                 @error('instagram')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="instagram_nome">Nome público da conta (Instagram)</label>
+                <input class="dashboard-form-input" type="text" id="instagram_nome" name="instagram_nome" placeholder="pigea.ao" value="{{ old('instagram_nome', $definicoes['instagram_nome'] ?? '') }}">
+                @error('instagram_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>
                 <div class="dashboard-form-col">
               <div class="dashboard-form-group">
-                <label class="dashboard-form-label">LinkedIn</label>
-                <input class="dashboard-form-input" type="text" name="linkedin" placeholder="https://linkedin.com/…" value="{{ old('linkedin', $definicoes['linkedin'] ?? '') }}">
+                <label class="dashboard-form-label" for="linkedin">LinkedIn (link)</label>
+                <input class="dashboard-form-input" type="text" id="linkedin" name="linkedin" placeholder="https://linkedin.com/company/pigea" value="{{ old('linkedin', $definicoes['linkedin'] ?? '') }}">
                 @error('linkedin')<p class="form-error" role="alert">{{ $message }}</p>@enderror
-              </div>              <div class="dashboard-form-group">
-                <label class="dashboard-form-label">YouTube</label>
-                <input class="dashboard-form-input" type="text" name="youtube" placeholder="https://youtube.com/…" value="{{ old('youtube', $definicoes['youtube'] ?? '') }}">
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="linkedin_nome">Nome público da conta (LinkedIn)</label>
+                <input class="dashboard-form-input" type="text" id="linkedin_nome" name="linkedin_nome" placeholder="pigea.ao" value="{{ old('linkedin_nome', $definicoes['linkedin_nome'] ?? '') }}">
+                @error('linkedin_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="youtube">YouTube (link)</label>
+                <input class="dashboard-form-input" type="text" id="youtube" name="youtube" placeholder="https://youtube.com/@pigea" value="{{ old('youtube', $definicoes['youtube'] ?? '') }}">
                 @error('youtube')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="youtube_nome">Nome público da conta (YouTube)</label>
+                <input class="dashboard-form-input" type="text" id="youtube_nome" name="youtube_nome" placeholder="pigea.ao" value="{{ old('youtube_nome', $definicoes['youtube_nome'] ?? '') }}">
+                @error('youtube_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>
               </div>
+              <p class="helper-text">Os links alimentam o rodapé e a página de contactos; os «nomes públicos» aparecem no widget «Siga-nos» do site (ex.: <strong>pigea.ao</strong>). Sem link não configurado, a rede não aparece no site.</p>
               <div class="dashboard-form-actions">
                 <button type="submit" class="btn-primary"><i class="fa fa-save"></i> Guardar</button>
                 

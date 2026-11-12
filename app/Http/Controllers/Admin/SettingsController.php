@@ -41,9 +41,13 @@ class SettingsController extends Controller
         ],
         'redes' => [
             'facebook' => 'nullable|string|max:190',
+            'facebook_nome' => 'nullable|string|max:120',
             'instagram' => 'nullable|string|max:190',
+            'instagram_nome' => 'nullable|string|max:120',
             'linkedin' => 'nullable|string|max:190',
+            'linkedin_nome' => 'nullable|string|max:120',
             'youtube' => 'nullable|string|max:190',
+            'youtube_nome' => 'nullable|string|max:120',
         ],
         'seo' => [
             'meta_title' => 'nullable|string|max:60',

@@ -11,11 +11,7 @@
                             <p>PIGEA — Plataforma de Impulsionamento das Geociências em Angola. Centralizamos informação, promovemos a transparência e ligamos profissionais, empresas e investigadores.</p>
                             <div class="footer-social fl-wrap">
                                 <ul>
-                                    <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                                    <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
-                                    <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                    <li><a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
-                                    <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
+                                    @include('components.social-icons')
                                 </ul>
                             </div>
                         </div>

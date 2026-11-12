@@ -65,6 +65,8 @@
         <script src="{{ asset('js/scripts.js') }}"></script>
         {{-- FASE 5.1 — acordeão mobile do Mega Menu (desktop é 100% CSS) --}}
         <script src="{{ asset('js/menu.js') }}" defer></script>
+        {{-- FASE 15 — rotação dos destaques publicitários (autoplay 4s) --}}
+        <script src="{{ asset('js/destaque.js') }}" defer></script>
         @stack('scripts')
     </body>
 </html>

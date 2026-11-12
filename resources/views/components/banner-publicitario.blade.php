@@ -41,11 +41,11 @@
                     <span style="display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.55; margin-bottom: 4px;">Publicidade</span>
                     @if ($bannerPublicitario->link_destino)
                         <a href="{{ $bannerPublicitario->link_destino }}" target="_blank" rel="noopener sponsored" title="{{ $bannerPublicitario->titulo }}">
-                            <img src="{{ $urlImagem }}" alt="{{ $bannerPublicitario->titulo }}" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                            <img src="{{ $urlImagem }}" alt="{{ $bannerPublicitario->titulo }}" loading="{{ $posicao === 'topo' ? 'eager' : 'lazy' }}" style="max-width: 100%; height: auto; display: block;">
                         </a>
                     @else
                         {{-- pub.md §5.5: sem link de destino o banner é só imagem (não clicável) --}}
-                        <img src="{{ $urlImagem }}" alt="{{ $bannerPublicitario->titulo }}" loading="lazy" style="max-width: 100%; height: auto; display: block;">
+                        <img src="{{ $urlImagem }}" alt="{{ $bannerPublicitario->titulo }}" loading="{{ $posicao === 'topo' ? 'eager' : 'lazy' }}" style="max-width: 100%; height: auto; display: block;">
                     @endif
                 </div>
     @if ($wrapper)
