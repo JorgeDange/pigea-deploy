@@ -471,3 +471,30 @@ tinymce.init({
 
     aplicar();
 })();
+
+/* ===== autor.md - switch «Ficheiro vs Link» na foto do autor convidado ===== */
+(function () {
+    var radios = document.querySelectorAll('input[name="guest_author_foto_fonte"]');
+    var painelFicheiro = document.getElementById('guest-foto-ficheiro');
+    var painelLink = document.getElementById('guest-foto-link');
+    var inputFicheiro = document.getElementById('guest_author_avatar');
+    var inputLink = document.getElementById('guest_author_avatar_link');
+
+    if (!radios.length || !painelFicheiro || !painelLink) return;
+
+    function aplicar() {
+        var valor = (document.querySelector('input[name="guest_author_foto_fonte"]:checked') || {}).value || 'ficheiro';
+
+        painelFicheiro.hidden = valor !== 'ficheiro';
+        painelLink.hidden = valor !== 'link';
+
+        if (inputFicheiro) inputFicheiro.disabled = valor !== 'ficheiro';
+        if (inputLink) inputLink.disabled = valor !== 'link';
+    }
+
+    radios.forEach(function (r) {
+        r.addEventListener('change', aplicar);
+    });
+
+    aplicar();
+})();

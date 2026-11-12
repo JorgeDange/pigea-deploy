@@ -37,7 +37,11 @@ trait ResolvesContent
         ];
 
         foreach ($models as $model) {
-            $row = $model::published()->where('slug', $slug)->first();
+            // autor.md: eager loading do autor só para a Notícia (as restantes
+            // tabelas não têm coluna guest_author_*; `author` é belongsTo direta).
+            $row = $model === News::class
+                ? $model::published()->with('author')->where('slug', $slug)->first()
+                : $model::published()->where('slug', $slug)->first();
 
             if ($row !== null) {
                 return $row;

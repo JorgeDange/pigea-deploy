@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\PublicidadeImagemController;
 use App\Http\Controllers\Admin\ContentFormController;
 use App\Http\Controllers\Admin\DocumentFormController;
 use App\Http\Controllers\Admin\ProjectFormController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserFormController;
 use App\Http\Controllers\CspReportController;
@@ -117,6 +118,8 @@ Route::post('/csp-report', CspReportController::class)
 // continuam exclusivos do admin — Fase 7, ModeracaoDiretorioTest).
 Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'))->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
+    Route::get('/perfil', [ProfileController::class, 'index'])->name('perfil');
+    Route::post('/perfil', [ProfileController::class, 'update'])->name('perfil.update');
     Route::view('/noticias', 'admin.noticias')->middleware('can:news.manage')->name('noticias');
     Route::view('/eventos', 'admin.eventos')->middleware('can:event.manage')->name('eventos');
     Route::view('/investigacao', 'admin.investigacao')->middleware('can:research.manage')->name('investigacao');

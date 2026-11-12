@@ -22,6 +22,7 @@
     $grupos = [
         ['rotulo' => 'Principal', 'itens' => [
             ['chave' => 'index', 'nome' => 'Dashboard', 'icone' => 'fa-tachometer-alt', 'rota' => 'admin.index', 'can' => null],
+            ['chave' => 'perfil', 'nome' => 'O Meu Perfil', 'icone' => 'fa-user-circle', 'rota' => 'admin.perfil', 'can' => null],
         ]],
         ['rotulo' => 'Produção', 'itens' => [
             ['chave' => 'noticias', 'nome' => 'Notícias', 'icone' => 'fa-newspaper', 'rota' => 'admin.noticias', 'can' => 'news.manage'],

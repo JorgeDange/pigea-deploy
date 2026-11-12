@@ -35,7 +35,7 @@
                                             <h1>{{ $post->title }}</h1>
                                             <h4>Informação actualizada e verificada pela equipa PIGEA.</h4>
                                             <div class="clearfix"></div>
-                                            <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($post->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($post->author)->name }}</span></a></div>
+                                            <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ \App\Support\Autor::avatarUrl(\App\Support\Autor::assinatura($post)['avatar']) }}" alt="">  <span>{{ \App\Support\Autor::assinatura($post)['name'] }}</span></a></div>
                                             <span class="post-date"><i class="far fa-clock"></i> {{ $post->display_date }}</span>
                                             <ul class="post-opt">
                                                 <li><i class="fal fa-eye"></i>  {{ $post->views_count }} </li>
@@ -152,31 +152,21 @@
                                         </div>
                                         <!-- single-post-content  end   -->
                                         <div class="limit-box2 fl-wrap"></div>
-                                        <!-- post-author-->                                   
+                                        <!-- post-author (Sobre o Autor — autor.md §3) -->
+                                        @php
+                                            $assinatura = \App\Support\Autor::assinatura($post);
+                                            $avatarSrc = \App\Support\Autor::avatarUrl($assinatura['avatar']);
+                                        @endphp
                                         <div class="post-author fl-wrap">
                                             <div class="author-img">
-                                                <img  src="{{ asset('images/avatar/2.jpg') }}" alt="">	
+                                                <img src="{{ $avatarSrc }}" alt="{{ $assinatura['name'] }}">
                                             </div>
                                             <div class="author-content fl-wrap">
-                                                <h5>Escrito por <a href="{{ route('news.index') }}">{{ optional($post->author)->name }}</a></h5>
+                                                <h5>Escrito por <a href="{{ route('news.index') }}">{{ $assinatura['name'] }}</a></h5>
                                                 <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
                                             </div>
-                                            <div class="profile-card-footer fl-wrap">
-                                                <a href="{{ route('news.index') }}" class="post-author_link">Ver Perfil <i class="fas fa-caret-right"></i></a>
-                                                <div class="profile-card-footer_soc">
-                                                    <div class="profile-card-footer_title">Seguir: </div>
-                                                    <div class="profile-card-social">
-                                                        <ul>
-                                                            <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                                                            <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
-                                                            <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                                            <li><a href="#" target="_blank"><i class="fab fa-vk"></i></a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
-                                        <!--post-author end-->		
+                                        <!--post-author end-->
                                         <div class="more-post-wrap  fl-wrap">
                                             <div class="pr-subtitle prs_big">Artigos Relacionados</div>
                                             <div class="list-post-wrap list-post-wrap_column fl-wrap">

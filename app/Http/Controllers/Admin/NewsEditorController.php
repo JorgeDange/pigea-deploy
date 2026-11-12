@@ -33,6 +33,7 @@ class NewsEditorController extends Controller
         return view('admin.noticia-editor', array_merge([
             'noticia' => null,
             'categoriasSelecionada' => null,
+            'utilizadores' => $this->utilizadoresInternos(),
         ], $mapa));
     }
 
@@ -43,7 +44,16 @@ class NewsEditorController extends Controller
         return view('admin.noticia-editor', array_merge([
             'noticia' => $noticia,
             'categoriasSelecionada' => $noticia?->category_id,
+            'utilizadores' => $this->utilizadoresInternos(),
         ], $mapa));
+    }
+
+    /** Utilizadores internos (admin + editor) para o select "Autor do Artigo". */
+    private function utilizadoresInternos(): \Illuminate\Support\Collection
+    {
+        return \App\Models\User::role(['admin', 'editor'])
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
     /** Valores possíveis de acao nos botões de submit. */
@@ -282,6 +292,11 @@ class NewsEditorController extends Controller
             'link' => ['nullable', 'url:http,https', 'max:300'],
             'capa' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
             'contexto' => ['nullable', 'array', 'max:10'],
+            'author_choice' => ['nullable', Rule::in(['interno', 'convidado'])],
+            'author_id' => ['nullable', 'integer', Rule::exists('users', 'id')],
+            'guest_author_name' => ['nullable', 'string', 'max:100'],
+            'guest_author_avatar' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
+            'guest_author_avatar_link' => ['nullable', 'url:http,https', 'max:300'],
             'contexto.*' => ['image', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
         ];
 
@@ -296,6 +311,24 @@ class NewsEditorController extends Controller
         if ($capaLink !== '' && $request->hasFile('capa')) {
             throw ValidationException::withMessages([
                 'capa' => 'Envia o ficheiro OU o link da imagem de capa, não ambos.',
+            ]);
+        }
+
+        // Autor do Artigo (autor.md §2.2): convidado exige o nome; na foto —
+        // ficheiro OU link, nunca os dois.
+        $escolha = trim((string) $request->input('author_choice', ''));
+
+        if ($escolha === 'convidado' && trim((string) $request->input('guest_author_name', '')) === '') {
+            throw ValidationException::withMessages([
+                'guest_author_name' => 'Escreve o nome do autor convidado (ou escolhe "Autor interno").',
+            ]);
+        }
+
+        $guestLink = trim((string) $request->input('guest_author_avatar_link', ''));
+
+        if ($guestLink !== '' && $request->hasFile('guest_author_avatar')) {
+            throw ValidationException::withMessages([
+                'guest_author_avatar' => 'Envia o ficheiro OU o link da foto do autor, não ambos.',
             ]);
         }
 
@@ -374,6 +407,28 @@ class NewsEditorController extends Controller
             default => $atual?->published_at,
         };
 
+        // Autor do Artigo (autor.md §2.2/§2.3):
+        //  - "interno"   → o utilizador interno selecionado (ou eu, por omissão);
+        //  - "convidado" → sem conta: nome do convidado, author_id fica nulo;
+        //  - campo ausente → mantém o atual; na criação, eu sou o autor.
+        $escolha = trim((string) $request->input('author_choice', ''));
+        $guestName = $tem('guest_author_name')
+            ? (trim((string) ($dados['guest_author_name'] ?? '')) ?: null)
+            : $atual?->guest_author_name;
+
+        $authorId = $atual?->author_id;
+        $guestNomeFinal = $atual?->guest_author_name;
+
+        if ($escolha === 'interno') {
+            $authorId = (int) ($dados['author_id'] ?? 0) ?: $request->user()?->id;
+            $guestNomeFinal = null;
+        } elseif ($escolha === 'convidado') {
+            $authorId = null;
+            $guestNomeFinal = $guestName;
+        } elseif ($atual === null) {
+            $authorId = $request->user()?->id;
+        }
+
         $dateLabel = $publishedAt !== null
             ? $publishedAt->locale('pt')->translatedFormat('d M Y')
             : null;
@@ -417,7 +472,8 @@ class NewsEditorController extends Controller
             'status' => $status,
             'published_at' => $publishedAt,
             'date_label' => $dateLabel,
-            'author_id' => $request->user()?->id,
+            'author_id' => $authorId,
+            'guest_author_name' => $guestNomeFinal,
         ];
     }
 
@@ -463,6 +519,43 @@ class NewsEditorController extends Controller
 
         foreach ($request->file('contexto', []) as $ficheiro) {
             $noticia->addMedia($ficheiro)->toMediaCollection('contexto');
+        }
+
+        // Foto do autor convidado (autor.md §2.2): ficheiro → miniatura
+        // 150x150 em avatars/; link → URL tal como está; "interno" limpa.
+        $escolhaAutor = trim((string) $request->input('author_choice', ''));
+        $guestLink = trim((string) $request->input('guest_author_avatar_link', ''));
+
+        if ($escolhaAutor === 'interno') {
+            if ($noticia->guest_author_avatar !== null) {
+                \App\Support\Autor::apagarLocal($noticia->guest_author_avatar);
+                $noticia->guest_author_avatar = null;
+                $noticia->save();
+            }
+
+            return;
+        }
+
+        // convidado OU campo ausente — sem pedido completo não se mexe.
+        if ($guestLink !== '' && ! $request->hasFile('guest_author_avatar')) {
+            \App\Support\Autor::apagarLocal($noticia->guest_author_avatar);
+            $noticia->guest_author_avatar = $guestLink;
+            $noticia->save();
+        } elseif ($request->hasFile('guest_author_avatar')) {
+            $antigo = $noticia->guest_author_avatar;
+            $novo = null;
+
+            try {
+                $novo = \App\Support\Autor::guardarMiniatura($request->file('guest_author_avatar'), 'guest');
+            } catch (\Throwable $excecao) {
+                report($excecao);
+            }
+
+            if ($novo !== null) {
+                \App\Support\Autor::apagarLocal($antigo);
+                $noticia->guest_author_avatar = $novo;
+                $noticia->save();
+            }
         }
     }
 

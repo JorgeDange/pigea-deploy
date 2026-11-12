@@ -125,6 +125,52 @@
                     {{-- Categoria + media + links --}}
                     <div class="card">
                         <div class="card-body">
+                            {{-- Autor do Artigo (autor.md §2.2): interno OU convidado --}}
+                            @php
+                                $autorChoice = old('author_choice', ($noticia && $noticia->author_id === null && $noticia->guest_author_name) ? 'convidado' : 'interno');
+                                $utilizadorAtualId = $utilizadores->firstWhere('id', auth()->id())?->id ?? $utilizadores->first()?->id;
+                                $autorAtualId = old('author_id', $noticia?->author_id ?? $utilizadorAtualId);
+                                $guestFotoFonte = old('guest_author_foto_fonte', ($noticia && $noticia->guest_author_avatar && str_starts_with($noticia->guest_author_avatar, 'http')) ? 'link' : 'ficheiro');
+                            @endphp
+                            <div class="dashboard-form-group">
+                                <span class="dashboard-form-label">Autor do Artigo</span>
+                                <label class="dashboard-checkbox"><input type="radio" name="author_choice" value="interno" {{ $autorChoice === 'interno' ? 'checked' : '' }}> Autor interno</label>
+                                <select class="dashboard-form-select" id="author_id" name="author_id" aria-label="Selecionar o autor interno">
+                                    @foreach ($utilizadores as $utilizador)
+                                        <option value="{{ $utilizador->id }}" {{ (string) $autorAtualId === (string) $utilizador->id ? 'selected' : '' }}>{{ $utilizador->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('author_id')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+
+                                <label class="dashboard-checkbox"><input type="radio" name="author_choice" value="convidado" {{ $autorChoice === 'convidado' ? 'checked' : '' }}> Convidado (autor sem conta no sistema)</label>
+                                <input class="dashboard-form-input" type="text" name="guest_author_name" id="guest_author_name" placeholder="Nome do autor convidado" value="{{ old('guest_author_name', $noticia?->guest_author_name) }}" maxlength="100" aria-describedby="erro-guest-nome">
+                                @error('guest_author_name')<p class="form-error" id="erro-guest-nome" role="alert">{{ $message }}</p>@enderror
+
+                                <div class="cover-source">
+                                    <label class="dashboard-checkbox"><input type="radio" name="guest_author_foto_fonte" value="ficheiro" {{ $guestFotoFonte === 'ficheiro' ? 'checked' : '' }}> Carregar foto</label>
+                                    <label class="dashboard-checkbox"><input type="radio" name="guest_author_foto_fonte" value="link" {{ $guestFotoFonte === 'link' ? 'checked' : '' }}> Colar endereço (link)</label>
+                                </div>
+                                <div id="guest-foto-ficheiro" class="file-upload" data-accept="image" data-max-bytes="1048576"{{ $guestFotoFonte === 'link' ? ' hidden' : '' }}>
+                                    @if ($noticia?->guest_author_avatar && ! str_starts_with($noticia->guest_author_avatar, 'http'))
+                                        <img class="file-upload-preview" src="{{ asset($noticia->guest_author_avatar) }}" alt="Foto do autor convidado">
+                                    @endif
+                                    <label class="file-upload-button" for="guest_author_avatar"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher foto</label>
+                                    <div class="file-upload-meta">
+                                        <span class="file-upload-name">{{ $noticia?->guest_author_avatar ? 'Foto atual: ' . basename($noticia->guest_author_avatar) : 'Nenhuma foto selecionada' }}</span>
+                                        <small class="help-text">Recomendado: 150x150px. JPG, PNG. Máx.: 1MB.</small>
+                                    </div>
+                                    <input type="file" id="guest_author_avatar" name="guest_author_avatar" accept="image/png,image/jpeg,image/webp" aria-describedby="erro-guest-foto"{{ $guestFotoFonte === 'link' ? ' disabled' : '' }}>
+                                    <button type="button" class="file-upload-remove">Remover</button>
+                                    <p class="file-upload-erro" id="erro-guest-foto" role="alert"></p>
+                                </div>
+                                <div id="guest-foto-link" class="dashboard-form-group"{{ $guestFotoFonte === 'link' ? '' : ' hidden' }}>
+                                    <label class="dashboard-form-label" for="guest_author_avatar_link">Link da foto</label>
+                                    <input class="dashboard-form-input" type="url" id="guest_author_avatar_link" name="guest_author_avatar_link" placeholder="https://…/autor.jpg" value="{{ old('guest_author_avatar_link', ($noticia && str_starts_with((string) $noticia->guest_author_avatar, 'http')) ? $noticia->guest_author_avatar : '') }}" aria-describedby="erro-guest-foto"{{ $guestFotoFonte === 'link' ? '' : ' disabled' }}>
+                                </div>
+                                @error('guest_author_avatar')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+                                @error('guest_author_avatar_link')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+                            </div>
+
                             <div class="dashboard-form-group">
                                 <label class="dashboard-form-label" for="categoria">Categoria</label>
                                 <select class="dashboard-form-select" id="categoria" name="categoria" aria-describedby="erro-categoria">

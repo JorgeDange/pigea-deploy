@@ -30,7 +30,7 @@ class News extends Model implements HasMedia
     protected $table = 'news';
 
     protected $fillable = [
-        'category_id', 'author_id', 'title', 'slug', 'excerpt', 'content',
+        'category_id', 'author_id', 'guest_author_name', 'guest_author_avatar', 'title', 'slug', 'excerpt', 'content',
         'image', 'image_alt', 'image_caption', 'status', 'published_at', 'date_label',
 
         'province',
