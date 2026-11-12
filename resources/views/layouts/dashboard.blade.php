@@ -6,12 +6,13 @@
   <title>@yield('title') — PIGEA</title>
   <meta name="description" content="@yield('title') — PIGEA">
   <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-  <link rel="stylesheet" href="{{ asset('css/plugins.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/color.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+  {{-- FASE A (melhoria.md §6): admin.css = dashboard.css + subconjunto de icones.
+       O painel deixa de carregar style.css/plugins.css/color.css (CSS do site
+       publico, ~275 KB por página) e plugins.js (315 KB — nenhuma biblioteca
+       dele é usada pelo painel). fonts.css mantém os tipos de letra do tema. --}}
+  <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
   <link rel="stylesheet" href="{{ asset('css/fonts.css') }}">
-<link rel="stylesheet" href="{{ asset('css/article.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/article.css') }}">
   @livewireStyles
   @stack('styles')
 </head>
@@ -72,7 +73,8 @@
     </div>
   </div>
   <script src="{{ asset('js/jquery.min.js') }}"></script>
-  <script src="{{ asset('js/plugins.js') }}"></script>
+  {{-- FASE A: plugins.js (315 KB) retirado — dashboard.js/banner.js/news-editor.js
+       nao usam Swiper/lightGallery/Chart (verificado no melhoria.md §2.2). --}}
   <script src="{{ asset('js/dashboard.js') }}"></script>
   {{-- Fase 16 — window.PIGEAConfirm + .js-confirm/livewire intercept (publicidade) --}}
   <script src="{{ asset('js/admin/banner.js') }}"></script>
