@@ -13,13 +13,7 @@
                 <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
             </ul>
 
-            {{-- Área de publicidade CENTRAL — banner horizontal (pedido do
-                 cliente, 11/11/2026). O componente renderiza o banner exibível
-                 mais recente; sem banner vigente não gera HTML e o centro fica
-                 livre. Posicionamento em css/topo.css. --}}
-            <div class="top-banner-area">
-                <x-banner-publicitario posicao="topo" />
-            </div>
+            {{-- O banner da barra superior (posicao="topo") foi removido a pedido do cliente: coexistia com a data e a pesquisa e não agradava. Caso se pretenda reativar, repor o <x-banner-publicitario posicao="topo" />. --}}
 
             {{-- Direita: data/hora + pesquisa. O ícone de pesquisa saiu do
                  header-inner, onde ficava sob a barra full-width do mega menu
