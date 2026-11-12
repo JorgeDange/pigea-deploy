@@ -158,11 +158,21 @@ class DirectorySeeder extends Seeder
             'data_fim' => null,
             'ativo' => true,
         ]);
-        // FASE 18 — slot vertical na sidebar (largura da coluna, 1:1)
+        // FASE 18 — slot vertical na sidebar (largura da coluna, 1:1);
+        // 2 demos para a rotação em slide (5s, banner-lateral.js)
         Banner::create([
             'titulo' => 'Banner Lateral — GeoAqua (vertical)',
             'imagem_url' => 'images/banners/lateral-demo.jpg',
             'link_destino' => 'https://example.ao/geoaqua',
+            'posicao' => 'lateral',
+            'data_inicio' => null,
+            'data_fim' => null,
+            'ativo' => true,
+        ]);
+        Banner::create([
+            'titulo' => 'Banner Lateral — Minex Feira (vertical)',
+            'imagem_url' => 'images/banners/lateral-demo-2.jpg',
+            'link_destino' => 'https://example.ao/minex',
             'posicao' => 'lateral',
             'data_inicio' => null,
             'data_fim' => null,

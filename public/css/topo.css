@@ -127,3 +127,14 @@
 	display: block;
 	border-radius: 4px;
 }
+
+/* Slider de rotação (FASE 18 — 2..4 slides, autoplay 5s em
+   banner-lateral.js): recorta o conjunto ao enquadramento 1:1. */
+.banner-publicitario--lateral .banner-lateral-slider {
+	overflow: hidden;
+	border-radius: 4px;
+}
+
+.banner-publicitario--lateral .banner-lateral-slider .swiper-slide {
+	width: 100%;
+}

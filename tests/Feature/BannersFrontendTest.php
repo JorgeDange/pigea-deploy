@@ -140,8 +140,9 @@ class BannersFrontendTest extends TestCase
     }
 
     /**
-     * FASE 18 — posição `lateral` (vertical ~300×600): renderiza com
-     * wrapper box-widget, classe própria e lazy (abaixo da dobra).
+     * FASE 18 — posição `lateral` (vertical): renderiza com wrapper box-widget,
+     * classe própria e lazy (abaixo da dobra). Com 1 só banner é estático
+     * (sem slider).
      */
     public function test_posicao_lateral_com_wrapper(): void
     {
@@ -159,6 +160,63 @@ class BannersFrontendTest extends TestCase
         $this->assertStringContainsString('banner-publicitario--lateral', $html);
         $this->assertStringContainsString('box-widget', $html);
         $this->assertStringContainsString('loading="lazy"', $html);
+        // 1 banner → estático, sem slider de rotação
+        $this->assertStringNotContainsString('banner-lateral-slider', $html);
+    }
+
+    /**
+     * FASE 18 — rotação: com 2+ banners `lateral` ativos renderiza slider
+     * com data-autoplay (5s) e todos os slides; imagens `eager` (pré-load
+     * para a troca não fazer flash).
+     */
+    public function test_posicao_lateral_rotativa_com_dois_banners(): void
+    {
+        Banner::create([
+            'titulo' => 'TEST Lateral A',
+            'imagem_url' => 'https://cdn.teste.ao/vertical-a.jpg',
+            'link_destino' => 'https://a.teste.ao',
+            'posicao' => 'lateral',
+            'ativo' => true,
+        ]);
+        Banner::create([
+            'titulo' => 'TEST Lateral B',
+            'imagem_url' => 'https://cdn.teste.ao/vertical-b.jpg',
+            'posicao' => 'lateral',
+            'ativo' => true,
+        ]);
+
+        $html = $this->render('lateral', true);
+
+        $this->assertStringContainsString('banner-lateral-slider', $html);
+        $this->assertStringContainsString('data-autoplay="5000"', $html);
+        $this->assertStringContainsString('swiper-wrapper', $html);
+        $this->assertSame(2, substr_count($html, 'swiper-slide'), 'devia ter 2 slides');
+        $this->assertStringContainsString('https://cdn.teste.ao/vertical-a.jpg', $html);
+        $this->assertStringContainsString('https://cdn.teste.ao/vertical-b.jpg', $html);
+        $this->assertStringContainsString('loading="eager"', $html);
+        // o banner B (sem link) não gera <a>; o A sim
+        $this->assertStringContainsString('https://a.teste.ao', $html);
+    }
+
+    /** FASE 18 — rotação limitada a 4 slides (os 4 mais recentes). */
+    public function test_posicao_lateral_rotacao_maximo_quatro(): void
+    {
+        for ($i = 1; $i <= 5; $i++) {
+            Banner::create([
+                'titulo' => 'TEST Lateral ' . $i,
+                'imagem_url' => 'https://cdn.teste.ao/v' . $i . '.jpg',
+                'posicao' => 'lateral',
+                'ativo' => true,
+            ]);
+        }
+
+        $html = $this->render('lateral');
+
+        $this->assertStringContainsString('banner-lateral-slider', $html);
+        $this->assertSame(4, substr_count($html, 'swiper-slide'), 'devia limitar a 4 slides');
+        // os 4 mais recentes (ids 5..2); o mais antigo (1) fica de fora
+        $this->assertStringNotContainsString('v1.jpg', $html);
+        $this->assertStringContainsString('v5.jpg', $html);
     }
 
     /** FASE 18 — sem banner `lateral` ativo, o slot vertical não gera HTML. */

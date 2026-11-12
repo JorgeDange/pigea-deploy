@@ -100,7 +100,7 @@
                         <option value="{{ $valor }}" @selected((string) $posicaoAtual === (string) $valor)>{{ $rotulo }}</option>
                         @endforeach
                     </select>
-                    <small class="help-text">Onde o banner aparece no site. Topo = barra superior; Sidebar = grelha direita; Lateral = vertical nas sidebars de leitura (largura da coluna, enquadramento 1:1); Rodapé = final da página.</small>
+                    <small class="help-text">Onde o banner aparece no site. Topo = barra superior; Sidebar = grelha direita; Lateral = vertical nas sidebars de leitura (largura da coluna, enquadramento 1:1) — crie 2 a 4 banners Lateral ativos para rodarem em slide a cada 5s; Rodapé = final da página.</small>
                     @error('posicao')<p class="form-error" id="erro-posicao" role="alert">{{ $message }}</p>@enderror
                 </div>
 

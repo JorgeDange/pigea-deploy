@@ -67,6 +67,8 @@
         <script src="{{ asset('js/menu.js') }}" defer></script>
         {{-- FASE 15 — rotação dos destaques publicitários (autoplay 4s) --}}
         <script src="{{ asset('js/destaque.js') }}" defer></script>
+        {{-- FASE 18 — rotação dos banners verticais `lateral` (autoplay 5s) --}}
+        <script src="{{ asset('js/banner-lateral.js') }}" defer></script>
         @stack('scripts')
     </body>
 </html>
