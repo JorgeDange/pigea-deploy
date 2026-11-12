@@ -207,6 +207,10 @@ blockquote:before {
 	float: left;
 	color: #fff;
 	border-radius: 2px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 }
 .topbar-social a  {	
     transition: all 100ms linear;
@@ -1632,6 +1636,11 @@ section {
     float: left;
     color: #fff;
     border-radius: 2px;
+    /* centrado vertical + horizontal — o ícone deixa de colar à esquerda */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 .footer-list li {
     display: block;
