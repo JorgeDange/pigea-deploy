@@ -86,12 +86,30 @@
                 @error('descricao')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Documentos</label>
-                <div class="upload-box">PDF (pode selecionar vários)<br><input type="file" name="documentos[]" multiple></div>
+                <div class="file-upload" data-accept="pdf">
+                  <label class="file-upload-button" for="documentos"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher ficheiro(s)</label>
+                  <div class="file-upload-meta">
+                    <span class="file-upload-name">Nenhum ficheiro selecionado</span>
+                    <small class="help-text">Só PDF (pode selecionar vários).</small>
+                  </div>
+                  <input type="file" id="documentos" name="documentos[]" accept="application/pdf" multiple>
+                  <button type="button" class="file-upload-remove">Remover</button>
+                  <p class="file-upload-erro" role="alert"></p>
+                </div>
                 @error('documentos')<p class="form-error" role="alert">{{ $message }}</p>@enderror
                 @error('documentos.*')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Imagens</label>
-                <div class="upload-box">PNG ou JPG (pode selecionar vários)<br><input type="file" name="imagens[]" multiple></div>
+                <div class="file-upload" data-accept="image" data-max-bytes="4194304">
+                  <label class="file-upload-button" for="imagens"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem/imagens</label>
+                  <div class="file-upload-meta">
+                    <span class="file-upload-name">Nenhum ficheiro selecionado</span>
+                    <small class="help-text">PNG ou JPG (pode selecionar vários). Máx.: 4MB por imagem.</small>
+                  </div>
+                  <input type="file" id="imagens" name="imagens[]" accept="image/png,image/jpeg,image/webp" multiple>
+                  <button type="button" class="file-upload-remove">Remover</button>
+                  <p class="file-upload-erro" role="alert"></p>
+                </div>
                 @error('imagens')<p class="form-error" role="alert">{{ $message }}</p>@enderror
                 @error('imagens.*')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>

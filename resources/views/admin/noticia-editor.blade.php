@@ -152,8 +152,8 @@
                             <div class="dashboard-form-group">
                                 <span class="dashboard-form-label">Imagem de capa</span>
                                 <div class="cover-source">
-                                    <label class="dashboard-checkbox"><input type="radio" name="capa_fonte" value="ficheiro" {{ $fonteAtual === 'ficheiro' ? 'checked' : '' }}> Ficheiro (upload)</label>
-                                    <label class="dashboard-checkbox"><input type="radio" name="capa_fonte" value="link" {{ $fonteAtual === 'link' ? 'checked' : '' }}> Link (URL)</label>
+                                    <label class="dashboard-checkbox"><input type="radio" name="capa_fonte" value="ficheiro" {{ $fonteAtual === 'ficheiro' ? 'checked' : '' }}> Carregar ficheiro</label>
+                                    <label class="dashboard-checkbox"><input type="radio" name="capa_fonte" value="link" {{ $fonteAtual === 'link' ? 'checked' : '' }}> Colar endereço de imagem (link)</label>
                                 </div>
 
                                 {{-- Painel: upload do ficheiro --}}

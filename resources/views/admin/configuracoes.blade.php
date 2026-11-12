@@ -35,12 +35,35 @@
                 <div class="dashboard-form-col">
               <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Logótipo</label>
-                <div class="upload-box">PNG ou JPG até 2MB<br><input type="file" name="logo"></div>
-                <small class="help-text">Recomendado: 400x100px (Fundo transparente PNG).</small>
+                <div class="file-upload" data-accept="image" data-max-bytes="2097152">
+                    @if (!empty($definicoes['logo']))
+                    <img class="file-upload-preview" src="{{ asset('storage/' . $definicoes['logo']) }}" alt="Logótipo atual">
+                    @endif
+                    <label class="file-upload-button" for="logo"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem</label>
+                    <div class="file-upload-meta">
+                        <span class="file-upload-name">{{ !empty($definicoes['logo']) ? 'Logótipo atual: ' . basename($definicoes['logo']) : 'Nenhum ficheiro selecionado' }}</span>
+                        <small class="help-text">PNG ou JPG, até 2MB. Rec.: 400x100px.</small>
+                    </div>
+                    <input type="file" id="logo" name="logo" accept="image/png,image/jpeg">
+                    <button type="button" class="file-upload-remove">Remover</button>
+                    <p class="file-upload-erro" role="alert"></p>
+                </div>
                 @error('logo')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Favicon</label>
-                <div class="upload-box">PNG 32×32<br><input type="file" name="favicon"></div>
+                <div class="file-upload" data-accept="image">
+                    @if (!empty($definicoes['favicon']))
+                    <img class="file-upload-preview" src="{{ asset('storage/' . $definicoes['favicon']) }}" alt="Favicon atual">
+                    @endif
+                    <label class="file-upload-button" for="favicon"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem</label>
+                    <div class="file-upload-meta">
+                        <span class="file-upload-name">{{ !empty($definicoes['favicon']) ? 'Favicon atual: ' . basename($definicoes['favicon']) : 'Nenhum ficheiro selecionado' }}</span>
+                        <small class="help-text">PNG 32×32. Máx.: 256KB no servidor.</small>
+                    </div>
+                    <input type="file" id="favicon" name="favicon" accept="image/png">
+                    <button type="button" class="file-upload-remove">Remover</button>
+                    <p class="file-upload-erro" role="alert"></p>
+                </div>
                 @error('favicon')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>

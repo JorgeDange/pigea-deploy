@@ -152,34 +152,70 @@ $(function () {
         }
 
         function validarEActualizar() {
-            var ficheiro = input.files[0];
-            if (!ficheiro) return;
-            var tipo = (ficheiro.type || '').toLowerCase();
-            var permitidos = ['image/jpeg', 'image/png', 'image/webp'];
-            var maxBytes = 2 * 1024 * 1024; // capa (2MB); contexto tem limite maior no server-side
+            var ficheiros = input.files ? Array.prototype.slice.call(input.files) : [];
+            if (!ficheiros.length) return;
             if (erroEl) erroEl.textContent = '';
-            if (permitidos.indexOf(tipo) === -1) {
-                if (erroEl) erroEl.textContent = 'Formato não suportado. Usa JPG, PNG ou WebP.';
-                input.value = '';
-                if (preview) { preview.hidden = true; }
-                if (nomeEl) nomeEl.textContent = '';
-                return;
-            }
-            if (ficheiro.size > maxBytes) {
-                if (erroEl && root.dataset.limit === 'capa') {
-                    erroEl.textContent = 'A imagem excede o máximo de 2MB.';
+
+            var total = 0;
+            for (var i = 0; i < ficheiros.length; i++) {
+                var f = ficheiros[i];
+                total += f.size;
+                var tipo = (f.type || '').toLowerCase();
+                if (permitidos.indexOf(tipo) === -1) {
+                    if (erroEl) erroEl.textContent = msgFormato;
+                    input.value = '';
+                    if (preview) { preview.hidden = true; }
+                    if (nomeEl) nomeEl.textContent = '';
+                    return;
+                }
+                if (maxBytes !== Infinity && f.size > maxBytes) {
+                    if (erroEl) erroEl.textContent = 'O ficheiro excede o máximo de ' + bytesLegiveis(maxBytes) + '.';
                     input.value = '';
                     if (preview) { preview.hidden = true; }
                     if (nomeEl) nomeEl.textContent = '';
                     return;
                 }
             }
-            var leitor = new FileReader();
-            leitor.onload = function (ev) {
-                if (preview) { preview.src = ev.target.result; preview.hidden = false; }
-            };
-            leitor.readAsDataURL(ficheiro);
-            if (nomeEl) nomeEl.textContent = ficheiro.name + ' · ' + bytesLegiveis(ficheiro.size);
+
+            var primeiro = ficheiros[0];
+            if (primeiro.type && primeiro.type.indexOf('image/') === 0) {
+                var leitor = new FileReader();
+                leitor.onload = function (ev) {
+                    if (preview) { preview.src = ev.target.result; preview.hidden = false; }
+                };
+                leitor.readAsDataURL(primeiro);
+            } else if (preview) {
+                preview.hidden = true;
+            }
+            if (nomeEl) {
+                nomeEl.textContent = ficheiros.length > 1
+                    ? ficheiros.length + ' ficheiros selecionados (' + bytesLegiveis(total) + ')'
+                    : primeiro.name + ' - ' + bytesLegiveis(primeiro.size);
+            }
+        }
+
+        /* Tipos aceites por data-accept="image|pdf[,...]" (imagem por omissão) */
+        var tiposAceites = {
+            image: ['image/jpeg', 'image/png', 'image/webp'],
+            pdf: ['application/pdf']
+        };
+        var aceita = (root.dataset.accept || 'image').toLowerCase().split(',');
+        var permitidos = [];
+        for (var k = 0; k < aceita.length; k++) {
+            var lista = tiposAceites[aceita[k].trim()];
+            if (lista) permitidos = permitidos.concat(lista);
+        }
+        if (!permitidos.length) permitidos = tiposAceites.image.slice();
+        var soPdf = aceita.length === 1 && aceita[0].trim() === 'pdf';
+        var msgFormato = soPdf
+            ? 'Formato não suportado. Usa PDF.'
+            : 'Formato não suportado. Usa JPG, PNG ou WebP.';
+
+        /* Limite de tamanho por data-max-bytes (bytes).
+           data-limit="capa" mantém o limite de 2MB de sempre. */
+        var maxBytes = parseInt(root.dataset.maxBytes || '0', 10);
+        if (!maxBytes || isNaN(maxBytes)) {
+            maxBytes = root.dataset.limit === 'capa' ? 2 * 1024 * 1024 : Infinity;
         }
 
         if (btn) btn.addEventListener('click', function () { input.click(); });

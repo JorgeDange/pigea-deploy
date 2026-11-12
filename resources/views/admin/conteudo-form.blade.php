@@ -91,9 +91,19 @@
                     @break
 
                   @case('ficheiro')
-                    <div class="upload-box">PNG ou JPG até 4MB
-                      @if (!empty($campo['actual']))<br><small>Imagem actual: {{ $campo['actual'] }}</small>@endif
-                      <br><input type="file" name="{{ $campo['nome'] }}"></div>
+                    <div class="file-upload" data-accept="image" data-max-bytes="4194304">
+                      @if (!empty($campo['actual']))
+                      <img class="file-upload-preview" src="{{ str_starts_with($campo['actual'], 'http') ? $campo['actual'] : asset($campo['actual']) }}" alt="Imagem atual">
+                      @endif
+                      <label class="file-upload-button" for="{{ $campo['nome'] }}"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem</label>
+                      <div class="file-upload-meta">
+                        <span class="file-upload-name">{{ !empty($campo['actual']) ? 'Imagem atual: ' . $campo['actual'] : 'Nenhum ficheiro selecionado' }}</span>
+                        <small class="help-text">PNG ou JPG até 4MB.</small>
+                      </div>
+                      <input type="file" id="{{ $campo['nome'] }}" name="{{ $campo['nome'] }}" accept="image/png,image/jpeg,image/webp">
+                      <button type="button" class="file-upload-remove">Remover</button>
+                      <p class="file-upload-erro" role="alert"></p>
+                    </div>
                     @break
                 @endswitch
                 @error($campo['nome'])<p class="form-error" role="alert">{{ $message }}</p>@enderror
