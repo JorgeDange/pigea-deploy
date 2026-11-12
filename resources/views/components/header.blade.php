@@ -37,8 +37,9 @@
     <!-- top bar end -->
     <div class="header-inner fl-wrap">
         <div class="container">
-            <!-- logo holder  -->
-            <a href="{{ route('home') }}" class="logo-holder"><img src="{{ asset('images/logo.png') }}" alt="PIGEA"></a>
+            {{-- Logótipo configurável no admin; fallback images/logo.png do tema --}}
+            @php $definicoes = \App\Models\Setting::todas(); @endphp
+            <a href="{{ route('home') }}" class="logo-holder"><img src="{{ \App\Models\Setting::imagem($definicoes['logo'] ?? null, 'images/logo.png') }}" alt="{{ \App\Models\Setting::portal() }}"></a>
             <!-- logo holder end -->
             <!-- header-search-wrap -->
             <div class="header-search-wrap novis_sarch">

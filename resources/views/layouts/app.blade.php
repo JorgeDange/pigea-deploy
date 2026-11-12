@@ -3,15 +3,15 @@
     <head>
         <!--=============== basic  ===============-->
         <meta charset="UTF-8">
-        <title>@yield('title', 'PIGEA — Plataforma de Impulsionamento das Geociências em Angola')</title>
+        <title>@yield('title', \App\Models\Setting::tituloPadrao())</title>
         <meta name="robots" content="index, follow" />
         <meta name="keywords" content="@yield('keywords', '')" />
-        <meta name="description" content="@yield('description', 'PIGEA reúne notícias, projetos mineiros, empregos, formação e investigação das geociências em Angola.')">
-        <meta property="og:title" content="@yield('og_title', 'PIGEA — Plataforma de Impulsionamento das Geociências em Angola')">
-        <meta property="og:description" content="@yield('og_description', 'PIGEA reúne notícias, projetos mineiros, empregos, formação e investigação das geociências em Angola.')">
+        <meta name="description" content="@yield('description', \App\Models\Setting::descricaoPadrao())" />
+        <meta property="og:title" content="@yield('og_title', \App\Models\Setting::tituloPadrao())" />
+        <meta property="og:description" content="@yield('og_description', \App\Models\Setting::descricaoPadrao())" />
         <meta property="og:type" content="website">
         <meta property="og:locale" content="pt_AO">
-        <meta property="og:site_name" content="PIGEA">
+        <meta property="og:site_name" content="{{ \App\Models\Setting::portal() }}">
         <!--=============== css  ===============-->
         <link type="text/css" rel="stylesheet" href="{{ asset('css/plugins.css') }}">
         <link type="text/css" rel="stylesheet" href="{{ asset('css/style.css') }}">
@@ -20,7 +20,9 @@
         <link type="text/css" rel="stylesheet" href="{{ asset('css/menu.css') }}">
         <link type="text/css" rel="stylesheet" href="{{ asset('css/topo.css') }}">
         <!--=============== favicons ===============-->
-        <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+        {{-- Favicon configurável no admin (Geral); fallback images/favicon.png --}}
+        @php $definicoes = \App\Models\Setting::todas(); @endphp
+        <link rel="icon" type="image/png" href="{{ \App\Models\Setting::imagem($definicoes['favicon'] ?? null, 'images/favicon.png') }}">
         @stack('styles')
     </head>
     <body>

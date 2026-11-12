@@ -194,7 +194,6 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
     Route::post('/configuracoes/contactos', [SettingsController::class, 'contactos'])->middleware('can:settings.manage')->name('configuracoes.contactos');
     Route::post('/configuracoes/redes', [SettingsController::class, 'redes'])->middleware('can:settings.manage')->name('configuracoes.redes');
     Route::post('/configuracoes/seo', [SettingsController::class, 'seo'])->middleware('can:settings.manage')->name('configuracoes.seo');
-    Route::post('/configuracoes/email', [SettingsController::class, 'email'])->middleware('can:settings.manage')->name('configuracoes.email');
 
     /*
     |----------------------------------------------------------------------

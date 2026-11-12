@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Contactos | PIGEA')
-@section('description', 'Contacte o PIGEA: Luanda, Angola — geral@pigea.ao')
+@php
+    $definicoes = \App\Models\Setting::todas();
+    $enderecoContacto = trim((string) ($definicoes['endereco'] ?? '')) ?: 'Luanda, Angola';
+    $emailContacto = trim((string) ($definicoes['email'] ?? '')) ?: 'geral@pigea.ao';
+    $telefoneContacto = trim((string) ($definicoes['telefone'] ?? '')) ?: '+244 000 000 000';
+@endphp
+@section('title', 'Contactos | ' . \App\Models\Setting::portal())
+@section('description', 'Contacte o ' . \App\Models\Setting::portal() . ': ' . $enderecoContacto . ' — ' . $emailContacto)
 
 @section('content')
 
@@ -35,9 +41,9 @@
                                     <div class="pr-subtitle prs_big">Details</div>
                                     <!--card-item -->
                                     <ul class="contacts-list fl-wrap">
-                                        <li><span><i class="fal fa-map-marker"></i> Morada :</span> <a href="#">Luanda, Angola</a></li>
-                                        <li><span><i class="fal fa-phone"></i> Telefone :</span> <a href="tel:+244000000000">+244 000 000 000</a></li>
-                                        <li><span><i class="fal fa-envelope"></i> Email :</span> <a href="mailto:geral@pigea.ao">geral@pigea.ao</a></li>
+                                        <li><span><i class="fal fa-map-marker"></i> Morada :</span> <a href="#">{{ $enderecoContacto }}</a></li>
+                                        <li><span><i class="fal fa-phone"></i> Telefone :</span> <a href="tel:{{ preg_replace('/\s+/', '', $telefoneContacto) }}">{{ $telefoneContacto }}</a></li>
+                                        <li><span><i class="fal fa-envelope"></i> Email :</span> <a href="mailto:{{ $emailContacto }}">{{ $emailContacto }}</a></li>
                                     </ul>
                                     <!--card-item end -->
                                     <div class="contact-social fl-wrap">

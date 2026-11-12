@@ -74,9 +74,16 @@
                         <div class="footer-widget-content">
                             <div class="footer-list footer-box fl-wrap">
                                 <ul>
-                                    <li> <a href="{{ route('contacts') }}"><i class="fas fa-map-marker-alt"></i> Luanda, Angola</a></li>
-                                    <li> <a href="mailto:geral@pigea.ao"><i class="fas fa-envelope"></i> geral@pigea.ao</a></li>
-                                    <li> <a href="tel:+244000000000"><i class="fas fa-phone"></i> +244 000 000 000</a></li>
+                                    {{-- Dados configuráveis no admin > Configurações > Contactos --}}
+                                    @php
+                                        $definicoes = \App\Models\Setting::todas();
+                                        $enderecoRodape = trim((string) ($definicoes['endereco'] ?? '')) ?: 'Luanda, Angola';
+                                        $emailRodape = trim((string) ($definicoes['email'] ?? '')) ?: 'geral@pigea.ao';
+                                        $telefoneRodape = trim((string) ($definicoes['telefone'] ?? '')) ?: '+244 000 000 000';
+                                    @endphp
+                                    <li> <a href="{{ route('contacts') }}"><i class="fas fa-map-marker-alt"></i> {{ $enderecoRodape }}</a></li>
+                                    <li> <a href="mailto:{{ $emailRodape }}"><i class="fas fa-envelope"></i> {{ $emailRodape }}</a></li>
+                                    <li> <a href="tel:{{ preg_replace('/\s+/', '', $telefoneRodape) }}"><i class="fas fa-phone"></i> {{ $telefoneRodape }}</a></li>
                                 </ul>
                             </div>
                         </div>

@@ -192,45 +192,4 @@
           </form>
           </div>
         </div>
-        <div class="card">
-          <div class="card-head">
-            <h3 class="card-title">Idiomas</h3>
-            
-          </div>
-          <div class="card-body">
-            <ul class="list-check">
-              <li><span>Português (PT) — idioma principal</span><label class="switch"><input type="checkbox" checked><span></span></label></li>
-              <li><span>Inglês (EN) — tradução do portal</span><label class="switch"><input type="checkbox"><span></span></label></li>
-            </ul>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <h3 class="card-title">Notificações por email</h3>
-            
-          </div>
-          <div class="card-body">
-<form class="dashboard-form" action="{{ route('admin.configuracoes.email') }}" method="post">
-              @csrf
-              <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Modelo de notificação</label>
-                <select class="dashboard-form-select" name="template">
-                <option value="" @selected(old('template', $definicoes['template'] ?? '') === '')>Selecionar modelo…</option>
-                <option value="novo-registo" @selected(old('template', $definicoes['template'] ?? '') === 'novo-registo')>Novo registo de empresa</option>
-                <option value="newsletter" @selected(old('template', $definicoes['template'] ?? '') === 'newsletter')>Newsletter semanal</option>
-              </select>
-                @error('template')<p class="form-error" role="alert">{{ $message }}</p>@enderror
-              </div>
-              <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Texto do email</label>
-                <textarea class="dashboard-form-textarea" name="texto_email" rows="4" placeholder="Corpo do email de notificação (suporta variáveis @{{nome}}, @{{data}})…">{{ old('texto_email', $definicoes['texto_email'] ?? '') }}</textarea>
-                @error('texto_email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
-              </div>
-              <div class="dashboard-form-actions">
-                <button type="submit" class="btn-primary"><i class="fa fa-save"></i> Guardar</button>
-                
-              </div>
-          </form>
-          </div>
-        </div>
 @endsection

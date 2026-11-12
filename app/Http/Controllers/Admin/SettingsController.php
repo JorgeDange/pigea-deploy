@@ -10,15 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 /**
- * Os 5 formulários de `/admin/configuracoes` (protótipo admin/configuracoes.html).
+ * Os formulários de `/admin/configuracoes` (protótipo admin/configuracoes.html).
  *
- * No protótipo cada cartão tem `<form class="dashboard-form">` sem `action` e um
+ * No protótipo cada cartão tinha `<form class="dashboard-form">` sem `action` e um
  * botão *Guardar* que não fazia nada. Aqui cada cartão submete para a sua rota
  * `admin.configuracoes.<secção>`, valida com as regras do Laravel (fase.md §2.2)
  * e grava na tabela `settings`.
  *
- * O cartão **Idiomas** não tem `<form>` no protótipo (só duas `switch` soltas),
- * por isso continua visual — não há o que submeter.
+ * Nota: o cartão **Notificações por email** foi removido (o sistema por trás
+ * ainda não existe — o protótipo também não o tinha feito funcionar) e o
+ * **Idiomas**, sem `<form>` nem efeito, também foi removido.
  */
 class SettingsController extends Controller
 {
@@ -53,10 +54,6 @@ class SettingsController extends Controller
             'meta_title' => 'nullable|string|max:60',
             'meta_description' => 'nullable|string|max:160',
         ],
-        'email' => [
-            'template' => 'nullable|in:novo-registo,newsletter',
-            'texto_email' => 'nullable|string|max:2000',
-        ],
     ];
 
     /** Página com os valores já guardados (vazios = placeholder do protótipo). */
@@ -89,12 +86,6 @@ class SettingsController extends Controller
     public function seo(Request $request): RedirectResponse
     {
         return $this->guardar($request, 'seo');
-    }
-
-    /** Cartão "Notificações por email" (modelo e texto do email). */
-    public function email(Request $request): RedirectResponse
-    {
-        return $this->guardar($request, 'email');
     }
 
     /**
