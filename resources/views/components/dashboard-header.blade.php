@@ -14,7 +14,7 @@
     <a href="{{ route('home') }}" target="_blank" rel="noopener" class="btn-ghost btn-sm header-ver-site"><i class="fa fa-external-link-alt"></i> Ver site</a>
     <button type="button" class="header-icon js-modal-open" data-modal="notificacoes-modal" aria-label="Abrir notificações" title="Notificações"><i class="fa fa-bell" aria-hidden="true"></i>@if (($pendentesModeracao ?? 0) > 0)<span class="badge">{{ $pendentesModeracao }}</span>@endif</button>
     <div class="header-user">
-      <img src="{{ asset(auth()->user()->avatar ?: 'images/avatar/1.jpg') }}" alt="{{ auth()->user()->name }}">
+      <img src="{{ \App\Support\Autor::avatarUrl(auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}">
       <span>{{ auth()->user()->name }}<small class="header-user-role">{{ auth()->user()->hasRole('admin') ? 'Admin' : (auth()->user()->hasRole('editor') ? 'Editor' : 'Colaborador') }}</small></span>
     </div>
     <a href="#" onclick="event.preventDefault(); document.getElementById('form-sair').submit();" class="header-logout" aria-label="Sair"><i class="fa fa-sign-out"></i></a>
