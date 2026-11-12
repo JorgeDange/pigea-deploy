@@ -90,8 +90,9 @@
                   <label class="file-upload-button" for="documentos"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher ficheiro(s)</label>
                   <div class="file-upload-meta">
                     <span class="file-upload-name">Nenhum ficheiro selecionado</span>
-                    <small class="help-text">Só PDF (pode selecionar vários).</small>
+                    <small class="help-text">Só PDF (pode selecionar vários). O pré-visualizador mostra o PDF em miniatura.</small>
                   </div>
+                  <div class="file-upload-docs" hidden></div>
                   <input type="file" id="documentos" name="documentos[]" accept="application/pdf" multiple>
                   <button type="button" class="file-upload-remove">Remover</button>
                   <p class="file-upload-erro" role="alert"></p>
@@ -106,6 +107,7 @@
                     <span class="file-upload-name">Nenhum ficheiro selecionado</span>
                     <small class="help-text">PNG ou JPG (pode selecionar vários). Máx.: 4MB por imagem.</small>
                   </div>
+                  <div class="file-upload-previews" hidden></div>
                   <input type="file" id="imagens" name="imagens[]" accept="image/png,image/jpeg,image/webp" multiple>
                   <button type="button" class="file-upload-remove">Remover</button>
                   <p class="file-upload-erro" role="alert"></p>

@@ -151,9 +151,8 @@
                                     <label class="dashboard-checkbox"><input type="radio" name="guest_author_foto_fonte" value="link" {{ $guestFotoFonte === 'link' ? 'checked' : '' }}> Colar endereço (link)</label>
                                 </div>
                                 <div id="guest-foto-ficheiro" class="file-upload" data-accept="image" data-max-bytes="1048576"{{ $guestFotoFonte === 'link' ? ' hidden' : '' }}>
-                                    @if ($noticia?->guest_author_avatar && ! str_starts_with($noticia->guest_author_avatar, 'http'))
-                                        <img class="file-upload-preview" src="{{ asset($noticia->guest_author_avatar) }}" alt="Foto do autor convidado">
-                                    @endif
+                                    @php $gSrc = $noticia?->guest_author_avatar; @endphp
+                                    <img class="file-upload-preview" @if ($gSrc) src="{{ str_starts_with($gSrc, 'http') ? $gSrc : asset($gSrc) }}" alt="Foto do autor convidado" @else hidden alt="Foto do autor convidado" @endif>
                                     <label class="file-upload-button" for="guest_author_avatar"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher foto</label>
                                     <div class="file-upload-meta">
                                         <span class="file-upload-name">{{ $noticia?->guest_author_avatar ? 'Foto atual: ' . basename($noticia->guest_author_avatar) : 'Nenhuma foto selecionada' }}</span>
@@ -204,9 +203,7 @@
 
                                 {{-- Painel: upload do ficheiro --}}
                                 <div id="capa-ficheiro" class="file-upload" data-limit="capa"{{ $fonteAtual === 'link' ? ' hidden' : '' }}>
-                                    @if ($noticia?->image)
-                                        <img class="file-upload-preview" src="{{ image_url($noticia->image) }}" alt="Capa atual da notícia (imagem em uso)">
-                                    @endif
+                                    <img class="file-upload-preview" @if ($noticia?->image) src="{{ image_url($noticia->image) }}" alt="Capa atual da notícia (imagem em uso)" @else hidden alt="Capa" @endif>
                                     <label class="file-upload-button" for="capa"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher ficheiro</label>
                                     <div class="file-upload-meta">
                                         <span class="file-upload-name">{{ $noticia?->image ? 'Imagem atual: ' . basename($noticia->image) : 'Nenhum ficheiro selecionado' }}</span>
@@ -246,6 +243,7 @@
                                         <span class="file-upload-name">Nenhum ficheiro selecionado</span>
                                         <small class="help-text" id="contexto-hint">Recomendado: 800px de largura. JPG, PNG, WebP. Máx: 4MB por imagem (até 10).</small>
                                     </div>
+                                    <div class="file-upload-previews" hidden></div>
                                     <input type="file" id="contexto" name="contexto[]" accept="image/png,image/jpeg,image/webp" multiple aria-describedby="erro-contexto erro-contexto-item contexto-hint">
                                     <button type="button" class="file-upload-remove">Remover</button>
                                     <p class="file-upload-erro" role="alert"></p>

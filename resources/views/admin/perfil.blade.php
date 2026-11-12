@@ -58,6 +58,7 @@
         </div>
 
         <div id="avatar-ficheiro" class="file-upload" data-accept="image" data-max-bytes="1048576"{{ $fonteFoto === 'link' ? ' hidden' : '' }}>
+          <img class="file-upload-preview" hidden alt="Foto">
           <label class="file-upload-button" for="avatar"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem</label>
           <div class="file-upload-meta">
             <span class="file-upload-name">Nenhum ficheiro selecionado</span>

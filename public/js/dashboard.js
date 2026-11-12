@@ -143,6 +143,8 @@ $(function () {
         var preview = root.querySelector('.file-upload-preview');
         var nomeEl = root.querySelector('.file-upload-name');
         var erroEl = root.querySelector('.file-upload-erro');
+        var previewsStrip = root.querySelector('.file-upload-previews');
+        var docsBox = root.querySelector('.file-upload-docs');
 
         function bytesLegiveis(n) {
             if (n === 0) return '0 B';
@@ -151,47 +153,28 @@ $(function () {
             return (n / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1) + ' ' + u[i];
         }
 
-        function validarEActualizar() {
-            var ficheiros = input.files ? Array.prototype.slice.call(input.files) : [];
-            if (!ficheiros.length) return;
-            if (erroEl) erroEl.textContent = '';
+        /* escapa nomes de ficheiros para innerHTML */
+        function escaparTexto(valor) {
+            var mapa = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+            return String(valor).replace(/[&<>"']/g, function (ch) { return mapa[ch]; });
+        }
 
-            var total = 0;
-            for (var i = 0; i < ficheiros.length; i++) {
-                var f = ficheiros[i];
-                total += f.size;
-                var tipo = (f.type || '').toLowerCase();
-                if (permitidos.indexOf(tipo) === -1) {
-                    if (erroEl) erroEl.textContent = msgFormato;
-                    input.value = '';
-                    if (preview) { preview.hidden = true; }
-                    if (nomeEl) nomeEl.textContent = '';
-                    return;
-                }
-                if (maxBytes !== Infinity && f.size > maxBytes) {
-                    if (erroEl) erroEl.textContent = 'O ficheiro excede o máximo de ' + bytesLegiveis(maxBytes) + '.';
-                    input.value = '';
-                    if (preview) { preview.hidden = true; }
-                    if (nomeEl) nomeEl.textContent = '';
-                    return;
-                }
-            }
+        /* liberta blob URLs e limpa o conteúdo de um contentor de preview */
+        function limparContentor(box) {
+            if (!box) return;
+            box.querySelectorAll('img, iframe').forEach(function (m) {
+                var src = m.getAttribute('src') || '';
+                if (src.indexOf('blob:') === 0) { URL.revokeObjectURL(src); }
+            });
+            box.innerHTML = '';
+            box.hidden = true;
+        }
 
-            var primeiro = ficheiros[0];
-            if (primeiro.type && primeiro.type.indexOf('image/') === 0) {
-                var leitor = new FileReader();
-                leitor.onload = function (ev) {
-                    if (preview) { preview.src = ev.target.result; preview.hidden = false; }
-                };
-                leitor.readAsDataURL(primeiro);
-            } else if (preview) {
-                preview.hidden = true;
-            }
-            if (nomeEl) {
-                nomeEl.textContent = ficheiros.length > 1
-                    ? ficheiros.length + ' ficheiros selecionados (' + bytesLegiveis(total) + ')'
-                    : primeiro.name + ' - ' + bytesLegiveis(primeiro.size);
-            }
+        /* esconde/zera TODOS os previews do bloco (erro de validação e Remover) */
+        function limparPreviews() {
+            if (preview) { preview.hidden = true; preview.removeAttribute('src'); }
+            limparContentor(previewsStrip);
+            limparContentor(docsBox);
         }
 
         /* Tipos aceites por data-accept="image|pdf[,...]" (imagem por omissão) */
@@ -218,13 +201,92 @@ $(function () {
             maxBytes = root.dataset.limit === 'capa' ? 2 * 1024 * 1024 : Infinity;
         }
 
+        function validarEActualizar() {
+            var ficheiros = input.files ? Array.prototype.slice.call(input.files) : [];
+            if (!ficheiros.length) return;
+            if (erroEl) erroEl.textContent = '';
+
+            var total = 0;
+            for (var i = 0; i < ficheiros.length; i++) {
+                var f = ficheiros[i];
+                total += f.size;
+                var tipo = (f.type || '').toLowerCase();
+                if (permitidos.indexOf(tipo) === -1) {
+                    if (erroEl) erroEl.textContent = msgFormato;
+                    input.value = '';
+                    limparPreviews();
+                    if (nomeEl) nomeEl.textContent = '';
+                    return;
+                }
+                if (maxBytes !== Infinity && f.size > maxBytes) {
+                    if (erroEl) erroEl.textContent = 'O ficheiro excede o máximo de ' + bytesLegiveis(maxBytes) + '.';
+                    input.value = '';
+                    limparPreviews();
+                    if (nomeEl) nomeEl.textContent = '';
+                    return;
+                }
+            }
+
+            /* preview de IMAGEM individual (img .file-upload-preview) */
+            var primeiro = ficheiros[0];
+            if (primeiro.type && primeiro.type.indexOf('image/') === 0) {
+                var leitor = new FileReader();
+                leitor.onload = function (ev) {
+                    if (preview) { preview.src = ev.target.result; preview.hidden = false; }
+                };
+                leitor.readAsDataURL(primeiro);
+            } else if (preview) {
+                preview.hidden = true;
+            }
+
+            /* faixa de miniaturas — apenas imagens */
+            if (previewsStrip) {
+                limparContentor(previewsStrip);
+                var imagens = 0;
+                ficheiros.forEach(function (ficheiro) {
+                    if ((ficheiro.type || '').indexOf('image/') !== 0) return;
+                    if (imagens >= 10) return;
+                    imagens++;
+                    var url = URL.createObjectURL(ficheiro);
+                    var item = document.createElement('div');
+                    item.className = 'file-upload-preview-item';
+                    item.innerHTML = '<img src="' + url + '" alt=""><span>' + escaparTexto(ficheiro.name) + '</span>';
+                    previewsStrip.appendChild(item);
+                });
+                previewsStrip.hidden = !imagens;
+            }
+
+            /* miniaturas de PDF — SÓ se o ficheiro for mesmo PDF */
+            if (docsBox) {
+                limparContentor(docsBox);
+                var pdfs = 0;
+                ficheiros.forEach(function (ficheiro) {
+                    if ((ficheiro.type || '') !== 'application/pdf') return; // preview SÓ PDF
+                    if (pdfs >= 10) return;
+                    pdfs++;
+                    var url = URL.createObjectURL(ficheiro);
+                    var item = document.createElement('div');
+                    item.className = 'file-upload-doc';
+                    item.innerHTML = '<iframe src="' + url + '#page=1&view=FitH" title="' + escaparTexto(ficheiro.name) + '" loading="lazy"></iframe><span>' + escaparTexto(ficheiro.name) + '</span>';
+                    docsBox.appendChild(item);
+                });
+                docsBox.hidden = !pdfs;
+            }
+
+            if (nomeEl) {
+                nomeEl.textContent = ficheiros.length > 1
+                    ? ficheiros.length + ' ficheiros selecionados (' + bytesLegiveis(total) + ')'
+                    : primeiro.name + ' - ' + bytesLegiveis(primeiro.size);
+            }
+        }
+
         if (btn) btn.addEventListener('click', function () { input.click(); });
         input.addEventListener('change', validarEActualizar);
 
         var remover = root.querySelector('.file-upload-remove');
         if (remover) remover.addEventListener('click', function () {
             input.value = '';
-            if (preview) { preview.hidden = true; }
+            limparPreviews();
             if (nomeEl) nomeEl.textContent = '';
             if (erroEl) erroEl.textContent = '';
         });

@@ -36,9 +36,7 @@
               <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Logótipo</label>
                 <div class="file-upload" data-accept="image" data-max-bytes="2097152">
-                    @if (!empty($definicoes['logo']))
-                    <img class="file-upload-preview" src="{{ asset('storage/' . $definicoes['logo']) }}" alt="Logótipo atual">
-                    @endif
+                    <img class="file-upload-preview" @if (!empty($definicoes['logo'])) src="{{ asset('storage/' . $definicoes['logo']) }}" alt="Logótipo atual" @else hidden alt="Logótipo" @endif>
                     <label class="file-upload-button" for="logo"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem</label>
                     <div class="file-upload-meta">
                         <span class="file-upload-name">{{ !empty($definicoes['logo']) ? 'Logótipo atual: ' . basename($definicoes['logo']) : 'Nenhum ficheiro selecionado' }}</span>
@@ -52,9 +50,7 @@
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Favicon</label>
                 <div class="file-upload" data-accept="image">
-                    @if (!empty($definicoes['favicon']))
-                    <img class="file-upload-preview" src="{{ asset('storage/' . $definicoes['favicon']) }}" alt="Favicon atual">
-                    @endif
+                    <img class="file-upload-preview" @if (!empty($definicoes['favicon'])) src="{{ asset('storage/' . $definicoes['favicon']) }}" alt="Favicon atual" @else hidden alt="Favicon" @endif>
                     <label class="file-upload-button" for="favicon"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem</label>
                     <div class="file-upload-meta">
                         <span class="file-upload-name">{{ !empty($definicoes['favicon']) ? 'Favicon atual: ' . basename($definicoes['favicon']) : 'Nenhum ficheiro selecionado' }}</span>

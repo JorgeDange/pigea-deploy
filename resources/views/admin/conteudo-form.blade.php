@@ -92,9 +92,7 @@
 
                   @case('ficheiro')
                     <div class="file-upload" data-accept="image" data-max-bytes="4194304">
-                      @if (!empty($campo['actual']))
-                      <img class="file-upload-preview" src="{{ str_starts_with($campo['actual'], 'http') ? $campo['actual'] : asset($campo['actual']) }}" alt="Imagem atual">
-                      @endif
+                      <img class="file-upload-preview" @if (!empty($campo['actual'])) src="{{ str_starts_with($campo['actual'], 'http') ? $campo['actual'] : asset($campo['actual']) }}" alt="Imagem atual" @else hidden alt="Imagem" @endif>
                       <label class="file-upload-button" for="{{ $campo['nome'] }}"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem</label>
                       <div class="file-upload-meta">
                         <span class="file-upload-name">{{ !empty($campo['actual']) ? 'Imagem atual: ' . $campo['actual'] : 'Nenhum ficheiro selecionado' }}</span>
