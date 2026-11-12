@@ -10,7 +10,7 @@
   </div>
   <div class="table-wrap">
     <table class="dashboard-table">
-      <thead><tr><th scope="col">Título</th><th scope="col">Descrição</th><th scope="col">Tipo</th><th scope="col">Link de Download</th><th scope="col">Áreas</th><th scope="col">Ações</th></tr></thead>
+      <thead><tr><th scope="col">Título</th><th scope="col">Descrição</th><th scope="col">Tipo</th><th scope="col">Ficheiro para descarregar</th><th scope="col">Áreas</th><th scope="col">Ações</th></tr></thead>
       <tbody>
         @forelse ($documentos as $documento)
         <tr wire:key="documento-{{ $documento->id }}">
@@ -32,10 +32,5 @@
       </tbody>
     </table>
   </div>
-  <nav class="dashboard-pagination" aria-label="Paginação">
-    @for ($pagina = 1; $pagina <= $documentos->lastPage(); $pagina++)
-    <a href="#" wire:click="gotoPage({{ $pagina }})" @class(['active' => $pagina === $documentos->currentPage()]) aria-current="page">{{ $pagina }}</a>
-    @endfor
-    <a href="#" wire:click="gotoPage({{ min($documentos->currentPage() + 1, $documentos->lastPage()) }})">»</a>
-  </div>
+  @include('livewire.admin.pagination', ['registos' => $documentos])
 </div>

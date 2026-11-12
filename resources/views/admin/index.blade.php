@@ -81,11 +81,12 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/chart.umd.js') }}"></script>
+<script src="{{ asset('js/chart.umd.js') }}" defer></script>
 <script>
     // IIFE — os gráficos não poluem o escopo global. Chart.js carregado de
-    // `public/js` (CSP script-src 'self' — nunca CDN).
-    (() => {
+    // `public/js` (CSP script-src 'self' — nunca CDN) em defer; este código
+    // corre no DOMContentLoaded (depois do Chart.js defer) — ordem garantida.
+    document.addEventListener('DOMContentLoaded', () => {
         const opcoes = {
             responsive: true,
             maintainAspectRatio: false,
@@ -149,6 +150,6 @@
             document.getElementById('grafico-provincias')
                 .insertAdjacentHTML('afterend', '<p class="chart-vazio">Sem províncias registadas no conteúdo.</p>');
         }
-    })();
+    });
 </script>
 @endpush

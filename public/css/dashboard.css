@@ -887,6 +887,24 @@
 	color: #FFFFFF;
 }
 
+.dashboard-pagination a.disabled {
+	opacity: .4;
+	pointer-events: none;
+	cursor: default;
+}
+
+.dashboard-pagination .page-ellipsis {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 34px;
+	height: 34px;
+	padding: 0 9px;
+	color: #999999;
+	font-size: 13px;
+	user-select: none;
+}
+
 /* ---------- MODAL -------------------------------------------------------- */
 .dashboard-modal {
 	position: fixed;

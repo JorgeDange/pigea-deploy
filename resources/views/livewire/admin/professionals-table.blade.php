@@ -40,10 +40,5 @@
       </tbody>
     </table>
   </div>
-  <nav class="dashboard-pagination" aria-label="Paginação">
-    @for ($pagina = 1; $pagina <= $profissionais->lastPage(); $pagina++)
-    <a href="#" wire:click="gotoPage({{ $pagina }})" @class(['active' => $pagina === $profissionais->currentPage()]) aria-current="page">{{ $pagina }}</a>
-    @endfor
-    <a href="#" wire:click="gotoPage({{ min($profissionais->currentPage() + 1, $profissionais->lastPage()) }})">»</a>
-  </div>
+  @include('livewire.admin.pagination', ['registos' => $profissionais])
 </div>

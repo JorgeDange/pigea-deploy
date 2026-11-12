@@ -23,7 +23,8 @@
             @endif
           </td>
           <td>@if ($banner->link_destino)<a href="{{ $banner->link_destino }}" target="_blank" rel="noopener">Abrir link</a>@else—@endif</td>
-          <td>{{ ucfirst($banner->posicao) }}</td>
+          {{-- posições com acentos e nomes claros para não-técnicos --}}
+          <td>{{ ['topo' => 'Topo', 'sidebar' => 'Sidebar', 'lateral' => 'Lateral (vertical)', 'rodape' => 'Rodapé'][$banner->posicao] ?? ucfirst($banner->posicao) }}</td>
           <td>{{ ($banner->data_inicio?->format('d/m/Y') ?? '—').' → '.($banner->data_fim?->format('d/m/Y') ?? '—') }}</td>
           <td><span class="status-badge {{ $banner->ativo ? 'active' : 'neutral' }}">{{ $banner->ativo ? 'Ativo' : 'Inativo' }}</span></td>
           <td>
@@ -40,10 +41,5 @@
       </tbody>
     </table>
   </div>
-  <nav class="dashboard-pagination" aria-label="Paginação">
-    @for ($pagina = 1; $pagina <= $banners->lastPage(); $pagina++)
-    <a href="#" wire:click="gotoPage({{ $pagina }})" @class(['active' => $pagina === $banners->currentPage()]) aria-current="page">{{ $pagina }}</a>
-    @endfor
-    <a href="#" wire:click="gotoPage({{ min($banners->currentPage() + 1, $banners->lastPage()) }})" aria-label="Página seguinte">»</a>
-  </div>
+  @include('livewire.admin.pagination', ['registos' => $banners])
 </div>
