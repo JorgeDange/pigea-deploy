@@ -138,4 +138,48 @@ class BannersFrontendTest extends TestCase
         $this->assertStringContainsString('https://cdn.teste.ao/side.jpg', $html);
         $this->assertStringContainsString('box-widget', $html);
     }
+
+    /**
+     * FASE 18 — posição `lateral` (vertical ~300×600): renderiza com
+     * wrapper box-widget, classe própria e lazy (abaixo da dobra).
+     */
+    public function test_posicao_lateral_com_wrapper(): void
+    {
+        Banner::create([
+            'titulo' => 'TEST Lateral',
+            'imagem_url' => 'https://cdn.teste.ao/vertical.jpg',
+            'link_destino' => 'https://anunciante.teste.ao',
+            'posicao' => 'lateral',
+            'ativo' => true,
+        ]);
+
+        $html = $this->render('lateral', true);
+
+        $this->assertStringContainsString('https://cdn.teste.ao/vertical.jpg', $html);
+        $this->assertStringContainsString('banner-publicitario--lateral', $html);
+        $this->assertStringContainsString('box-widget', $html);
+        $this->assertStringContainsString('loading="lazy"', $html);
+    }
+
+    /** FASE 18 — sem banner `lateral` ativo, o slot vertical não gera HTML. */
+    public function test_posicao_lateral_sem_banner_nao_gera_html(): void
+    {
+        $this->assertSame('', $this->render('lateral'));
+    }
+
+    /** FASE 18 — banner `lateral` sem link fica só imagem (não clicável). */
+    public function test_posicao_lateral_sem_link_nao_e_clicavel(): void
+    {
+        Banner::create([
+            'titulo' => 'TEST Lateral Sem Link',
+            'imagem_url' => 'images/banners/lateral-demo.jpg',
+            'posicao' => 'lateral',
+            'ativo' => true,
+        ]);
+
+        $html = $this->render('lateral');
+
+        $this->assertStringContainsString('TEST Lateral Sem Link', $html);
+        $this->assertStringNotContainsString('<a ', $html);
+    }
 }

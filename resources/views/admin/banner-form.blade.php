@@ -18,7 +18,7 @@
     $imagemSrc = ($imagemUrl && str_starts_with($imagemUrl, 'http')) ? $imagemUrl : ($imagemUrl ? asset($imagemUrl) : '');
     $fonteImagem = old('imagem_fonte', ($imagemUrl && str_starts_with($imagemUrl, 'http')) ? 'link' : 'ficheiro');
     $posicaoAtual = old('posicao', $banner?->posicao ?? '');
-    $posicaoLabel = ['topo' => 'Topo (leaderboard)', 'sidebar' => 'Sidebar (coluna)', 'rodape' => 'Rodapé (largura total)'][$posicaoAtual] ?? 'Posição: selecionar';
+    $posicaoLabel = ['topo' => 'Topo (leaderboard)', 'sidebar' => 'Sidebar (coluna)', 'rodape' => 'Rodapé (largura total)', 'lateral' => 'Lateral (vertical da coluna)'][$posicaoAtual] ?? 'Posição: selecionar';
 @endphp
 
 <form class="editor-grid" action="{{ $banner === null ? route('admin.banners.novo.store') : route('admin.banners.atualizar', ['id' => $banner->id]) }}" method="post" enctype="multipart/form-data" id="banner-form" data-loading-submit>
@@ -96,11 +96,11 @@
                     <label class="dashboard-form-label" for="posicao">Posição</label>
                     <select class="dashboard-form-select" id="posicao" name="posicao" required aria-describedby="erro-posicao">
                         <option value="">Selecionar…</option>
-                        @foreach (['topo' => 'Topo (leaderboard 970×90)', 'sidebar' => 'Sidebar (coluna vertical)', 'rodape' => 'Rodapé (largura total)'] as $valor => $rotulo)
+                        @foreach (['topo' => 'Topo (leaderboard 970×90)', 'sidebar' => 'Sidebar (coluna vertical)', 'lateral' => 'Lateral (vertical da coluna)', 'rodape' => 'Rodapé (largura total)'] as $valor => $rotulo)
                         <option value="{{ $valor }}" @selected((string) $posicaoAtual === (string) $valor)>{{ $rotulo }}</option>
                         @endforeach
                     </select>
-                    <small class="help-text">Onde o banner aparece no site. Topo = barra superior; Sidebar = grelha direita; Rodapé = final da página.</small>
+                    <small class="help-text">Onde o banner aparece no site. Topo = barra superior; Sidebar = grelha direita; Lateral = vertical nas sidebars de leitura (largura da coluna, enquadramento 1:1); Rodapé = final da página.</small>
                     @error('posicao')<p class="form-error" id="erro-posicao" role="alert">{{ $message }}</p>@enderror
                 </div>
 

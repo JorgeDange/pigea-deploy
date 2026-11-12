@@ -104,3 +104,26 @@
 		max-height: 26px;
 	}
 }
+
+/* =====================================================================
+   FASE 18 — banner VERTICAL (posição `lateral`, componente
+   banner-publicitario nas sidebars: /noticias/{slug}, /projetos/{slug},
+   /eventos, /legislacao, /fornecedores, /pesquisa e home).
+   Ajustes do cliente (2026-11-12): LARGURA 100% da coluna (alinhado com
+   os widgets abaixo) e ALTURA A MEIO — enquadramento 1:1 com recorte
+   centrado (object-fit: cover), sem distorção.
+   Sem banner ativo, o componente não gera HTML (slot some).
+   ===================================================================== */
+.banner-publicitario--lateral {
+	width: 100%;
+	text-align: center;
+}
+
+.banner-publicitario--lateral img {
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	height: auto;
+	object-fit: cover;
+	display: block;
+	border-radius: 4px;
+}

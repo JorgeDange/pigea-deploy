@@ -81,7 +81,7 @@ class BannerFormController extends Controller
             'titulo' => ['required', 'string', 'max:190'],
             'imagem_link' => ['nullable', 'string', 'max:2048'],
             'link_destino' => ['nullable', 'url:http,https', 'max:300'],
-            'posicao' => ['required', Rule::in(['topo', 'sidebar', 'rodape'])],
+            'posicao' => ['required', Rule::in(['topo', 'sidebar', 'rodape', 'lateral'])],
             'data_inicio' => ['nullable', 'date'],
             'data_fim' => ['nullable', 'date', 'after_or_equal:data_inicio'],
             'ativo' => ['nullable', 'boolean'],

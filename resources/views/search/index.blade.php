@@ -83,6 +83,8 @@
                                             </div>
                                         </div>
                                         <!-- box-widget  end -->						
+                                        <!-- Banner vertical publicitario (FASE 18) -->
+                                        <x-banner-publicitario posicao="lateral" wrapper />
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
                                             <div class="box-widget-content">

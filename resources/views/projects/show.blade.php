@@ -204,6 +204,8 @@
                                 <div class="col-md-4">
                                     <!-- sidebar   -->
                                     <div class="sidebar-content fl-wrap fixed-bar">
+                                        <!-- Banner vertical publicitario (FASE 18) -->
+                                        <x-banner-publicitario posicao="lateral" wrapper />
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
                                             <div class="box-widget-content">

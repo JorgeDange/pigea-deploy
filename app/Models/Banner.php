@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Banner publicitário (restrutura.md §3.5).
  *
- * Exibido nas posições `topo`/`sidebar`/`rodape` enquanto `ativo` e dentro
+ * Exibido nas posições `topo`/`sidebar`/`rodape`/`lateral` (FASE 18: slot
+ * vertical na sidebar — largura da coluna, enquadramento 1:1) enquanto
+ * `ativo` e dentro
  * do período `data_inicio`..`data_fim` (limites opcionais = sempre válido
  * nesse limite). O frontend (Fase 6) substitui o `banner-placeholder` do
  * header pelo banner da posição `topo`. SoftDeletes: a eliminação no

@@ -158,6 +158,16 @@ class DirectorySeeder extends Seeder
             'data_fim' => null,
             'ativo' => true,
         ]);
+        // FASE 18 — slot vertical na sidebar (largura da coluna, 1:1)
+        Banner::create([
+            'titulo' => 'Banner Lateral — GeoAqua (vertical)',
+            'imagem_url' => 'images/banners/lateral-demo.jpg',
+            'link_destino' => 'https://example.ao/geoaqua',
+            'posicao' => 'lateral',
+            'data_inicio' => null,
+            'data_fim' => null,
+            'ativo' => true,
+        ]);
         Banner::create([
             'titulo' => 'Banner expirado (teste de período)',
             'imagem_url' => 'images/all/banner.jpg',

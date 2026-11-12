@@ -4,6 +4,7 @@
       <option value="">Posição: todas</option>
       <option value="topo">Topo</option>
       <option value="sidebar">Sidebar</option>
+      <option value="lateral">Lateral (vertical)</option>
       <option value="rodape">Rodapé</option>
     </select>
     <input type="text" placeholder="Procurar banner…" class="filter-search" wire:model.live.debounce.500ms="busca">
