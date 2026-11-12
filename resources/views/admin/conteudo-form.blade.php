@@ -37,6 +37,7 @@
                 @foreach ($coluna as $campo)
               <div class="dashboard-form-group">
                 <label class="dashboard-form-label">{{ $campo['rotulo'] }}</label>
+                @if (!empty($campo['hint']))<small class="help-text">{{ $campo['hint'] }}</small>@endif
                 @switch($campo['tipo'])
                   @case('text')
                     <input class="dashboard-form-input" type="text" name="{{ $campo['nome'] }}" placeholder="{{ $campo['placeholder'] ?? '' }}" value="{{ $campo['valor'] ?? '' }}" @required($campo['obrigatorio'] ?? false)>

@@ -140,7 +140,7 @@
               </div>
                 </div>
               </div>
-              <p class="helper-text">Os links alimentam o rodapé e a página de contactos; os «nomes públicos» aparecem no widget «Siga-nos» do site (ex.: <strong>pigea.ao</strong>). Sem link não configurado, a rede não aparece no site.</p>
+              <p class="helper-text">Os links alimentam o rodapé e a página de contactos; os «nomes públicos» aparecem na caixa «Siga-nos» do site (ex.: <strong>pigea.ao</strong>). Sem link não configurado, a rede não aparece no site.</p>
               <div class="dashboard-form-actions">
                 <button type="submit" class="btn-primary"><i class="fa fa-save"></i> Guardar</button>
                 
@@ -150,20 +150,20 @@
         </div>
         <div class="card">
           <div class="card-head">
-            <h3 class="card-title">SEO</h3>
+            <h3 class="card-title">Aparência nas pesquisas (Google)</h3>
             
           </div>
           <div class="card-body">
 <form class="dashboard-form" action="{{ route('admin.configuracoes.seo') }}" method="post">
               @csrf
               <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Meta title padrão</label>
-                <input class="dashboard-form-input" type="text" name="meta_title" placeholder="Título para os motores de busca (até 60 caracteres)" value="{{ old('meta_title', $definicoes['meta_title'] ?? '') }}">
+                <label class="dashboard-form-label">Título que aparece nas pesquisas</label>
+                <input class="dashboard-form-input" type="text" name="meta_title" placeholder="Título que aparece no Google (até 60 caracteres)" value="{{ old('meta_title', $definicoes['meta_title'] ?? '') }}">
                 @error('meta_title')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
               <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Meta description padrão</label>
-                <textarea class="dashboard-form-textarea" name="meta_description" rows="2" placeholder="Descrição para os motores de busca (até 160 caracteres)">{{ old('meta_description', $definicoes['meta_description'] ?? '') }}</textarea>
+                <label class="dashboard-form-label">Descrição que aparece nas pesquisas</label>
+                <textarea class="dashboard-form-textarea" name="meta_description" rows="2" placeholder="Descrição que aparece no Google (até 160 caracteres)">{{ old('meta_description', $definicoes['meta_description'] ?? '') }}</textarea>
                 @error('meta_description')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
               <div class="dashboard-form-actions">

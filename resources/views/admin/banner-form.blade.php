@@ -43,13 +43,13 @@
                     @error('titulo')<p class="form-error" id="erro-titulo" role="alert">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Imagem: upload assíncrono OU link externo --}}
+                {{-- Imagem: carregar ficheiro OU colar endereço --}}
                 <fieldset class="dashboard-form-group" aria-describedby="erro-imagem">
                     <legend class="dashboard-form-label">Imagem do banner</legend>
 
                     <div class="cover-source">
-                        <label class="dashboard-checkbox"><input type="radio" name="imagem_fonte" value="ficheiro" {{ $fonteImagem === 'ficheiro' ? 'checked' : '' }}> Ficheiro (upload)</label>
-                        <label class="dashboard-checkbox"><input type="radio" name="imagem_fonte" value="link" {{ $fonteImagem === 'link' ? 'checked' : '' }}> Link externo (URL)</label>
+                        <label class="dashboard-checkbox"><input type="radio" name="imagem_fonte" value="ficheiro" {{ $fonteImagem === 'ficheiro' ? 'checked' : '' }}> Carregar ficheiro do seu computador</label>
+                        <label class="dashboard-checkbox"><input type="radio" name="imagem_fonte" value="link" {{ $fonteImagem === 'link' ? 'checked' : '' }}> Colar endereço de imagem (link)</label>
                     </div>
 
                     {{-- Painel: upload --}}
@@ -64,7 +64,7 @@
                         <input type="file" name="imagem_upload_temporario" accept="image/jpeg,image/png,image/webp" aria-hidden="true" tabindex="-1">
 
                         <div class="upload-async-meta">
-                            <span class="upload-async-name">{{ $imagemSrc ? 'Ficheiro atual carregado' : 'Nenhuma imagem selecionada' }}</span>
+                            <span class="upload-async-name">{{ $imagemSrc ? 'Imagem atual (já carregada)' : 'Nenhuma imagem selecionada' }}</span>
                             <span class="upload-progress" hidden><span class="upload-progress-bar"></span></span>
                             <span class="upload-progress-value"></span>
                         </div>
@@ -74,14 +74,14 @@
 
                     {{-- Painel: link --}}
                     <div id="imagem-link" class="dashboard-form-group"{{ $fonteImagem === 'link' ? '' : ' hidden' }}>
-                        <label class="dashboard-form-label" for="imagem_link_url">URL da imagem</label>
+                        <label class="dashboard-form-label" for="imagem_link_url">Endereço da imagem</label>
                         <input class="dashboard-form-input" type="url" id="imagem_link_url" placeholder="https://…/banner.jpg" value="{{ old('imagem_fonte') === 'link' ? old('imagem_link') : (str_starts_with((string) $imagemUrl, 'http') ? $imagemUrl : '') }}" aria-describedby="erro-imagem">
-                        <small class="help-text">A imagem não é descarregada; o site mostra o URL diretamente.</small>
+                        <small class="help-text">A imagem mostra-se a partir do endereço onde estiver publicada; não fica guardada no site.</small>
                     </div>
                     <input type="hidden" name="imagem_link" id="imagem_link" value="{{ old('imagem_fonte') === 'link' && old('imagem_link') ? old('imagem_link') : $imagemUrl }}">
 
                     <small class="help-text">Recomendado: 970 × 250 px (líder) ou 970 × 90 px (top-bar). Formatos: JPG, PNG, WebP. Máx.: 4MB.</small>
-                    <small class="help-text"><i class="fa fa-cloud-arrow-up" aria-hidden="true"></i> Upload bidirecional: escolhe o ficheiro para carregar já ou cola um URL direto.</small>
+                    <small class="help-text"><i class="fa fa-cloud-arrow-up" aria-hidden="true"></i> É simples: carregue um ficheiro do seu computador ou cole o endereço (link) de uma imagem já publicada na internet.</small>
                     @error('imagem_link')<p class="form-error" id="erro-imagem" role="alert">{{ $message }}</p>@enderror
                 </fieldset>
 

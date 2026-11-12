@@ -81,7 +81,7 @@
                                 @error('publicar_em')<p class="form-error" id="erro-publicar_em" role="alert">{{ $message }}</p>@enderror
                             </div>
                             <details class="editor-more-seo">
-                                <summary>SEO — título e descrição nos motores de busca</summary>
+                                <summary>Título e descrição nas pesquisas (Google)</summary>
                                 <div class="dashboard-form-group">
                                     <label class="dashboard-form-label" for="meta_title">Título da página <small class="form-label-hint">(ideal 60 caracteres)</small></label>
                                     <input class="dashboard-form-input" id="meta_title" name="meta_title" type="text" maxlength="190" value="{{ old('meta_title', $noticia?->meta_title ?? '') }}" aria-describedby="erro-meta_title contador-meta-title">

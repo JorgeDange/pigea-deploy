@@ -43,13 +43,13 @@
                     @error('titulo')<p class="form-error" id="erro-titulo" role="alert">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Imagem: upload assíncrono OU link externo --}}
+                {{-- Imagem: carregar ficheiro OU colar endereço --}}
                 <fieldset class="dashboard-form-group" aria-describedby="erro-imagem">
                     <legend class="dashboard-form-label">Imagem do destaque</legend>
 
                     <div class="cover-source">
-                        <label class="dashboard-checkbox"><input type="radio" name="imagem_fonte" value="ficheiro" {{ $fonteImagem === 'ficheiro' ? 'checked' : '' }}> Ficheiro (upload)</label>
-                        <label class="dashboard-checkbox"><input type="radio" name="imagem_fonte" value="link" {{ $fonteImagem === 'link' ? 'checked' : '' }}> Link externo (URL)</label>
+                        <label class="dashboard-checkbox"><input type="radio" name="imagem_fonte" value="ficheiro" {{ $fonteImagem === 'ficheiro' ? 'checked' : '' }}> Carregar ficheiro do seu computador</label>
+                        <label class="dashboard-checkbox"><input type="radio" name="imagem_fonte" value="link" {{ $fonteImagem === 'link' ? 'checked' : '' }}> Colar endereço de imagem (link)</label>
                     </div>
 
                     <div id="imagem-ficheiro" class="upload-async" role="group" aria-label="Carregar imagem" data-upload-url="{{ route('admin.banner.imagem.store') }}"{{ $fonteImagem === 'link' ? ' hidden' : '' }}>
@@ -63,7 +63,7 @@
                         <input type="file" name="imagem_upload_temporario" accept="image/jpeg,image/png,image/webp" aria-hidden="true" tabindex="-1">
 
                         <div class="upload-async-meta">
-                            <span class="upload-async-name">{{ $imagemSrc ? 'Ficheiro atual carregado' : 'Nenhuma imagem selecionada' }}</span>
+                            <span class="upload-async-name">{{ $imagemSrc ? 'Imagem atual (já carregada)' : 'Nenhuma imagem selecionada' }}</span>
                             <span class="upload-progress" hidden><span class="upload-progress-bar"></span></span>
                             <span class="upload-progress-value"></span>
                         </div>
@@ -72,14 +72,14 @@
                     </div>
 
                     <div id="imagem-link" class="dashboard-form-group"{{ $fonteImagem === 'link' ? '' : ' hidden' }}>
-                        <label class="dashboard-form-label" for="imagem_link_url">URL da imagem</label>
+                        <label class="dashboard-form-label" for="imagem_link_url">Endereço da imagem</label>
                         <input class="dashboard-form-input" type="url" id="imagem_link_url" placeholder="https://…/destaque.jpg" value="{{ old('imagem_fonte') === 'link' ? old('imagem_link') : (str_starts_with((string) $imagemUrl, 'http') ? $imagemUrl : '') }}" aria-describedby="erro-imagem">
-                        <small class="help-text">A imagem não é descarregada; o site mostra o URL diretamente.</small>
+                        <small class="help-text">A imagem mostra-se a partir do endereço onde estiver publicada; não fica guardada no site.</small>
                     </div>
                     <input type="hidden" name="imagem_link" id="imagem_link" value="{{ old('imagem_fonte') === 'link' && old('imagem_link') ? old('imagem_link') : $imagemUrl }}">
 
                     <small class="help-text">Recomendado: 1200 × 600 px (≈2:1). JPG, PNG, WebP. Máx.: 4MB.</small>
-                    <small class="help-text"><i class="fa fa-rotate" aria-hidden="true"></i> O widget da página inicial/projeto roda os destaques de 4 em 4 segundos.</small>
+                    <small class="help-text"><i class="fa fa-rotate" aria-hidden="true"></i> A caixa de destaques da página inicial e dos projetos troca a imagem a cada 4 segundos.</small>
                     @error('imagem_link')<p class="form-error" id="erro-imagem" role="alert">{{ $message }}</p>@enderror
                 </fieldset>
 
@@ -99,7 +99,7 @@
                                 <option value="{{ $valor }}" @selected((string) old('escopo', $destaque?->escopo) === (string) $valor)>{{ $rotulo }}</option>
                                 @endforeach
                             </select>
-                            <small class="help-text">"Todo o site" → home e páginas interiores. "Só página inicial" → widget da home. "Só páginas interiores" → widget da página de projeto.</small>
+                            <small class="help-text">"Todo o site" → home e páginas interiores. "Só página inicial" → caixa «Escolha da Equipa» da home. "Só páginas interiores" → caixa da página de projeto.</small>
                             @error('escopo')<p class="form-error" id="erro-escopo" role="alert">{{ $message }}</p>@enderror
                         </div>
                     </div>

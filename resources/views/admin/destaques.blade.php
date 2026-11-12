@@ -16,7 +16,7 @@
     <h3 class="card-title">Destaques publicitários</h3>
     <a href="{{ route('admin.destaques.novo') }}" class="btn-primary"><i class="fa fa-plus"></i> Novo destaque</a>
   </div>
-  <p class="helper-text">Rotativos, 4 segundos, no widget <strong>«Escolha da Equipa»</strong> (existe na home e na página de projeto). Só os <strong>ativos e dentro do período</strong> aparecem; sem nenhum, o widget segue a mostrar as notícias (sem rotação). O ideal é <strong>até 3 em simultâneo</strong> (use «Ordem»).</p>
+  <p class="helper-text">Rotativos, 4 segundos, na caixa <strong>«Escolha da Equipa»</strong> (existe na home e na página de projeto). Só os <strong>ativos e dentro do período</strong> aparecem; sem nenhum, a caixa segue a mostrar as notícias (sem rotação). O ideal é <strong>até 3 em simultâneo</strong> (use «Ordem»).</p>
   <div class="card-body">
   <div class="table-wrap">
     <table class="dashboard-table">

@@ -48,7 +48,7 @@
                     @error('tipo')<p class="form-error" role="alert">{{ $message }}</p>@enderror
                   </div>
                   <div class="dashboard-form-group">
-                    <label class="dashboard-form-label">Link de Download</label>
+                    <label class="dashboard-form-label">Ficheiro para descarregar</label>
                     <input class="dashboard-form-input" type="url" name="link_download" placeholder="https://… (PDF/artigo)" value="{{ old('link_download', $documento?->link_download) }}" required>
                     @error('link_download')<p class="form-error" role="alert">{{ $message }}</p>@enderror
                   </div>
