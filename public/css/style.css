@@ -5701,8 +5701,6 @@ h4.cart-title span {
    relatório (directorio-v2):
      - .directorio-sidebar  (wrapper da coluna col-md-4 / sidebar do /directorio) —
        mesmo padrão do hook .directorio-listing introduzido na Fase 15;
-     - .directorio-icone    (caixa escura com ícone dourado dos documentos — lei/artigo/
-       documento).
    Paleta herdada do tema, sem hex novos: vermelho #C8102E, dourado #F2A900, tinta
    #292929 / #1A1A1A, texto #494949 / #666666, linhas #eee / #E0E0E0, superfícies #fff.
    Zero sombras novas: os cards usam apenas borda 1px #eee (como o resto do tema).
@@ -5755,34 +5753,6 @@ h4.cart-title span {
 	align-items: flex-start;
 	width: 100%;
 	height: 100%;
-}
-.directorio-listing .author-widget > div:first-child { flex: 0 0 56px; }
-.directorio-listing .author-widget > div:first-child > div {
-	width: 56px;
-	height: 56px;
-	border-radius: 4px;
-	background: #C8102E;          /* avatar vermelho da empresa (mantido) */
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.directorio-listing .author-widget > div:first-child > div > span {
-	font-family: 'Playfair Display', serif;
-	font-size: 19px;
-	font-weight: 700;
-	color: #FFFFFF;
-	letter-spacing: .04em;
-	line-height: 1;
-}
-/* caixa do ícone de documento: tratamento unificado ouro-sobre-escuro (lei/artigo/documento).
-   Mesma especificidade do seletor do avatar (.directorio-listing .author-widget > div:first-child > div),
-   por isso entra com :first-child no lugar do avatar para vencer a regra base. */
-.directorio-listing .author-widget > div:first-child > div.directorio-icone {
-	background: #1A1A1A;
-}
-.directorio-listing .directorio-icone > i {
-	font-size: 22px;
-	color: #F2A900;
 }
 
 .directorio-listing .author-widget > div:last-child {
@@ -5880,8 +5850,5 @@ h4.cart-title span {
 @media (max-width: 767px) {
 	.directorio-listing .row > .col-md-6 > .box-widget-content { padding: 16px; margin-bottom: 16px; }
 	.directorio-listing .author-widget { gap: 12px; }
-	.directorio-listing .author-widget > div:first-child { flex-basis: 48px; }
-	.directorio-listing .author-widget > div:first-child > div { width: 48px; height: 48px; }
-	.directorio-listing .author-widget > div:first-child > div > span { font-size: 16px; }
 	.directorio-sidebar .box-widget { margin-bottom: 18px; }
 }

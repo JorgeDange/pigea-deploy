@@ -39,6 +39,8 @@
                 @error('linkedin')<p class="form-error" role="alert">{{ $message }}</p>@enderror
                 <input type="url" name="instagram" placeholder="https://instagram.com/a-sua-empresa" wire:model="instagram" />
                 @error('instagram')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+                <input type="url" name="youtube" placeholder="https://youtube.com/@a-sua-empresa" wire:model="youtube" />
+                @error('youtube')<p class="form-error" role="alert">{{ $message }}</p>@enderror
             </fieldset>
 
             <div class="clearfix"></div>

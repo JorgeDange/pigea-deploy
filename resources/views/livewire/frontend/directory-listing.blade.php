@@ -14,19 +14,9 @@
     @if ($aba === 'empresas')
         <div class="row">
             @forelse ($empresas as $empresa)
-                {{-- Iniciais da empresa para o avatar — 2 letras significativas (sem sufixos legais) --}}
-                @php
-                    $palavras = preg_split('/\s+/u', trim((string) $empresa->nome_empresa)) ?: [];
-                    $sufixos = ['de', 'da', 'do', 'dos', 'das', 'e', 'lda', 'sa', 's.a', 's.a.', 'ltda', 'limitada', 'inc', 'corp'];
-                    $uteis = array_values(array_filter($palavras, fn ($p) => mb_strlen($p) > 0 && ! in_array(mb_strtolower($p), $sufixos, true)));
-                    $iniciais = mb_strtoupper(mb_substr($uteis[0] ?? 'E', 0, 1) . mb_substr($uteis[1] ?? '', 0, 1));
-                @endphp
                 <div class="col-md-6" wire:key="empresa-{{ $empresa->id }}">
                     <div class="box-widget-content fl-wrap">
                         <div class="author-widget fl-wrap">
-                            <div aria-hidden="true">
-                                <div><span>{{ $iniciais }}</span></div>
-                            </div>
                             <div>
                                 <h4>{{ $empresa->nome_empresa }}</h4>
                                 <span><i class="fas fa-check-circle" aria-hidden="true"></i>Empresa aprovada</span>
@@ -40,10 +30,22 @@
                                 <p><i class="fas fa-phone-alt" aria-hidden="true"></i>{{ $empresa->contactos }}</p>
                                 {{-- NIF deliberadamente NÃO apresentado no público (restrutura.md §6) --}}
                                 @if ($empresa->redes_sociais)
+                                    @php
+                                        $redesMap = [
+                                            'facebook' => ['fa-facebook-f', 'Facebook'],
+                                            'linkedin' => ['fa-linkedin-in', 'LinkedIn'],
+                                            'instagram' => ['fa-instagram', 'Instagram'],
+                                            'youtube' => ['fa-youtube', 'YouTube'],
+                                        ];
+                                    @endphp
                                     <div>
                                         <ul class="footer-social fl-wrap">
-                                            @foreach ($empresa->redes_sociais as $rede => $url)
-                                                <li><a href="{{ $url }}" target="_blank" rel="noopener" title="{{ ucfirst($rede) }}" aria-label="{{ ucfirst($rede) }} — {{ $empresa->nome_empresa }}"><i class="fab fa-{{ $rede === 'linkedin' ? 'linkedin-in' : ($rede === 'instagram' ? 'instagram' : 'facebook-f') }}" aria-hidden="true"></i></a></li>
+                                            @foreach (array_filter((array) $empresa->redes_sociais) as $rede => $url)
+                                                @php
+                                                    $chaveRede = mb_strtolower((string) $rede);
+                                                    [$iconeRede, $nomeRede] = $redesMap[$chaveRede] ?? ['fa-link', ucfirst($chaveRede)];
+                                                @endphp
+                                                <li><a href="{{ $url }}" target="_blank" rel="noopener" title="{{ $nomeRede }}" aria-label="{{ $nomeRede }} de {{ $empresa->nome_empresa }}"><i class="fab {{ $iconeRede }}" aria-hidden="true"></i></a></li>
                                             @endforeach
                                         </ul>
                                     </div>
@@ -77,35 +79,9 @@
     @elseif ($aba === 'profissionais')
         <div class="row">
             @forelse ($profissionais as $profissional)
-                {{-- Iniciais do profissional para o avatar — nome útil (sem honoríficos "Eng.ª"/"Dr."/…), primeira + última palavra --}}
-                @php
-                    $raw = trim((string) $profissional->nome_completo);
-                    $tokens = preg_split('/\s+/u', $raw) ?: [];
-                    $honorificos = ['eng', 'engr', 'dr', 'dra', 'prof', 'sr', 'sra', 'srta', 'mr', 'mrs'];
-                    $uteis = [];
-                    foreach ($tokens as $token) {
-                        // Normaliza para a base dos honoríficos: "Eng.ª" → "eng", "Dr." → "dr"
-                        $base = mb_strtolower($token, 'UTF-8');
-                        $base = preg_replace('/[\.\-,]/u', '', $base);
-                        $base = preg_replace('/[ªº°]/u', '', $base);
-                        if ($base === '' || in_array($base, $honorificos, true)) {
-                            continue;
-                        }
-                        $uteis[] = $token;
-                    }
-                    if (count($uteis) === 0) {
-                        $uteis = $tokens; // segurança: nunca fica sem iniciais
-                    }
-                    $primeira = mb_strtoupper(mb_substr($uteis[0], 0, 1, 'UTF-8'), 'UTF-8');
-                    $ultima = count($uteis) > 1 ? mb_strtoupper(mb_substr(end($uteis), 0, 1, 'UTF-8'), 'UTF-8') : '';
-                    $iniciais = $primeira.$ultima;
-                @endphp
                 <div class="col-md-6" wire:key="profissional-{{ $profissional->id }}">
                     <div class="box-widget-content fl-wrap">
                         <div class="author-widget fl-wrap">
-                            <div aria-hidden="true">
-                                <div><span>{{ $iniciais }}</span></div>
-                            </div>
                             <div>
                                 <h4>{{ $profissional->nome_completo }}</h4>
                                 <span><i class="fas fa-check-circle" aria-hidden="true"></i>Profissional aprovado</span>
@@ -149,20 +125,9 @@
     @else
         <div class="row">
             @forelse ($documentos as $documento)
-                @php
-                    $iconeDoc = match ($documento->tipo) {
-                        'lei' => 'fa-gavel',
-                        'artigo' => 'fa-newspaper',
-                        'documento' => 'fa-file-contract',
-                        default => 'fa-file-alt',
-                    };
-                @endphp
                 <div class="col-md-6" wire:key="documento-{{ $documento->id }}">
                     <div class="box-widget-content fl-wrap">
                         <div class="author-widget fl-wrap">
-                            <div aria-hidden="true">
-                                <div class="directorio-icone"><i class="fas {{ $iconeDoc }}"></i></div>
-                            </div>
                             <div>
                                 <span class="post-category-marker">{{ $documento->tipo_label }}</span>
                                 <h4>{{ $documento->titulo }}</h4>

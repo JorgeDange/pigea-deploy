@@ -34,6 +34,8 @@ class RegistoEmpresa extends Component
 
     public string $instagram = '';
 
+    public string $youtube = '';
+
     /** `''` (formulário), `'ok'` (sucesso) ou `'erro'`. */
     public string $estado = '';
 
@@ -66,6 +68,7 @@ class RegistoEmpresa extends Component
                 'facebook' => $this->facebook,
                 'linkedin' => $this->linkedin,
                 'instagram' => $this->instagram,
+                'youtube' => $this->youtube,
             ],
             [
                 'nome_empresa' => 'required|string|max:200',
@@ -76,6 +79,7 @@ class RegistoEmpresa extends Component
                 'facebook' => 'nullable|url:http,https|max:200',
                 'linkedin' => 'nullable|url:http,https|max:200',
                 'instagram' => 'nullable|url:http,https|max:200',
+                'youtube' => 'nullable|url:http,https|max:200',
             ],
             [
                 'nome_empresa.required' => 'Indique o nome da empresa.',
@@ -89,6 +93,7 @@ class RegistoEmpresa extends Component
                 'facebook.url' => 'O link do Facebook não é um URL válido.',
                 'linkedin.url' => 'O link do LinkedIn não é um URL válido.',
                 'instagram.url' => 'O link do Instagram não é um URL válido.',
+                'youtube.url' => 'O link do YouTube não é um URL válido.',
             ]
         );
 
@@ -114,6 +119,7 @@ class RegistoEmpresa extends Component
             'facebook' => $this->facebook,
             'linkedin' => $this->linkedin,
             'instagram' => $this->instagram,
+            'youtube' => $this->youtube,
         ], fn ($url) => filled($url));
 
         try {
@@ -142,7 +148,7 @@ class RegistoEmpresa extends Component
 
         // Mensagem exata definida pelo cliente (restrutura.md §4.1).
         $this->estado = 'ok';
-        $this->reset('nome_empresa', 'nif', 'contactos', 'areas_atuacao', 'facebook', 'linkedin', 'instagram');
+        $this->reset('nome_empresa', 'nif', 'contactos', 'areas_atuacao', 'facebook', 'linkedin', 'instagram', 'youtube');
     }
 
     public function render()
