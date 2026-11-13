@@ -32,10 +32,10 @@ class CspTest extends TestCase
 
     public function test_csp_tambem_nas_paginas_de_auth_e_painel(): void
     {
-        $this->get('/login')->assertOk()
+        $this->get(route('login'))->assertOk()
             ->assertHeader('Content-Security-Policy-Report-Only');
         // Caminho do admin vem do ADMIN_PATH (.env) — ver RoleAccessTest.
-        $this->get(route('admin.index', [], false))->assertRedirect('/login') // sem sessão → continua com o header
+        $this->get(route('admin.index', [], false))->assertRedirect(route('login')) // sem sessão → continua com o header
             ->assertHeader('Content-Security-Policy-Report-Only');
     }
 

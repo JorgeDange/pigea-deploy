@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Concerns\ResolvesContent;
+use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
@@ -16,7 +17,7 @@ class NewsController extends Controller
         return view('news.index');
     }
 
-    public function show(string $slug)
+    public function show(Request $request, string $slug)
     {
         $post = $this->resolveContent($slug);
 
@@ -24,7 +25,8 @@ class NewsController extends Controller
             abort(404);
         }
 
-        $post->increment('views_count');
+        // FASE E2: conta apenas leituras reais (sem bots; sessão 1× por 5 min).
+        \App\Support\ContadorDeVisitas::contar($request, $post, 'vista_noticia');
 
         [$prev, $next] = $this->adjacentNews($post);
 

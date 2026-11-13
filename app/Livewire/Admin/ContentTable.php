@@ -4,10 +4,8 @@ namespace App\Livewire\Admin;
 
 use App\Livewire\Concerns\FiltraData;
 use App\Models\Category;
-use App\Models\Directory;
 use App\Models\Event;
 use App\Models\Interview;
-use App\Models\Job;
 use App\Models\Legislation;
 use App\Models\News;
 use App\Models\Project;
@@ -156,7 +154,17 @@ class ContentTable extends Component
             // na Fase 8); os registos do seeder ficam com `—` (sem dados).
             'mapas' => [
                 'mineral' => ['ferro' => 'Ferro', 'ouro' => 'Ouro', 'diamantes' => 'Diamantes', 'litio' => 'Lítio', 'manganes' => 'Manganês', 'cobre' => 'Cobre', 'fosfatos' => 'Fosfatos'],
-                'province' => ['huila' => 'Huíla', 'namibe' => 'Namibe', 'uige' => 'Uíge', 'cuanza-sul' => 'Cuanza Sul', 'benguela' => 'Benguela', 'cuando-cubango' => 'Cuando Cubango'],
+                // 18 províncias + «Nacional» + slugs legados (cuanza-sul → Cuanza Sul).
+                // Deve espelhar App\Support\Provincias::LISTA + LEGADO.
+                // Valores fora da lista (texto livre «Outros») mostram o próprio texto.
+                'province' => [
+                    'bengo' => 'Bengo', 'benguela' => 'Benguela', 'bie' => 'Bié', 'cabinda' => 'Cabinda',
+                    'cuando-cubango' => 'Cuando Cubango', 'kwanza-norte' => 'Cuanza Norte', 'kwanza-sul' => 'Cuanza Sul',
+                    'cunene' => 'Cunene', 'huambo' => 'Huambo', 'huila' => 'Huíla', 'luanda' => 'Luanda',
+                    'lunda-norte' => 'Lunda Norte', 'lunda-sul' => 'Lunda Sul', 'malanje' => 'Malanje', 'moxico' => 'Moxico',
+                    'namibe' => 'Namibe', 'uige' => 'Uíge', 'zaire' => 'Zaire', 'nacional' => 'Nacional',
+                    'cuanza-sul' => 'Cuanza Sul', 'quando-cubango' => 'Cuando Cubango',
+                ],
                 'phase' => ['prospeccao' => 'Prospecção', 'exploracao' => 'Exploração', 'producao' => 'Produção'],
             ],
             'filtros' => [
@@ -164,48 +172,6 @@ class ContentTable extends Component
                 ['nome' => 'estado', 'rotulo' => 'Estado: todos', 'campo' => 'status', 'opcoes' => ['Ativo', 'Em análise', 'Expirada'], 'mapa' => ['Ativo' => 'published', 'Em análise' => 'draft', 'Expirada' => 'rejected']],
             ],
             'busca' => null,
-            'estado' => ['published' => ['active', 'Ativa'], 'draft' => ['pending', 'Em análise'], 'rejected' => ['rejected', 'Expirada'], 'pending' => ['pending', 'Em análise']],
-        ],
-
-        'empresas' => [
-            'modelo' => Directory::class,
-            'vazio' => 'Nenhuma empresa encontrada.',
-            'ordem' => 'published_at',
-            'acoes' => 'aprovar',
-            'permissao' => 'company.moderate',
-            'colunas' => [
-                ['rotulo' => 'Nome', 'campo' => 'title'],
-                ['rotulo' => 'Setor', 'campo' => null],
-                ['rotulo' => 'Província', 'campo' => null],
-                ['rotulo' => 'Estado', 'campo' => 'estado'],
-            ],
-            'filtros' => [
-                ['nome' => 'setor', 'rotulo' => 'Setor: todos', 'opcoes' => ['Mineração', 'Água', 'Ambiente', 'Energia', 'Serviços']],
-                ['nome' => 'estado', 'rotulo' => 'Estado: todos', 'campo' => 'status', 'opcoes' => ['Pendente', 'Aprovada', 'Rejeitada'], 'mapa' => ['Pendente' => 'draft', 'Aprovada' => 'published', 'Rejeitada' => 'rejected']],
-            ],
-            'busca' => ['tipo' => 'titulo', 'placeholder' => 'Procurar empresa…'],
-            'estado' => ['published' => ['active', 'Aprovada'], 'draft' => ['pending', 'Em análise'], 'rejected' => ['rejected', 'Rejeitada'], 'pending' => ['pending', 'Em análise']],
-        ],
-
-        'vagas' => [
-            'modelo' => Job::class,
-            'vazio' => 'Nenhuma vaga encontrada.',
-            'ver' => 'jobs.show',
-            'ordem' => 'published_at',
-            'acoes' => 'crud',
-            'permissao' => 'job.moderate',
-            'colunas' => [
-                ['rotulo' => 'Título', 'campo' => 'title'],
-                ['rotulo' => 'Empresa', 'campo' => null],
-                ['rotulo' => 'Data', 'campo' => 'data'],
-                ['rotulo' => 'Prazo', 'campo' => null],
-                ['rotulo' => 'Estado', 'campo' => 'estado'],
-            ],
-            'filtros' => [
-                ['nome' => 'estado', 'rotulo' => 'Estado: todas', 'campo' => 'status', 'opcoes' => ['Ativa', 'Em análise', 'Expirada'], 'mapa' => ['Ativa' => 'published', 'Em análise' => 'draft', 'Expirada' => 'rejected']],
-                ['nome' => 'empresa', 'rotulo' => 'Empresa: todas', 'opcoes' => ['Minex Angola', 'Hidrotec', 'EcoAmbiente Lda', 'Ferrangol']],
-            ],
-            'busca' => ['tipo' => 'data', 'placeholder' => 'Filtrar por data (mm/aaaa)'],
             'estado' => ['published' => ['active', 'Ativa'], 'draft' => ['pending', 'Em análise'], 'rejected' => ['rejected', 'Expirada'], 'pending' => ['pending', 'Em análise']],
         ],
     ];
@@ -252,13 +218,7 @@ class ContentTable extends Component
         }
     }
 
-    /**
-     * Editar: abre a página de edição do tipo desta tabela.
-     *
-     * O botão caneta do protótipo era estático (sem `wire:click` nem link);
-     * aponta ao formulário genérico, porque o protótipo não tem página de
-     * edição para nenhum dos tipos.
-     */
+    /** Editar: notícias → editor Livewire próprio; restantes → form genérico. */
     public function editar(int $id): void
     {
         $conf = $this->configuracao();
@@ -266,6 +226,12 @@ class ContentTable extends Component
         // Mesma permissão granular do módulo (Fase 13) — o endpoint Livewire
         // é partilhado pelas 8 páginas, o `can:` da rota não chega.
         Gate::authorize($conf['permissao']);
+
+        if ($this->tipo === 'noticias') {
+            $this->redirectRoute('admin.noticia-editar', ['noticia' => $id]);
+
+            return;
+        }
 
         $this->redirect(route('admin.conteudo.editar', ['tipo' => $this->tipo, 'id' => $id]));
     }
@@ -283,31 +249,6 @@ class ContentTable extends Component
 
         if ($registo !== null) {
             $registo->delete();
-        }
-    }
-
-    /** Aprovação rápida (botões da tabela de empresas). */
-    public function aprovar(int $id): void
-    {
-        $this->mudarEstado($id, 'published');
-    }
-
-    public function rejeitar(int $id): void
-    {
-        $this->mudarEstado($id, 'rejected');
-    }
-
-    protected function mudarEstado(int $id, string $estado): void
-    {
-        $conf = $this->configuracao();
-
-        // Mesma permissão granular do módulo que `eliminar` (Fase 13).
-        Gate::authorize($conf['permissao']);
-
-        $registo = $conf['modelo']::find($id);
-
-        if ($registo !== null) {
-            $registo->update(['status' => $estado]);
         }
     }
 

@@ -7,7 +7,7 @@
 @endsection
 
 @section('breadcrumb')
-<ul><li><a href="{{ route('admin.index') }}">Admin</a></li><li><a href="{{ route('admin.projetos') }}">Projetos</a></li><li class="active">Novo</li></ul>
+<ol><li><a href="{{ route('admin.index') }}">Admin</a></li><li><a href="{{ route('admin.projetos') }}">Projetos</a></li><li class="active" aria-current="page">Novo</li></ol>
 @endsection
 
 @section('content')
@@ -25,7 +25,7 @@
               <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Nome do projeto</label>
                 <input class="dashboard-form-input" type="text" name="nome" placeholder="Nome do projeto" value="{{ old('nome') }}" required>
-                @error('nome')<p class="form-error">{{ $message }}</p>@enderror
+                @error('nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Mineral</label>
                 <select class="dashboard-form-select" name="minereral">
@@ -38,20 +38,8 @@
                 <option value="cobre" @selected(old('minereral') === 'cobre')>Cobre</option>
                 <option value="fosfatos" @selected(old('minereral') === 'fosfatos')>Fosfatos</option>
               </select>
-                @error('minereral')<p class="form-error">{{ $message }}</p>@enderror
-              </div>              <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Província</label>
-                <select class="dashboard-form-select" name="provincia">
-                <option value="">Selecionar província…</option>
-                <option value="huila" @selected(old('provincia') === 'huila')>Huíla</option>
-                <option value="namibe" @selected(old('provincia') === 'namibe')>Namibe</option>
-                <option value="uige" @selected(old('provincia') === 'uige')>Uíge</option>
-                <option value="cuanza-sul" @selected(old('provincia') === 'cuanza-sul')>Cuanza Sul</option>
-                <option value="benguela" @selected(old('provincia') === 'benguela')>Benguela</option>
-                <option value="cuando-cubango" @selected(old('provincia') === 'cuando-cubango')>Cuando Cubango</option>
-              </select>
-                @error('provincia')<p class="form-error">{{ $message }}</p>@enderror
-              </div>              <div class="dashboard-form-group">
+                @error('minereral')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>              <x-provincia-select hint="(opcional — usada no gráfico do painel)" />              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Fase</label>
                 <select class="dashboard-form-select" name="fase">
                 <option value="">Selecionar fase…</option>
@@ -59,15 +47,15 @@
                 <option value="exploracao" @selected(old('fase') === 'exploracao')>Exploração</option>
                 <option value="producao" @selected(old('fase') === 'producao')>Produção</option>
               </select>
-                @error('fase')<p class="form-error">{{ $message }}</p>@enderror
+                @error('fase')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Operador</label>
                 <input class="dashboard-form-input" type="text" name="operador" placeholder="Nome do operador" value="{{ old('operador') }}">
-                @error('operador')<p class="form-error">{{ $message }}</p>@enderror
+                @error('operador')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Área (km²)</label>
                 <input class="dashboard-form-input" type="number" name="area" placeholder="Ex.: 120" value="{{ old('area') }}">
-                @error('area')<p class="form-error">{{ $message }}</p>@enderror
+                @error('area')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Estado</label>
                 <select class="dashboard-form-select" name="estado">
@@ -76,24 +64,44 @@
                 <option value="em-analise" @selected(old('estado') === 'em-analise')>Em análise</option>
                 <option value="expirada" @selected(old('estado') === 'expirada')>Expirada</option>
               </select>
-                @error('estado')<p class="form-error">{{ $message }}</p>@enderror
+                @error('estado')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>
                 <div class="dashboard-form-col">
               <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Descrição</label>
                 <textarea class="dashboard-form-textarea" name="descricao" rows="4" placeholder="Descrição do projeto, contexto e objetivos…">{{ old('descricao') }}</textarea>
-                @error('descricao')<p class="form-error">{{ $message }}</p>@enderror
+                @error('descricao')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Documentos</label>
-                <div class="upload-box">PDF (pode selecionar vários)<br><input type="file" name="documentos[]" multiple></div>
-                @error('documentos')<p class="form-error">{{ $message }}</p>@enderror
-                @error('documentos.*')<p class="form-error">{{ $message }}</p>@enderror
+                <div class="file-upload" data-accept="pdf">
+                  <label class="file-upload-button" for="documentos"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher ficheiro(s)</label>
+                  <div class="file-upload-meta">
+                    <span class="file-upload-name">Nenhum ficheiro selecionado</span>
+                    <small class="help-text">Só PDF (pode selecionar vários). O pré-visualizador mostra o PDF em miniatura.</small>
+                  </div>
+                  <div class="file-upload-docs" hidden></div>
+                  <input type="file" id="documentos" name="documentos[]" accept="application/pdf" multiple>
+                  <button type="button" class="file-upload-remove">Remover</button>
+                  <p class="file-upload-erro" role="alert"></p>
+                </div>
+                @error('documentos')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+                @error('documentos.*')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Imagens</label>
-                <div class="upload-box">PNG ou JPG (pode selecionar vários)<br><input type="file" name="imagens[]" multiple></div>
-                @error('imagens')<p class="form-error">{{ $message }}</p>@enderror
-                @error('imagens.*')<p class="form-error">{{ $message }}</p>@enderror
+                <div class="file-upload" data-accept="image" data-max-bytes="4194304">
+                  <label class="file-upload-button" for="imagens"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem/imagens</label>
+                  <div class="file-upload-meta">
+                    <span class="file-upload-name">Nenhum ficheiro selecionado</span>
+                    <small class="help-text">PNG ou JPG (pode selecionar vários). Máx.: 4MB por imagem.</small>
+                  </div>
+                  <div class="file-upload-previews" hidden></div>
+                  <input type="file" id="imagens" name="imagens[]" accept="image/png,image/jpeg,image/webp" multiple>
+                  <button type="button" class="file-upload-remove">Remover</button>
+                  <p class="file-upload-erro" role="alert"></p>
+                </div>
+                @error('imagens')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+                @error('imagens.*')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>
               </div>

@@ -1,11 +1,16 @@
 /* ==========================================================================
-   PIGEA — Dashboard / Painéis (comportamentos)
-   Sem backend: os formulários são apenas demonstrativos (pré-Laravel).
+   PIGEA — Dashboard / Painéis
+   ----------------------------------------------------------------------------
+   Apenas os handlers com elementos vivos no frontend/admin. Tudo o resto do
+   protótipo (formulários "demo estático" que interceptaram os submits — o
+   P0 —, tabs de autenticação, registo público, "marcar todas lidas", remover
+   itens, filtros de demonstração) foi removido na Fase 8; os formulários
+   submetem normalmente no Laravel e a porta pública de entrada é /login.
    ========================================================================== */
 $(function () {
     'use strict';
 
-    /* ---------- Sidebar (mobile) ---------- */
+    /* ---------- Sidebar (mobile) — dashboard-header.blade.php ---------- */
     $(document).on('click', '.sidebar-toggle', function () {
         $('.dashboard-wrap').toggleClass('sidebar-open');
     });
@@ -15,90 +20,287 @@ $(function () {
         }
     });
 
-    /* ---------- Tabs de autenticação (Entrar / Registar) ---------- */
-    $(document).on('click', '.auth-tabs button', function () {
-        var url = $(this).data('href');
-        if (url) {
-            window.location.href = url;
-        }
-    });
-
-    /* ---------- Formulários (demo estático) ---------- */
-    $(document).on('submit', 'form.auth-form, form.dashboard-form', function (e) {
-        if (this.id === 'registoform') {
-            return; /* tratado pelo handler específico abaixo */
-        }
-        var form = this;
-        if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
-            return true; /* deixa o browser validar */
-        }
-        e.preventDefault();
-        var $msg = $(form).find('.dashboard-msg');
-        if (!$msg.length) {
-            $msg = $('<div class="dashboard-msg"></div>');
-            $(form).append($msg);
-        }
-        $msg.removeClass('is-error').text('Demo estático — guardado com sucesso. A integração com o Laravel ficará disponível na Fase 3.').stop(true, true).fadeIn(200);
-        return false;
-    });
-
-    /* ---------- Registo de empresa (mantém a mensagem do protótipo) ---------- */
-    $(document).on('submit', '#registoform', function () {
-        var form = this;
-        if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
-            form.reportValidity();
-            return false;
-        }
-        $('#message').hide().html('<div class="form-ok">Registo enviado com sucesso! A equipa PIGEA analisará os dados e entrará em contacto através do email indicado.</div>').slideDown('slow');
-        form.reset();
-        return false;
-    });
-    $(document).on('keyup', '#registoform input, #registoform select, #registoform textarea', function () {
-        $('#message').slideUp(1500);
-    });
-
-    /* ---------- Notificações ---------- */
-    $(document).on('click', '.js-mark-all-read', function () {
-        $('.notification-item.unread').removeClass('unread');
-        $('.badge').text('0');
-        return false;
-    });
-
-    /* ---------- Modal ---------- */
+    /* ---------- Modais ("Adicionar utilizador" e pré-visualização) ---------- */
     $(document).on('click', '.js-modal-open', function () {
         var id = $(this).data('modal');
-        $('#' + id).addClass('open');
+        var $modal = $('#' + id);
+        $('.dashboard-modal.open').removeClass('open'); // só um aberto de cada vez
+        $modal.addClass('open').attr('tabindex', '-1').focus();
+        $modal.data('trigger', this); // guarda o botão de origem para nele devolver o foco
         return false;
     });
-    $(document).on('click', '.js-modal-close', function () {
-        $(this).closest('.dashboard-modal').removeClass('open');
+
+    $(document).on('click', '.js-modal-close, [data-role="fechar-modal"]', function () {
+        var $modal = $(this).closest('.dashboard-modal');
+        $modal.removeClass('open');
+        var trigger = $modal.data('trigger');
+        if (trigger) $(trigger).focus(); else $('.js-modal-open:focus').focus();
         return false;
     });
     $(document).on('click', '.dashboard-modal', function (e) {
         if (e.target === this) {
-            $(this).removeClass('open');
+            var $modal = $(this);
+            $modal.removeClass('open');
+            // Mesmo contrato das outras duas rotas de fecho (× e Escape):
+            // o foco volta ao botão que abriu o modal.
+            var trigger = $modal.data('trigger');
+            if (trigger) $(trigger).focus();
         }
     });
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape') {
+            var $open = $('.dashboard-modal.open');
+            if ($open.length) {
+                $open.removeClass('open');
+                var trigger = $open.last().data('trigger');
+                if (trigger) $(trigger).focus();
+            }
+        }
+    });
+});
 
-    /* ---------- Remover itens (guardadas / listas) ---------- */
-    $(document).on('click', '.js-remove-item', function () {
-        $(this).closest('.job-card, .notification-item, tr').fadeOut(250, function () {
-            $(this).remove();
-        });
+/* ===== cms_v.md FASE 5 - Toast global e confirmação genérica ==========
+   Toast substitui o flash simples; confirm-modal para ações destrutivas
+   (apagar). Voz PT; sem dependências novas. */
+window.PIGEAToast = function (msg, tipo) {
+    var regiao = document.querySelector('.toast-region');
+    if (!regiao) return;
+    var toast = document.createElement('div');
+    toast.className = 'toast' + (tipo ? ' ' + tipo : '');
+    toast.setAttribute('role', 'status');
+    var texto = document.createElement('span');
+    texto.textContent = msg;
+    var fechar = document.createElement('button');
+    fechar.className = 'toast-fechar';
+    fechar.type = 'button';
+    fechar.setAttribute('aria-label', 'Fechar aviso');
+    fechar.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>';
+    fechar.addEventListener('click', function () { regiao.removeChild(toast); });
+    toast.appendChild(texto);
+    toast.appendChild(fechar);
+    regiao.appendChild(toast);
+    setTimeout(function () { if (toast.parentNode === regiao) regiao.removeChild(toast); }, 5000);
+};
+
+$(function () {
+    'use strict';
+
+    /* Flash de sessão (quando a vista marca [data-flash-toast]) → toast */
+    document.querySelectorAll('[data-flash-toast]').forEach(function (el) {
+        window.PIGEAToast(el.textContent.trim(), el.getAttribute('data-flash-toast'));
+        el.remove();
+    });
+
+    /* Modal de confirmação genérico (sem alert/confirm nativos).
+       window.PIGEAConfirm abre #confirm-modal e regista a ação a executar
+       no clique de «Confirmar». `.js-confirm` é o atalho para submissão de
+       formulários; `.js-confirm-livewire` (banner.js) para ações
+       Livewire. */
+    var confirmAcaoPendente = null;
+
+    window.PIGEAConfirm = function (title, message, confirmText, onConfirm) {
+        $('#confirm-title').text(title || 'Confirmar ação');
+        $('#confirm-message').text(message || 'Tem a certeza?');
+        $('#confirm-action').text(confirmText || 'Confirmar');
+        confirmAcaoPendente = typeof onConfirm === 'function' ? onConfirm : null;
+        $('#confirm-modal').addClass('open').attr('tabindex', '-1').focus();
+        return false;
+    };
+
+    $(document).on('click', '.js-confirm', function () {
+        var $btn = $(this);
+        window.PIGEAConfirm(
+            $btn.data('confirm-title') || 'Confirmar ação',
+            $btn.data('confirm-message') || 'Tem a certeza?',
+            $btn.data('confirm-text') || 'Confirmar',
+            function () {
+                var formId = $btn.data('confirm-form') || '';
+                var form = formId ? document.getElementById(formId) : null;
+                if (form) form.submit();
+            }
+        );
         return false;
     });
 
-    /* ---------- Filtros demonstrativos ---------- */
-    $(document).on('change', '.dashboard-filters select, .dashboard-filters input', function () {
-        var $wrap = $(this).closest('.card, .dashboard-content');
-        var $empty = $wrap.find('.filter-empty');
-        if (!$empty.length) {
-            $empty = $('<div class="filter-empty dashboard-msg is-error" style="display:block">Sem resultados para o filtro selecionado (dados de demonstração).</div>');
-            $wrap.find('.dashboard-filters').after($empty);
+    $(document).on('click', '#confirm-action', function () {
+        $('#confirm-modal').removeClass('open');
+        if (confirmAcaoPendente) {
+            var acao = confirmAcaoPendente;
+            confirmAcaoPendente = null;
+            acao();
         }
-        $empty.show();
-        setTimeout(function () {
-            $empty.fadeOut(300);
-        }, 1600);
     });
+
+    /* Estados de loading em submits (todos os formulários marcados) */
+    $(document).on('submit', 'form[data-loading-submit]', function () {
+        $(this).find('button[type="submit"]').addClass('is-loading').prop('disabled', true);
+    });
+
+    /* Upload em PT: área de largar, botão PT, pré-visualização, remover */
+    function ligarFileUpload(root) {
+        var input = root.querySelector('input[type="file"]');
+        var btn = root.querySelector('.file-upload-button');
+        var preview = root.querySelector('.file-upload-preview');
+        var nomeEl = root.querySelector('.file-upload-name');
+        var erroEl = root.querySelector('.file-upload-erro');
+        var previewsStrip = root.querySelector('.file-upload-previews');
+        var docsBox = root.querySelector('.file-upload-docs');
+
+        function bytesLegiveis(n) {
+            if (n === 0) return '0 B';
+            var u = ['B', 'KB', 'MB', 'GB'];
+            var i = Math.floor(Math.log(n) / Math.log(1024));
+            return (n / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1) + ' ' + u[i];
+        }
+
+        /* escapa nomes de ficheiros para innerHTML */
+        function escaparTexto(valor) {
+            var mapa = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+            return String(valor).replace(/[&<>"']/g, function (ch) { return mapa[ch]; });
+        }
+
+        /* liberta blob URLs e limpa o conteúdo de um contentor de preview */
+        function limparContentor(box) {
+            if (!box) return;
+            box.querySelectorAll('img, iframe').forEach(function (m) {
+                var src = m.getAttribute('src') || '';
+                if (src.indexOf('blob:') === 0) { URL.revokeObjectURL(src); }
+            });
+            box.innerHTML = '';
+            box.hidden = true;
+        }
+
+        /* esconde/zera TODOS os previews do bloco (erro de validação e Remover) */
+        function limparPreviews() {
+            if (preview) { preview.hidden = true; preview.removeAttribute('src'); }
+            limparContentor(previewsStrip);
+            limparContentor(docsBox);
+        }
+
+        /* Tipos aceites por data-accept="image|pdf[,...]" (imagem por omissão) */
+        var tiposAceites = {
+            image: ['image/jpeg', 'image/png', 'image/webp'],
+            pdf: ['application/pdf']
+        };
+        var aceita = (root.dataset.accept || 'image').toLowerCase().split(',');
+        var permitidos = [];
+        for (var k = 0; k < aceita.length; k++) {
+            var lista = tiposAceites[aceita[k].trim()];
+            if (lista) permitidos = permitidos.concat(lista);
+        }
+        if (!permitidos.length) permitidos = tiposAceites.image.slice();
+        var soPdf = aceita.length === 1 && aceita[0].trim() === 'pdf';
+        var msgFormato = soPdf
+            ? 'Formato não suportado. Usa PDF.'
+            : 'Formato não suportado. Usa JPG, PNG ou WebP.';
+
+        /* Limite de tamanho por data-max-bytes (bytes).
+           data-limit="capa" mantém o limite de 2MB de sempre. */
+        var maxBytes = parseInt(root.dataset.maxBytes || '0', 10);
+        if (!maxBytes || isNaN(maxBytes)) {
+            maxBytes = root.dataset.limit === 'capa' ? 2 * 1024 * 1024 : Infinity;
+        }
+
+        function validarEActualizar() {
+            var ficheiros = input.files ? Array.prototype.slice.call(input.files) : [];
+            if (!ficheiros.length) return;
+            if (erroEl) erroEl.textContent = '';
+
+            var total = 0;
+            for (var i = 0; i < ficheiros.length; i++) {
+                var f = ficheiros[i];
+                total += f.size;
+                var tipo = (f.type || '').toLowerCase();
+                if (permitidos.indexOf(tipo) === -1) {
+                    if (erroEl) erroEl.textContent = msgFormato;
+                    input.value = '';
+                    limparPreviews();
+                    if (nomeEl) nomeEl.textContent = '';
+                    return;
+                }
+                if (maxBytes !== Infinity && f.size > maxBytes) {
+                    if (erroEl) erroEl.textContent = 'O ficheiro excede o máximo de ' + bytesLegiveis(maxBytes) + '.';
+                    input.value = '';
+                    limparPreviews();
+                    if (nomeEl) nomeEl.textContent = '';
+                    return;
+                }
+            }
+
+            /* preview de IMAGEM individual (img .file-upload-preview) */
+            var primeiro = ficheiros[0];
+            if (primeiro.type && primeiro.type.indexOf('image/') === 0) {
+                var leitor = new FileReader();
+                leitor.onload = function (ev) {
+                    if (preview) { preview.src = ev.target.result; preview.hidden = false; }
+                };
+                leitor.readAsDataURL(primeiro);
+            } else if (preview) {
+                preview.hidden = true;
+            }
+
+            /* faixa de miniaturas — apenas imagens */
+            if (previewsStrip) {
+                limparContentor(previewsStrip);
+                var imagens = 0;
+                ficheiros.forEach(function (ficheiro) {
+                    if ((ficheiro.type || '').indexOf('image/') !== 0) return;
+                    if (imagens >= 10) return;
+                    imagens++;
+                    var url = URL.createObjectURL(ficheiro);
+                    var item = document.createElement('div');
+                    item.className = 'file-upload-preview-item';
+                    item.innerHTML = '<img src="' + url + '" alt=""><span>' + escaparTexto(ficheiro.name) + '</span>';
+                    previewsStrip.appendChild(item);
+                });
+                previewsStrip.hidden = !imagens;
+            }
+
+            /* miniaturas de PDF — SÓ se o ficheiro for mesmo PDF */
+            if (docsBox) {
+                limparContentor(docsBox);
+                var pdfs = 0;
+                ficheiros.forEach(function (ficheiro) {
+                    if ((ficheiro.type || '') !== 'application/pdf') return; // preview SÓ PDF
+                    if (pdfs >= 10) return;
+                    pdfs++;
+                    var url = URL.createObjectURL(ficheiro);
+                    var item = document.createElement('div');
+                    item.className = 'file-upload-doc';
+                    item.innerHTML = '<iframe src="' + url + '#page=1&view=FitH" title="' + escaparTexto(ficheiro.name) + '" loading="lazy"></iframe><span>' + escaparTexto(ficheiro.name) + '</span>';
+                    docsBox.appendChild(item);
+                });
+                docsBox.hidden = !pdfs;
+            }
+
+            if (nomeEl) {
+                nomeEl.textContent = ficheiros.length > 1
+                    ? ficheiros.length + ' ficheiros selecionados (' + bytesLegiveis(total) + ')'
+                    : primeiro.name + ' - ' + bytesLegiveis(primeiro.size);
+            }
+        }
+
+        if (btn) btn.addEventListener('click', function () { input.click(); });
+        input.addEventListener('change', validarEActualizar);
+
+        var remover = root.querySelector('.file-upload-remove');
+        if (remover) remover.addEventListener('click', function () {
+            input.value = '';
+            limparPreviews();
+            if (nomeEl) nomeEl.textContent = '';
+            if (erroEl) erroEl.textContent = '';
+        });
+
+        ['dragenter', 'dragover'].forEach(function (evt) {
+            root.addEventListener(evt, function (e) { e.preventDefault(); root.classList.add('is-dragover'); });
+        });
+        ['dragleave', 'drop'].forEach(function (evt) {
+            root.addEventListener(evt, function (e) { e.preventDefault(); root.classList.remove('is-dragover'); });
+        });
+        root.addEventListener('drop', function (e) {
+            if (e.dataTransfer.files.length) { input.files = e.dataTransfer.files; validarEActualizar(); }
+        });
+    }
+
+    document.querySelectorAll('.file-upload').forEach(ligarFileUpload);
 });

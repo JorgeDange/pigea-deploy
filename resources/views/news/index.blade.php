@@ -1,5 +1,26 @@
 @extends('layouts.app')
 
+@php
+    use App\Models\Category;
+    use App\Models\News;
+
+    // Sidebar "Categorias" — nomes e contagens REAIS (notícias publicadas),
+    // na ordem definida pelo design atual.
+    $sidebarSlugs = ['mineracao', 'agua', 'ambiente', 'investigacao', 'internacional'];
+
+    $sidebarCategorias = Category::query()
+        ->where('type', 'news')
+        ->whereIn('slug', $sidebarSlugs)
+        ->get()
+        ->keyBy('slug');
+
+    $sidebarCounts = collect($sidebarSlugs)
+        ->mapWithKeys(fn ($slug) => [
+            $slug => News::published()->whereHas('category', fn ($q) => $q->where('slug', $slug))->count(),
+        ])
+        ->all();
+@endphp
+
 @section('title', 'Notícias de Geociências | PIGEA')
 @section('description', 'Últimas notícias sobre mineração, água, ambiente e investigação científica em Angola.')
 
@@ -34,12 +55,15 @@
                                             <div class="box-widget-content">
                                                 <div class="search-widget fl-wrap">
                                                     <form action="{{ route('search.index') }}">
-                                                        <input name="se" id="se12" type="text" class="search" placeholder="Pesquisar notícias, projetos, empresas..." value="" />
+                                                        <input name="se" id="se12" type="text" class="search" placeholder="Pesquisar notícias, empresas, legislação…" value="" />
                                                         <button class="search-submit2" id="submit_btn12"><i class="far fa-search"></i> </button>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- box-widget  end -->
+                                        <!-- Banner publicitario sidebar (FASE 6) -->
+                                        <x-banner-publicitario posicao="sidebar" wrapper />
                                         <!-- box-widget  end -->						
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
@@ -50,7 +74,7 @@
                                                     </div>
                                                     <div class="banner-widget_content">
                                                         <h5>Registe a sua empresa no diretório PIGEA e aceda a novas oportunidades de negócio.</h5>
-                                                        <a href="{{ route('company.register') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
+                                                        <a href="{{ route('registo-empresa') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -61,11 +85,9 @@
                                             <div class="widget-title">Categorias</div>
                                             <div class="box-widget-content">
                                                 <ul class="cat-wid-list">
-                                                    <li><a href="#">Internacional</a><span>3</span></li>
-                                                    <li><a href="#">Mineração</a> <span>6</span></li>
-                                                    <li><a href="#">Água</a> <span>12</span></li>
-                                                    <li><a href="#">Investigação</a> <span>4</span></li>
-                                                    <li><a href="#">Ambiente</a> <span>22</span></li>
+                                                    @foreach ($sidebarSlugs as $slug)
+                                                    <li><a href="{{ route('news.index', ['cat' => $slug]) }}">{{ optional($sidebarCategorias->get($slug))->name }}</a> <span>{{ $sidebarCounts[$slug] ?? 0 }}</span></li>
+                                                    @endforeach
                                                 </ul>
                                             </div>
                                         </div>
@@ -75,45 +97,18 @@
                                             <div class="widget-title">Tags Populares</div>
                                             <div class="box-widget-content">
                                                 <div class="tags-widget">
-                                                    <a href="#">Internacional</a>
-                                                    <a href="#">Mineração</a>
-                                                    <a href="#">Água</a>
-                                                    <a href="#">Ambiente</a>
-                                                    <a href="#">Investigação</a>
-                                                    <a href="#">Eventos</a>
+                                                    <a href="{{ route('news.index', ['cat' => 'internacional']) }}">Internacional</a>
+                                                    <a href="{{ route('news.index', ['cat' => 'mineracao']) }}">Mineração</a>
+                                                    <a href="{{ route('news.index', ['cat' => 'agua']) }}">Água</a>
+                                                    <a href="{{ route('news.index', ['cat' => 'ambiente']) }}">Ambiente</a>
+                                                    <a href="{{ route('news.index', ['cat' => 'investigacao']) }}">Investigação</a>
+                                                    <a href="{{ route('events.index') }}">Eventos</a>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- box-widget  end -->						
                                         <!-- box-widget -->
-                                        <div class="box-widget fl-wrap">
-                                            <div class="widget-title">Siga-nos</div>
-                                            <div class="box-widget-content">
-                                                <div class="social-widget">
-                                                    <a href="#" target="_blank" class="facebook-soc">
-                                                    <i class="fab fa-facebook-f"></i>
-                                                    <span class="soc-widget-title">Curtidas</span>
-                                                    <span class="soc-widget_counter">2640</span>
-                                                    </a>
-                                                    <a href="#" target="_blank" class="twitter-soc">
-                                                    <i class="fab fa-twitter"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 
-                                                    <a href="#" target="_blank" class="youtube-soc">
-                                                    <i class="fab fa-youtube"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 												
-                                                    <a href="#" target="_blank" class="instagram-soc">
-                                                    <i class="fab fa-instagram"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 														
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- box-widget  end -->						
+                                        @include('components.redes-sociais')						
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
                                             <div class="box-widget-content">
@@ -135,13 +130,12 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -160,13 +154,12 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -195,7 +188,7 @@
                     <!-- section  -->
                     <div class="gray-bg ad-wrap fl-wrap">
                         <div class="content-banner-wrap">
-                            <img src="{{ asset('images/all/banner.jpg') }}" class="respimg" alt="">
+                            <x-banner-publicitario posicao="largo" />
                         </div>
                     </div>
                     <!-- section end -->

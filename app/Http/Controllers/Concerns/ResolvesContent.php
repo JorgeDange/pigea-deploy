@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Concerns;
 use App\Models\Directory;
 use App\Models\Event;
 use App\Models\Interview;
-use App\Models\Job;
 use App\Models\Legislation;
 use App\Models\News;
 use App\Models\Project;
@@ -27,7 +26,6 @@ trait ResolvesContent
         $models = [
             News::class,
             Project::class,
-            Job::class,
             Supplier::class,
             Event::class,
             Legislation::class,
@@ -39,7 +37,11 @@ trait ResolvesContent
         ];
 
         foreach ($models as $model) {
-            $row = $model::published()->where('slug', $slug)->first();
+            // autor.md: eager loading do autor só para a Notícia (as restantes
+            // tabelas não têm coluna guest_author_*; `author` é belongsTo direta).
+            $row = $model === News::class
+                ? $model::published()->with('author')->where('slug', $slug)->first()
+                : $model::published()->where('slug', $slug)->first();
 
             if ($row !== null) {
                 return $row;

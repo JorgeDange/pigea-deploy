@@ -3,80 +3,67 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\News;
 use Illuminate\View\View;
 
+/**
+ * Fragmentos AJAX dos separadores da home (editoria_cms.md FASE 1).
+ *
+ * As 4 abas correspondem às 4 categorias de topo de notícias:
+ *   Mineração (slug `mineracao`)  → cat + subcategorias via parent_id;
+ *   Água (slug `agua`)            → cat + subcategorias via parent_id;
+ *   Ambiente (slug `ambiente`)    → cat + subcategorias via parent_id;
+ *   Investigação (slug `investigacao`) → cat + subcategorias via parent_id;
+ *
+ * Selecção dinamica: resolve a categoria pai pelo slug e inclui ela + todos
+ * os seus filhos (via parent_id). Sem hardcode de slugs de notícias.
+ *
+ * Nota sobre `categories.menu_group`: esse campo serve as 44 subcategorias
+ * do Mega Menu (invariante do MegaMenuTest). As 4 secções AJAX correspondem
+ * a categorias-pai de `type='news'` criadas pelo ContentSeeder com
+ * menu_group=NULL. Para não colidir com a invariante do MegaMenuTest
+ * (44 rows), filtramos por parent_id + slug em vez de menu_group.
+ */
 class FragmentController extends Controller
 {
-    /**
-     * Os 4 separadores da home carregam estes fragmentos por AJAX
-     * (`scripts.js` lê `this.href` e injeta o HTML em `#ajax-content`).
-     *
-     * A lista de slugs é editorial — é a mesma ordem dos ficheiros
-     * `ajax/noticias-*.html` do protótipo; os dados de cada ficha
-     * (imagem, data, excerpt, autor, contadores) vêm da BD.
-     */
-    private const FRAGMENTOS = [
-        'noticias-mineracao.html' => [
-            'categoria' => 'Mineração',
-            'slugs' => [
-                'novo-mapa-geologico-digital-de-angola-disponivel-para-consulta',
-                'concurso-publico-para-exploracao-de-cobre-no-cuando-cubango',
-                'descoberta-de-novo-indicio-de-manganes-em-malanje',
-                'catoca-norte-amplia-a-capacidade-de-producao',
-                'producao-de-ferro-em-cassinga-retoma-operacoes',
-            ],
-        ],
-        'noticias-agua.html' => [
-            'categoria' => 'Água',
-            'slugs' => [
-                'estudo-hidrogeologico-do-bie-conclui-a-primeira-fase',
-                'programa-de-monitorizacao-das-aguas-subterraneas-arranca',
-                'sistema-de-alerta-de-cheias-alarga-a-cobertura-no-cuanza',
-            ],
-        ],
-        'noticias-ambiente.html' => [
-            'categoria' => 'Ambiente',
-            'slugs' => [
-                'avaliacao-de-impacto-ambiental-concluida-em-projecto-mineiro',
-                'reabilitacao-de-areas-degradadas-avanca-no-namibe',
-                'novas-normas-de-emissoes-para-operacoes-mineiras',
-                'campanha-de-reflorestamento-atinge-10-000-arvores',
-            ],
-        ],
-        'noticias-investigacao.html' => [
-            'categoria' => 'Investigação',
-            'slugs' => [
-                'hidrogeologia-do-planalto-do-bie-primeiros-resultados',
-                'potencial-mineral-da-provincia-do-namibe-avaliado',
-                'mapeamento-geologico-a-escala-1-250-000-concluido',
-                'mudancas-climaticas-e-recursos-hidricos-em-angola',
-            ],
-        ],
+    private const GRUPOS = [
+        'noticias-mineracao.html' => ['rotulo' => 'Mineração', 'slug' => 'mineracao'],
+        'noticias-agua.html' => ['rotulo' => 'Água', 'slug' => 'agua'],
+        'noticias-ambiente.html' => ['rotulo' => 'Ambiente', 'slug' => 'ambiente'],
+        'noticias-investigacao.html' => ['rotulo' => 'Investigação', 'slug' => 'investigacao'],
     ];
 
     public function show(string $arquivo): View
     {
-        if (! isset(self::FRAGMENTOS[$arquivo])) {
+        $cfg = self::GRUPOS[$arquivo] ?? null;
+
+        if ($cfg === null) {
             abort(404);
         }
 
-        $fragmento = self::FRAGMENTOS[$arquivo];
+        $categoria = Category::where('slug', $cfg['slug'])
+            ->where('type', 'news')
+            ->first();
 
-        $porSlug = News::published()
+        if ($categoria === null) {
+            abort(404);
+        }
+
+        $ids = Category::where('parent_id', $categoria->id)
+            ->pluck('id')
+            ->push($categoria->id);
+
+        $items = News::published()
             ->with(['category', 'author'])
-            ->whereIn('slug', $fragmento['slugs'])
-            ->get()
-            ->keyBy('slug');
-
-        $items = collect($fragmento['slugs'])
-            ->map(fn (string $slug) => $porSlug->get($slug))
-            ->filter()
-            ->values();
+            ->whereIn('category_id', $ids)
+            ->latest('published_at')
+            ->take(5)
+            ->get();
 
         return view('fragments.news', [
             'items' => $items,
-            'categoria' => $fragmento['categoria'],
+            'categoria' => $cfg['rotulo'],
         ]);
     }
 }

@@ -7,7 +7,7 @@
 @endsection
 
 @section('breadcrumb')
-<ul><li><a href="{{ route('admin.index') }}">Admin</a></li><li class="active">Utilizadores</li></ul>
+<ol><li><a href="{{ route('admin.index') }}">Admin</a></li><li class="active" aria-current="page">Utilizadores</li></ol>
 @endsection
 
 @section('content')
@@ -38,33 +38,31 @@
         <div class="dashboard-form-group">
           <label class="dashboard-form-label">Nome</label>
           <input class="dashboard-form-input" type="text" name="nome" placeholder="Nome completo" value="{{ old('nome') }}" required>
-          @error('nome')<p class="form-error">{{ $message }}</p>@enderror
+          @error('nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
         </div>
         <div class="dashboard-form-group">
           <label class="dashboard-form-label">Email</label>
           <input class="dashboard-form-input" type="email" name="email" placeholder="o.seu@email.com" value="{{ old('email') }}" required>
-          @error('email')<p class="form-error">{{ $message }}</p>@enderror
+          @error('email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
         </div>
         <div class="dashboard-form-group">
           <label class="dashboard-form-label">Perfil</label>
           <select class="dashboard-form-select" name="perfil" required>
             <option value="">Selecionar perfil…</option>
-            <option value="user" @selected(old('perfil') === 'user')>Utilizador</option>
-            <option value="company" @selected(old('perfil') === 'company')>Empresa</option>
             <option value="editor" @selected(old('perfil') === 'editor')>Editor</option>
             <option value="admin" @selected(old('perfil') === 'admin')>Admin</option>
           </select>
-          @error('perfil')<p class="form-error">{{ $message }}</p>@enderror
+          @error('perfil')<p class="form-error" role="alert">{{ $message }}</p>@enderror
         </div>
         <div class="dashboard-form-group">
           <label class="dashboard-form-label">Palavra-passe</label>
           <input class="dashboard-form-input" type="password" name="password" placeholder="mínimo 8 caracteres" required>
-          @error('password')<p class="form-error">{{ $message }}</p>@enderror
+          @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
         </div>
         <div class="dashboard-form-group">
           <label class="dashboard-form-label">Confirmar palavra-passe</label>
           <input class="dashboard-form-input" type="password" name="password_confirmation" placeholder="repita a palavra-passe" required>
-          @error('password_confirmation')<p class="form-error">{{ $message }}</p>@enderror
+          @error('password_confirmation')<p class="form-error" role="alert">{{ $message }}</p>@enderror
         </div>
       </form>
     </div>

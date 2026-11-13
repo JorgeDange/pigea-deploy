@@ -7,15 +7,16 @@
 @endsection
 
 @section('breadcrumb')
-<ul><li><a href="{{ route('admin.index') }}">Admin</a></li><li class="active">Notícias</li></ul>
+<ol><li><a href="{{ route('admin.index') }}">Admin</a></li><li class="active" aria-current="page">Notícias</li></ol>
 @endsection
 
 @section('content')
+@if (session('estado'))<div class="flash-toast" data-flash-toast="success" hidden>{{ session('estado') }}</div>@endif
 <div class="card">
   <div class="card-head">
-    <h3 class="card-title">Notícias</h3>
-    <div class="card-actions"><a href="{{ Route::has('admin.noticia-nova') ? route('admin.noticia-nova') : '#' }}" class="btn-primary btn-sm"><i class="fa fa-plus"></i> Nova notícia</a></div>
+    <h2 class="card-title">Notícias</h2>
+    <div class="card-actions"><a href="{{ Route::has('admin.noticia-nova') ? route('admin.noticia-nova') : '#' }}" class="btn-primary btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> Nova notícia</a></div>
   </div>
-  <livewire:admin.content-table tipo="noticias" />
+  <livewire:admin.news-list-table />
 </div>
 @endsection

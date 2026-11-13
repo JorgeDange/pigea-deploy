@@ -17,14 +17,12 @@ class Directory extends Model
     protected $fillable = [
         'category_id', 'author_id', 'title', 'slug', 'excerpt', 'content',
         'image', 'image_caption', 'status', 'published_at', 'date_label',
-        'comments_count', 'views_count',
     ];
 
     protected function casts(): array
     {
         return [
             'published_at' => 'date',
-            'comments_count' => 'integer',
             'views_count' => 'integer',
         ];
     }

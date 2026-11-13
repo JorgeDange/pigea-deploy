@@ -7,7 +7,7 @@
 @endsection
 
 @section('breadcrumb')
-<ul><li><a href="{{ route('admin.index') }}">Admin</a></li><li><a href="{{ route($conf['lista']) }}">{{ $rotuloLista }}</a></li><li class="active">{{ $migalha }}</li></ul>
+<ol><li><a href="{{ route('admin.index') }}">Admin</a></li><li><a href="{{ route($conf['lista']) }}">{{ $rotuloLista }}</a></li><li class="active" aria-current="page">{{ $migalha }}</li></ol>
 @endsection
 
 @section('content')
@@ -37,9 +37,14 @@
                 @foreach ($coluna as $campo)
               <div class="dashboard-form-group">
                 <label class="dashboard-form-label">{{ $campo['rotulo'] }}</label>
+                @if (!empty($campo['hint']))<small class="help-text">{{ $campo['hint'] }}</small>@endif
                 @switch($campo['tipo'])
                   @case('text')
                     <input class="dashboard-form-input" type="text" name="{{ $campo['nome'] }}" placeholder="{{ $campo['placeholder'] ?? '' }}" value="{{ $campo['valor'] ?? '' }}" @required($campo['obrigatorio'] ?? false)>
+                    @break
+
+                  @case('url')
+                    <input class="dashboard-form-input" type="url" name="{{ $campo['nome'] }}" placeholder="{{ $campo['placeholder'] ?? '' }}" value="{{ $campo['valor'] ?? '' }}">
                     @break
 
                   @case('textarea')
@@ -76,6 +81,10 @@
                     </select>
                     @break
 
+                  @case('provincia')
+                    <x-provincia-select :value="$campo['valor'] ?? null" bare />
+                    @break
+
                   @case('select')
                     <select class="dashboard-form-select" name="{{ $campo['nome'] }}">
                       <option value="">Selecionar…</option>
@@ -86,12 +95,23 @@
                     @break
 
                   @case('ficheiro')
-                    <div class="upload-box">PNG ou JPG até 4MB
-                      @if (!empty($campo['actual']))<br><small>Imagem actual: {{ $campo['actual'] }}</small>@endif
-                      <br><input type="file" name="{{ $campo['nome'] }}"></div>
+                    <div class="file-upload" data-accept="image" data-max-bytes="4194304">
+                      <img class="file-upload-preview" @if (!empty($campo['actual'])) src="{{ str_starts_with($campo['actual'], 'http') ? $campo['actual'] : asset($campo['actual']) }}" alt="Imagem atual" @else hidden alt="Imagem" @endif>
+                      <label class="file-upload-button" for="{{ $campo['nome'] }}"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem</label>
+                      <div class="file-upload-meta">
+                        <span class="file-upload-name">{{ !empty($campo['actual']) ? 'Imagem atual: ' . $campo['actual'] : 'Nenhum ficheiro selecionado' }}</span>
+                        <small class="help-text">PNG ou JPG até 4MB.</small>
+                      </div>
+                      <input type="file" id="{{ $campo['nome'] }}" name="{{ $campo['nome'] }}" accept="image/png,image/jpeg,image/webp">
+                      <button type="button" class="file-upload-remove">Remover</button>
+                      <p class="file-upload-erro" role="alert"></p>
+                    </div>
                     @break
                 @endswitch
-                @error($campo['nome'])<p class="form-error">{{ $message }}</p>@enderror
+                @error($campo['nome'])<p class="form-error" role="alert">{{ $message }}</p>@enderror
+                @if (($campo['tipo'] ?? null) === 'provincia')
+                @error('provincia_outro')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+                @endif
               </div>
                 @endforeach
                 </div>

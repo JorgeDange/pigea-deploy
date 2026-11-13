@@ -7,7 +7,7 @@
 @endsection
 
 @section('breadcrumb')
-<ul><li><a href="{{ route('admin.index') }}">Admin</a></li><li class="active">Configurações</li></ul>
+<ol><li><a href="{{ route('admin.index') }}">Admin</a></li><li class="active" aria-current="page">Configurações</li></ol>
 @endsection
 
 @section('content')
@@ -25,22 +25,42 @@
               <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Nome do portal</label>
                 <input class="dashboard-form-input" type="text" name="portal" placeholder="PIGEA — Plataforma de Impulsionamento das Geociências em Angola" value="{{ old('portal', $definicoes['portal'] ?? '') }}" required>
-                @error('portal')<p class="form-error">{{ $message }}</p>@enderror
+                @error('portal')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Descrição</label>
                 <textarea class="dashboard-form-textarea" name="descricao" rows="3" placeholder="Descrição curta do portal…">{{ old('descricao', $definicoes['descricao'] ?? '') }}</textarea>
-                @error('descricao')<p class="form-error">{{ $message }}</p>@enderror
+                @error('descricao')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>
                 <div class="dashboard-form-col">
               <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Logótipo</label>
-                <div class="upload-box">PNG ou JPG até 2MB<br><input type="file" name="logo"></div>
-                @error('logo')<p class="form-error">{{ $message }}</p>@enderror
+                <div class="file-upload" data-accept="image" data-max-bytes="2097152">
+                    <img class="file-upload-preview" @if (!empty($definicoes['logo'])) src="{{ asset('storage/' . $definicoes['logo']) }}" alt="Logótipo atual" @else hidden alt="Logótipo" @endif>
+                    <label class="file-upload-button" for="logo"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem</label>
+                    <div class="file-upload-meta">
+                        <span class="file-upload-name">{{ !empty($definicoes['logo']) ? 'Logótipo atual: ' . basename($definicoes['logo']) : 'Nenhum ficheiro selecionado' }}</span>
+                        <small class="help-text">PNG ou JPG, até 2MB. Rec.: 400x100px.</small>
+                    </div>
+                    <input type="file" id="logo" name="logo" accept="image/png,image/jpeg">
+                    <button type="button" class="file-upload-remove">Remover</button>
+                    <p class="file-upload-erro" role="alert"></p>
+                </div>
+                @error('logo')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Favicon</label>
-                <div class="upload-box">PNG 32×32<br><input type="file" name="favicon"></div>
-                @error('favicon')<p class="form-error">{{ $message }}</p>@enderror
+                <div class="file-upload" data-accept="image">
+                    <img class="file-upload-preview" @if (!empty($definicoes['favicon'])) src="{{ asset('storage/' . $definicoes['favicon']) }}" alt="Favicon atual" @else hidden alt="Favicon" @endif>
+                    <label class="file-upload-button" for="favicon"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher imagem</label>
+                    <div class="file-upload-meta">
+                        <span class="file-upload-name">{{ !empty($definicoes['favicon']) ? 'Favicon atual: ' . basename($definicoes['favicon']) : 'Nenhum ficheiro selecionado' }}</span>
+                        <small class="help-text">PNG 32×32. Máx.: 256KB no servidor.</small>
+                    </div>
+                    <input type="file" id="favicon" name="favicon" accept="image/png">
+                    <button type="button" class="file-upload-remove">Remover</button>
+                    <p class="file-upload-erro" role="alert"></p>
+                </div>
+                @error('favicon')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>
               </div>
@@ -64,18 +84,18 @@
               <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Email</label>
                 <input class="dashboard-form-input" type="email" name="email" placeholder="geral@pigea.ao" value="{{ old('email', $definicoes['email'] ?? '') }}" required>
-                @error('email')<p class="form-error">{{ $message }}</p>@enderror
+                @error('email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Telefone</label>
                 <input class="dashboard-form-input" type="tel" name="telefone" placeholder="+244 000 000 000" value="{{ old('telefone', $definicoes['telefone'] ?? '') }}">
-                @error('telefone')<p class="form-error">{{ $message }}</p>@enderror
+                @error('telefone')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>
                 <div class="dashboard-form-col">
               <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Endereço</label>
                 <input class="dashboard-form-input" type="text" name="endereco" placeholder="Rua, bairro, município, Luanda" value="{{ old('endereco', $definicoes['endereco'] ?? '') }}">
-                @error('endereco')<p class="form-error">{{ $message }}</p>@enderror
+                @error('endereco')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>
               </div>
@@ -89,7 +109,6 @@
         <div class="card">
           <div class="card-head">
             <h3 class="card-title">Redes sociais</h3>
-            
           </div>
           <div class="card-body">
 <form class="dashboard-form" action="{{ route('admin.configuracoes.redes') }}" method="post">
@@ -97,27 +116,60 @@
               <div class="dashboard-form-row">
                 <div class="dashboard-form-col">
               <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Facebook</label>
-                <input class="dashboard-form-input" type="text" name="facebook" placeholder="https://facebook.com/…" value="{{ old('facebook', $definicoes['facebook'] ?? '') }}">
-                @error('facebook')<p class="form-error">{{ $message }}</p>@enderror
-              </div>              <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Instagram</label>
-                <input class="dashboard-form-input" type="text" name="instagram" placeholder="https://instagram.com/…" value="{{ old('instagram', $definicoes['instagram'] ?? '') }}">
-                @error('instagram')<p class="form-error">{{ $message }}</p>@enderror
+                <label class="dashboard-form-label" for="facebook">Facebook (link)</label>
+                <input class="dashboard-form-input" type="text" id="facebook" name="facebook" placeholder="https://facebook.com/pigea.ao" value="{{ old('facebook', $definicoes['facebook'] ?? '') }}">
+                @error('facebook')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="facebook_nome">Nome público da conta (Facebook)</label>
+                <input class="dashboard-form-input" type="text" id="facebook_nome" name="facebook_nome" placeholder="pigea.ao" value="{{ old('facebook_nome', $definicoes['facebook_nome'] ?? '') }}">
+                @error('facebook_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="instagram">Instagram (link)</label>
+                <input class="dashboard-form-input" type="text" id="instagram" name="instagram" placeholder="https://instagram.com/pigea.ao" value="{{ old('instagram', $definicoes['instagram'] ?? '') }}">
+                @error('instagram')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="instagram_nome">Nome público da conta (Instagram)</label>
+                <input class="dashboard-form-input" type="text" id="instagram_nome" name="instagram_nome" placeholder="pigea.ao" value="{{ old('instagram_nome', $definicoes['instagram_nome'] ?? '') }}">
+                @error('instagram_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>
                 <div class="dashboard-form-col">
               <div class="dashboard-form-group">
-                <label class="dashboard-form-label">LinkedIn</label>
-                <input class="dashboard-form-input" type="text" name="linkedin" placeholder="https://linkedin.com/…" value="{{ old('linkedin', $definicoes['linkedin'] ?? '') }}">
-                @error('linkedin')<p class="form-error">{{ $message }}</p>@enderror
-              </div>              <div class="dashboard-form-group">
-                <label class="dashboard-form-label">YouTube</label>
-                <input class="dashboard-form-input" type="text" name="youtube" placeholder="https://youtube.com/…" value="{{ old('youtube', $definicoes['youtube'] ?? '') }}">
-                @error('youtube')<p class="form-error">{{ $message }}</p>@enderror
+                <label class="dashboard-form-label" for="linkedin">LinkedIn (link)</label>
+                <input class="dashboard-form-input" type="text" id="linkedin" name="linkedin" placeholder="https://linkedin.com/company/pigea" value="{{ old('linkedin', $definicoes['linkedin'] ?? '') }}">
+                @error('linkedin')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="linkedin_nome">Nome público da conta (LinkedIn)</label>
+                <input class="dashboard-form-input" type="text" id="linkedin_nome" name="linkedin_nome" placeholder="pigea.ao" value="{{ old('linkedin_nome', $definicoes['linkedin_nome'] ?? '') }}">
+                @error('linkedin_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="youtube">YouTube (link)</label>
+                <input class="dashboard-form-input" type="text" id="youtube" name="youtube" placeholder="https://youtube.com/@pigea" value="{{ old('youtube', $definicoes['youtube'] ?? '') }}">
+                @error('youtube')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="youtube_nome">Nome público da conta (YouTube)</label>
+                <input class="dashboard-form-input" type="text" id="youtube_nome" name="youtube_nome" placeholder="pigea.ao" value="{{ old('youtube_nome', $definicoes['youtube_nome'] ?? '') }}">
+                @error('youtube_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="twitter">X / Twitter (link)</label>
+                <input class="dashboard-form-input" type="text" id="twitter" name="twitter" placeholder="https://x.com/pigea" value="{{ old('twitter', $definicoes['twitter'] ?? '') }}">
+                @error('twitter')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="twitter_nome">Nome público da conta (X / Twitter)</label>
+                <input class="dashboard-form-input" type="text" id="twitter_nome" name="twitter_nome" placeholder="pigea.ao" value="{{ old('twitter_nome', $definicoes['twitter_nome'] ?? '') }}">
+                @error('twitter_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
                 </div>
               </div>
+              <p class="helper-text">Os links alimentam o rodapé e a página de contactos; os «nomes públicos» aparecem na caixa «Siga-nos» do site (ex.: <strong>pigea.ao</strong>). Sem link não configurado, a rede não aparece no site.</p>
               <div class="dashboard-form-actions">
                 <button type="submit" class="btn-primary"><i class="fa fa-save"></i> Guardar</button>
                 
@@ -127,63 +179,21 @@
         </div>
         <div class="card">
           <div class="card-head">
-            <h3 class="card-title">SEO</h3>
+            <h3 class="card-title">Aparência nas pesquisas (Google)</h3>
             
           </div>
           <div class="card-body">
 <form class="dashboard-form" action="{{ route('admin.configuracoes.seo') }}" method="post">
               @csrf
               <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Meta title padrão</label>
-                <input class="dashboard-form-input" type="text" name="meta_title" placeholder="Título para os motores de busca (até 60 caracteres)" value="{{ old('meta_title', $definicoes['meta_title'] ?? '') }}">
-                @error('meta_title')<p class="form-error">{{ $message }}</p>@enderror
+                <label class="dashboard-form-label">Título que aparece nas pesquisas</label>
+                <input class="dashboard-form-input" type="text" name="meta_title" placeholder="Título que aparece no Google (até 60 caracteres)" value="{{ old('meta_title', $definicoes['meta_title'] ?? '') }}">
+                @error('meta_title')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
               <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Meta description padrão</label>
-                <textarea class="dashboard-form-textarea" name="meta_description" rows="2" placeholder="Descrição para os motores de busca (até 160 caracteres)">{{ old('meta_description', $definicoes['meta_description'] ?? '') }}</textarea>
-                @error('meta_description')<p class="form-error">{{ $message }}</p>@enderror
-              </div>
-              <div class="dashboard-form-actions">
-                <button type="submit" class="btn-primary"><i class="fa fa-save"></i> Guardar</button>
-                
-              </div>
-          </form>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <h3 class="card-title">Idiomas</h3>
-            
-          </div>
-          <div class="card-body">
-            <ul class="list-check">
-              <li><span>Português (PT) — idioma principal</span><label class="switch"><input type="checkbox" checked><span></span></label></li>
-              <li><span>Inglês (EN) — tradução do portal</span><label class="switch"><input type="checkbox"><span></span></label></li>
-            </ul>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-head">
-            <h3 class="card-title">Notificações por email</h3>
-            
-          </div>
-          <div class="card-body">
-<form class="dashboard-form" action="{{ route('admin.configuracoes.email') }}" method="post">
-              @csrf
-              <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Modelo de notificação</label>
-                <select class="dashboard-form-select" name="template">
-                <option value="" @selected(old('template', $definicoes['template'] ?? '') === '')>Selecionar modelo…</option>
-                <option value="novo-registo" @selected(old('template', $definicoes['template'] ?? '') === 'novo-registo')>Novo registo de empresa</option>
-                <option value="nova-candidatura" @selected(old('template', $definicoes['template'] ?? '') === 'nova-candidatura')>Nova candidatura a vaga</option>
-                <option value="newsletter" @selected(old('template', $definicoes['template'] ?? '') === 'newsletter')>Newsletter semanal</option>
-              </select>
-                @error('template')<p class="form-error">{{ $message }}</p>@enderror
-              </div>
-              <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Texto do email</label>
-                <textarea class="dashboard-form-textarea" name="texto_email" rows="4" placeholder="Corpo do email de notificação (suporta variáveis @{{nome}}, @{{data}})…">{{ old('texto_email', $definicoes['texto_email'] ?? '') }}</textarea>
-                @error('texto_email')<p class="form-error">{{ $message }}</p>@enderror
+                <label class="dashboard-form-label">Descrição que aparece nas pesquisas</label>
+                <textarea class="dashboard-form-textarea" name="meta_description" rows="2" placeholder="Descrição que aparece no Google (até 160 caracteres)">{{ old('meta_description', $definicoes['meta_description'] ?? '') }}</textarea>
+                @error('meta_description')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
               <div class="dashboard-form-actions">
                 <button type="submit" class="btn-primary"><i class="fa fa-save"></i> Guardar</button>

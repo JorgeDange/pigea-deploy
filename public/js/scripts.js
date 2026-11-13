@@ -12,17 +12,8 @@ function initGmag() {
     $(".date_mounth").text(getMon);
     $(".date_year").text(getyear);
 	//   ticker------------------
-    $('.header_news-ticker').easyTicker({
-        direction: 'up',
-        easing: 'swing',
-        interval: 2500,
-        mousePause: true,
-        controls: {
-            up: '.n_btn',
-            down: '.p_btn',
-
-        },
-    });
+    // easyTicker do .header_news-ticker REMOVIDO (FASE 6): o news ticker foi
+    // retirado do header e o banner publicitário real (Livewire) o substituiu.
     $('.picker-wrap').easyTicker({
         direction: 'up',
         visible: 3,
@@ -184,45 +175,6 @@ function initGmag() {
             }
         }
     });
-    //   Contact form (estático, sem backend)------------------
-    $(document).on('submit', '#contactform', function () {
-        var form = this;
-        if (typeof form.checkValidity === "function" && !form.checkValidity()) {
-            form.reportValidity();
-            return false;
-        }
-        $("#message").hide().html('<div class="form-ok">Mensagem enviada com sucesso! A equipa PIGEA responderá através do email indicado.</div>').slideDown("slow");
-        form.reset();
-        return false;
-    });
-    $(document).on('keyup', '#contactform input, #contactform textarea', function () {
-        $("#message").slideUp(1500);
-    });
-    //   Registo de empresa (estático, sem backend) ------------------
-    $(document).on('submit', '#registoform', function () {
-        var form = this;
-        if (typeof form.checkValidity === "function" && !form.checkValidity()) {
-            form.reportValidity();
-            return false;
-        }
-        $("#message").hide().html('<div class="form-ok">Registo enviado com sucesso! A equipa PIGEA analisará os dados e entrará em contacto através do email indicado.</div>').slideDown("slow");
-        form.reset();
-        return false;
-    });
-    //   mailchimp------------------
-    $("#subscribe").ajaxChimp({
-        language: "eng",
-        url: "https://gmail.us1.list-manage.com/subscribe/post?u=1fe818378d5c129b210719d80&amp;id=a2792f681b"
-    });
-    $.ajaxChimp.translations.eng = {
-        submit: "Submitting...",
-        0: '<i class="fal fa-check"></i> We will be in touch soon!',
-        1: '<i class="fal fa-exclamation-circle"></i> You must enter a valid e-mail address.',
-        2: '<i class="fal fa-exclamation-circle"></i> E-mail address is not valid.',
-        3: '<i class="fal fa-exclamation-circle"></i> E-mail address is not valid.',
-        4: '<i class="fal fa-exclamation-circle"></i> E-mail address is not valid.',
-        5: '<i class="fal fa-exclamation-circle"></i> E-mail address is not valid.'
-    };
     $(".to-top").on("click", function (a) {
         a.preventDefault();
         $("html, body").animate({
@@ -274,20 +226,9 @@ function initGmag() {
         if (swra.hasClass("isShare")) showShare();
         else hideShare();
     });
-    $(".show-reg-form").on("click", function () {
-        showModal();
-    });
-    function showModal() {
-        $(".main-register-container").fadeIn(1);
-        $(".main-register-wrap").addClass("vis_mr");
-    }
-    function hideModal() {
-        $(".main-register-container").fadeOut(1);
-        $(".main-register-wrap").removeClass("vis_mr");
-    }
-    $(".close-reg-form").on("click", function () {
-        hideModal();
-    });
+    // FASE 8 (código morto): removidos $('.show-reg-form') / showModal /
+    // hideModal / $('.close-reg-form') — o modal de login do tema já não é
+    // renderizado no layout; a porta única de login é a página /login.
     // duplicate -----------------
     $.fn.duplicate = function (a, b) {
         var c = [];

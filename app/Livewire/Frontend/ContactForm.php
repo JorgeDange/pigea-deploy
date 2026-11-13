@@ -16,8 +16,11 @@ use Livewire\Component;
  */
 class ContactForm extends Component
 {
-    /** Email público que o próprio protótipo indica na página de contactos. */
-    private const DESTINATARIO = 'geral@pigea.ao';
+    /** Email de receção: configurável no admin; fallback geral@pigea.ao */
+    private function destinatario(): string
+    {
+        return trim((string) (\App\Models\Setting::obter('email', 'geral@pigea.ao') ?? 'geral@pigea.ao')) ?: 'geral@pigea.ao';
+    }
 
     public string $name = '';
 
@@ -64,7 +67,7 @@ class ContactForm extends Component
             Mail::raw(
                 "Nome: {$this->name}\nEmail: {$this->email}\n\n{$this->comments}",
                 fn ($mensagem) => $mensagem
-                    ->to(self::DESTINATARIO)
+                    ->to($this->destinatario())
                     ->subject("Mensagem pelo site PIGEA — {$this->name}")
             );
         } catch (\Throwable $e) {

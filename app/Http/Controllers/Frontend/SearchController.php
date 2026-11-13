@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Directory;
 use App\Models\Event;
 use App\Models\Interview;
-use App\Models\Job;
 use App\Models\Legislation;
 use App\Models\News;
 use App\Models\Project;
@@ -19,20 +17,14 @@ use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    /**
-     * Todos os módulos de conteúdo público do protótipo (tabelas com o mesmo
-     * esquema), pesquisados de uma só vez com o driver `database` do Scout.
-     */
+    /** Todos os módulos de conteúdo público do protótipo (tabelas com o mesmo esquema). */
     private const MODELOS = [
         News::class,
-        Project::class,
-        Directory::class,
         Technology::class,
         Supplier::class,
         Event::class,
         Interview::class,
         Research::class,
-        Job::class,
         Legislation::class,
         Training::class,
     ];
@@ -48,7 +40,12 @@ class SearchController extends Controller
         $resultados = [];
 
         if ($termo !== '') {
-            foreach (self::MODELOS as $modelo) {
+            $modelos = self::MODELOS;
+            if (config('features.projects_publico')) {
+                $modelos[] = Project::class;
+            }
+
+            foreach ($modelos as $modelo) {
                 $encontrados = $modelo::search($termo, fn ($query) => $query->published()->whereNull('deleted_at'))
                     ->get();
 

@@ -4,6 +4,9 @@
 @section('description', 'Notícia de geociências no PIGEA.')
 
 @section('content')
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/article.css') }}">
+@endpush
 
                     <div class="breadcrumbs-header fl-wrap">
                         <div class="container">
@@ -32,10 +35,9 @@
                                             <h1>{{ $post->title }}</h1>
                                             <h4>Informação actualizada e verificada pela equipa PIGEA.</h4>
                                             <div class="clearfix"></div>
-                                            <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($post->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($post->author)->name }}</span></a></div>
+                                            <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ \App\Support\Autor::avatarUrl(\App\Support\Autor::assinatura($post)['avatar']) }}" alt="">  <span>{{ \App\Support\Autor::assinatura($post)['name'] }}</span></a></div>
                                             <span class="post-date"><i class="far fa-clock"></i> {{ $post->display_date }}</span>
                                             <ul class="post-opt">
-                                                <li><i class="far fa-comments-alt"></i> {{ $post->comments_count }} </li>
                                                 <li><i class="fal fa-eye"></i>  {{ $post->views_count }} </li>
                                             </ul>
                                         </div>
@@ -88,15 +90,10 @@
                                             </div>
                                             <div class="fs-wrap smpar fl-wrap">
                                                 <div class="fontSize"><span class="fs_title">Tamanho da letra: </span><input type="text" class="rage-slider" data-step="1" data-min="12" data-max="15" value="12"></div>
-                                                <div class="show-more-snopt smact"><i class="fal fa-ellipsis-v"></i></div>
-                                                <div class="show-more-snopt-tooltip">
-                                                    <a href="#comments" class="custom-scroll-link"> <i class="fas fa-comment-alt"></i> Escrever um comentário</a>
-                                                    <a href="#"> <i class="fas fa-exclamation-triangle"></i> Reportar</a>
-                                                </div>
                                                 <a class="print-btn" href="javascript:window.print()" data-microtip-position="bottom"><span>Imprimir</span><i class="fal fa-print"></i></a>
                                             </div>
                                             <div class="clearfix"></div>
-                                            {!! $post->content !!}
+                                            @include('news.partials.article-body', ['content' => $post->content])
                                             <div class="single-post-footer fl-wrap">
                                                 <div class="post-single-tags">
                                                     <span class="tags-title"><i class="fas fa-tag"></i> Tags : </span>
@@ -116,7 +113,7 @@
     
 <div class="spn_box_img">
     
-    <img src="{{ asset($prev->image ?? 'images/all/2.jpg') }}" class="respimg" alt="">
+    <img src="{{ image_url($prev->image, 'images/all/2.jpg') }}" class="respimg" alt="">
     
 </div>
     
@@ -136,7 +133,7 @@
     
 <div class="spn_box_img">
     
-    <img src="{{ asset($next->image ?? 'images/all/20.jpg') }}" class="respimg" alt="">
+    <img src="{{ image_url($next->image, 'images/all/20.jpg') }}" class="respimg" alt="">
     
 </div>
     
@@ -155,31 +152,21 @@
                                         </div>
                                         <!-- single-post-content  end   -->
                                         <div class="limit-box2 fl-wrap"></div>
-                                        <!-- post-author-->                                   
+                                        <!-- post-author (Sobre o Autor — autor.md §3) -->
+                                        @php
+                                            $assinatura = \App\Support\Autor::assinatura($post);
+                                            $avatarSrc = \App\Support\Autor::avatarUrl($assinatura['avatar']);
+                                        @endphp
                                         <div class="post-author fl-wrap">
                                             <div class="author-img">
-                                                <img  src="{{ asset('images/avatar/2.jpg') }}" alt="">	
+                                                <img src="{{ $avatarSrc }}" alt="{{ $assinatura['name'] }}">
                                             </div>
                                             <div class="author-content fl-wrap">
-                                                <h5>Escrito por <a href="{{ route('news.index') }}">{{ optional($post->author)->name }}</a></h5>
+                                                <h5>Escrito por <a href="{{ route('news.index') }}">{{ $assinatura['name'] }}</a></h5>
                                                 <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
                                             </div>
-                                            <div class="profile-card-footer fl-wrap">
-                                                <a href="{{ route('news.index') }}" class="post-author_link">Ver Perfil <i class="fas fa-caret-right"></i></a>
-                                                <div class="profile-card-footer_soc">
-                                                    <div class="profile-card-footer_title">Seguir: </div>
-                                                    <div class="profile-card-social">
-                                                        <ul>
-                                                            <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                                                            <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
-                                                            <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                                            <li><a href="#" target="_blank"><i class="fab fa-vk"></i></a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
-                                        <!--post-author end-->		
+                                        <!--post-author end-->
                                         <div class="more-post-wrap  fl-wrap">
                                             <div class="pr-subtitle prs_big">Artigos Relacionados</div>
                                             <div class="list-post-wrap list-post-wrap_column fl-wrap">
@@ -192,7 +179,7 @@
                                                             <div class="list-post-media">
                                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                                     <div class="bg-wrap">
-                                                                        <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
                                                                     </div>
                                                                 </a>
                                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -213,7 +200,7 @@
                                                             <div class="list-post-media">
                                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                                     <div class="bg-wrap">
-                                                                        <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
                                                                     </div>
                                                                 </a>
                                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -229,104 +216,27 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <!--comments  -->
-                                        <div id="comments" class="single-post-comm fl-wrap">
-                                            <div class="pr-subtitle prs_big">Comentários <span>3</span></div>
-                                            <ul class="commentlist clearafix">
-                                                <li class="comment">
-                                                    <div class="comment-author">
-                                                        <img alt="" src="{{ asset('images/avatar/2.jpg') }}" width="50" height="50">
-                                                    </div>
-                                                    <div class="comment-body smpar">
-                                                        <h4><a href="#">Marta Fernandes</a></h4>
-                                                        <div class="box-widget-menu-btn smact"><i class="far fa-ellipsis-h"></i></div>
-                                                        <div class="show-more-snopt-tooltip bxwt">
-                                                            <a href="#"> <i class="fas fa-reply"></i> Responder</a>
-                                                            <a href="#"> <i class="fas fa-exclamation-triangle"></i> Reportar</a>
-                                                        </div>
-                                                        <div class="clearfix"></div>
-                                                        <p>O PIGEA promove a partilha de conhecimento entre profissionais, empresas e investigadores, contribuindo para uma mineração e gestão de recursos mais transparentes e sustentáveis.</p>
-                                                        <a class="comment-reply-link" href="#"><i class="fas fa-reply"></i> Responder</a>
-                                                        <div class="comment-meta"><i class="far fa-clock"></i> 02 de janeiro de 2020</div>
-                                                        <div class="comment-body_dec"></div>
-                                                    </div>
-                                                </li>
-                                                <li class="comment comment_reply">
-                                                    <div class="comment-author">
-                                                        <img alt="" src="{{ asset('images/avatar/4.jpg') }}" width="50" height="50">
-                                                    </div>
-                                                    <div class="comment-body smpar">
-                                                        <h4><a href="#">João Baptista</a></h4>
-                                                        <div class="box-widget-menu-btn smact"><i class="far fa-ellipsis-h"></i></div>
-                                                        <div class="show-more-snopt-tooltip bxwt">
-                                                            <a href="#"> <i class="fas fa-reply"></i> Responder</a>
-                                                            <a href="#"> <i class="fas fa-exclamation-triangle"></i> Reportar</a>
-                                                        </div>
-                                                        <div class="clearfix"></div>
-                                                        <p>Os conteúdos do PIGEA são elaborados a partir de fontes oficiais, instituições parceiras e profissionais do setor, e revistos pela equipa editorial antes da publicação.</p>
-                                                        <a class="comment-reply-link" href="#"><i class="fas fa-reply"></i> Responder</a>
-                                                        <div class="comment-meta"><i class="far fa-clock"></i> 02 de janeiro de 2020</div>
-                                                        <div class="comment-body_dec"></div>
-                                                    </div>
-                                                </li>
-                                                <li class="comment">
-                                                    <div class="comment-author">
-                                                        <img alt="" src="{{ asset('images/avatar/4.jpg') }}" width="50" height="50">
-                                                    </div>
-                                                    <div class="comment-body smpar">
-                                                        <h4><a href="#">João Baptista</a></h4>
-                                                        <div class="box-widget-menu-btn smact"><i class="far fa-ellipsis-h"></i></div>
-                                                        <div class="show-more-snopt-tooltip bxwt">
-                                                            <a href="#"> <i class="fas fa-reply"></i> Responder</a>
-                                                            <a href="#"> <i class="fas fa-exclamation-triangle"></i> Reportar</a>
-                                                        </div>
-                                                        <div class="clearfix"></div>
-                                                        <p>Esta informação faz parte da plataforma PIGEA, que reúne notícias, dados e oportunidades das geociências em Angola, com acesso gratuito a toda a comunidade.</p>
-                                                        <a class="comment-reply-link" href="#"><i class="fas fa-reply"></i> Responder</a>
-                                                        <div class="comment-meta"><i class="far fa-clock"></i> 02 de janeiro de 2020</div>
-                                                        <div class="comment-body_dec"></div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                            <div class="clearfix"></div>
-                                            <div id="addcom" class="clearafix">
-                                                <div class="pr-subtitle"> Deixar um Comentário <i class="fas fa-caret-down"></i></div>
-                                                <div class="comment-reply-form fl-wrap">
-                                                    <form id="add-comment" class="add-comment custom-form">
-                                                        <fieldset>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <input type="text" placeholder="Nome *" value="" />
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <input type="text" placeholder="Email *" value="" />
-                                                                </div>
-                                                            </div>
-                                                            <textarea placeholder="O seu comentário:"></textarea>
-                                                        </fieldset>
-                                                        <button class="btn float-btn color-btn">  Submit Comment <i class="fas fa-caret-right"></i> </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                            <!--end respond-->
-                                        </div>
-                                        <!--comments end -->					  
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <!-- sidebar   -->
                                     <div class="sidebar-content fl-wrap fixed-bar">
+                                        <!-- Banner vertical publicitario (FASE 18) -->
+                                        <x-banner-publicitario posicao="lateral" wrapper />
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
                                             <div class="box-widget-content">
                                                 <div class="search-widget fl-wrap">
                                                     <form action="{{ route('search.index') }}">
-                                                        <input name="se" id="se12" type="text" class="search" placeholder="Pesquisar notícias, projetos, empresas..." value="" />
+                                                        <input name="se" id="se12" type="text" class="search" placeholder="Pesquisar notícias, empresas, legislação…" value="" />
                                                         <button class="search-submit2" id="submit_btn12"><i class="far fa-search"></i> </button>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- box-widget  end -->
+                                        <!-- Banner publicitario sidebar (FASE 6) -->
+                                        <x-banner-publicitario posicao="sidebar" wrapper />
                                         <!-- box-widget  end -->						
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
@@ -337,7 +247,7 @@
                                                     </div>
                                                     <div class="banner-widget_content">
                                                         <h5>Registe a sua empresa no diretório PIGEA e aceda a novas oportunidades de negócio.</h5>
-                                                        <a href="{{ route('company.register') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
+                                                        <a href="{{ route('registo-empresa') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -358,49 +268,9 @@
                                         </div>
                                         <!-- box-widget  end -->
                                         <!-- box-widget -->
-                                        <div class="box-widget fl-wrap">
-                                            <div class="widget-title">Tags Populares</div>
-                                            <div class="box-widget-content">
-                                                <div class="tags-widget">
-                                                    <a href="#">Internacional</a>
-                                                    <a href="#">Mineração</a>
-                                                    <a href="#">Água</a>
-                                                    <a href="#">Ambiente</a>
-                                                    <a href="#">Investigação</a>
-                                                    <a href="#">Eventos</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- box-widget  end -->						
+                                        <x-sidebar-tags />	
                                         <!-- box-widget -->
-                                        <div class="box-widget fl-wrap">
-                                            <div class="widget-title">Siga-nos</div>
-                                            <div class="box-widget-content">
-                                                <div class="social-widget">
-                                                    <a href="#" target="_blank" class="facebook-soc">
-                                                    <i class="fab fa-facebook-f"></i>
-                                                    <span class="soc-widget-title">Curtidas</span>
-                                                    <span class="soc-widget_counter">2640</span>
-                                                    </a>
-                                                    <a href="#" target="_blank" class="twitter-soc">
-                                                    <i class="fab fa-twitter"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 
-                                                    <a href="#" target="_blank" class="youtube-soc">
-                                                    <i class="fab fa-youtube"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 												
-                                                    <a href="#" target="_blank" class="instagram-soc">
-                                                    <i class="fab fa-instagram"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 														
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- box-widget  end -->						
+                                        @include('components.redes-sociais')						
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
                                             <div class="box-widget-content">
@@ -422,13 +292,12 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -447,13 +316,12 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -482,7 +350,7 @@
                     <!-- section  -->
                     <div class="gray-bg ad-wrap fl-wrap">
                         <div class="content-banner-wrap">
-                            <img src="{{ asset('images/all/banner.jpg') }}" class="respimg" alt="">
+                            <x-banner-publicitario posicao="largo" />
                         </div>
                     </div>
                     <!-- section end -->

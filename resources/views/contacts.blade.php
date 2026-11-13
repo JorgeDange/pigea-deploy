@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Contactos | PIGEA')
-@section('description', 'Contacte o PIGEA: Luanda, Angola — geral@pigea.ao')
+@php
+    $definicoes = \App\Models\Setting::todas();
+    $enderecoContacto = trim((string) ($definicoes['endereco'] ?? '')) ?: 'Luanda, Angola';
+    $emailContacto = trim((string) ($definicoes['email'] ?? '')) ?: 'geral@pigea.ao';
+    $telefoneContacto = trim((string) ($definicoes['telefone'] ?? '')) ?: '+244 000 000 000';
+@endphp
+@section('title', 'Contactos | ' . \App\Models\Setting::portal())
+@section('description', 'Contacte o ' . \App\Models\Setting::portal() . ': ' . $enderecoContacto . ' — ' . $emailContacto)
 
 @section('content')
 
@@ -35,19 +41,15 @@
                                     <div class="pr-subtitle prs_big">Details</div>
                                     <!--card-item -->
                                     <ul class="contacts-list fl-wrap">
-                                        <li><span><i class="fal fa-map-marker"></i> Morada :</span> <a href="#">Luanda, Angola</a></li>
-                                        <li><span><i class="fal fa-phone"></i> Telefone :</span> <a href="tel:+244000000000">+244 000 000 000</a></li>
-                                        <li><span><i class="fal fa-envelope"></i> Email :</span> <a href="mailto:geral@pigea.ao">geral@pigea.ao</a></li>
+                                        <li><span><i class="fal fa-map-marker"></i> Morada :</span> <a href="#">{{ $enderecoContacto }}</a></li>
+                                        <li><span><i class="fal fa-phone"></i> Telefone :</span> <a href="tel:{{ preg_replace('/\s+/', '', $telefoneContacto) }}">{{ $telefoneContacto }}</a></li>
+                                        <li><span><i class="fal fa-envelope"></i> Email :</span> <a href="mailto:{{ $emailContacto }}">{{ $emailContacto }}</a></li>
                                     </ul>
                                     <!--card-item end -->
                                     <div class="contact-social fl-wrap">
                                         <span class="cs-title">Siga-nos: </span>
                                         <ul>
-                                            <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                                            <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
-                                            <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                                            <li><a href="#" target="_blank"><i class="fab fa-vk"></i></a></li>
-                                            <li><a href="#" target="_blank"><i class="fab fa-pinterest-p"></i></a></li>
+                                            @include('components.social-icons')
                                         </ul>
                                     </div>
                                     <!-- box-widget -->
@@ -58,11 +60,13 @@
                                             </div>
                                             <div class="banner-widget_content">
                                                 <h5>Registe a sua empresa no diretório PIGEA e aceda a novas oportunidades de negócio.</h5>
-                                                <a href="{{ route('company.register') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
+                                                <a href="{{ route('registo-empresa') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- box-widget  end -->				
+                                    <!-- box-widget  end -->
+                                    <!-- newsletter (doc/newsletter.md) -->
+                                    <x-newsletter-form variante="contacto" />
                                 </div>
                                 <div class="col-md-8">
                                     <div class="pad-con fl-wrap">

@@ -28,8 +28,11 @@ use Illuminate\Validation\Rules\Password;
  */
 class UserFormController extends Controller
 {
-    /** Papéis atribuíveis — os mesmos que o filtro do `UsersTable` mostra. */
-    private const PAPEIS = ['user', 'company', 'editor', 'admin'];
+    /** Papéis atribuíveis pela equipa — apenas admin/editor (reestruturação
+     *  restrutura.md: a equipa interna tem login; empresas/profissionais não).
+     *  Os papéis legados `user`/`company` continuam na BD de testes por
+     *  compatibilidade, mas não são atribuíveis pela UI. */
+    private const PAPEIS = ['editor', 'admin'];
 
     public function store(Request $request): RedirectResponse
     {

@@ -1,66 +1,44 @@
 @php
-    // Item de topo ativo, como no protótipo (cada página marca o seu grupo).
-    $nomeRota = request()->route()?->getName() ?? '';
-    $menuAtivo = match (true) {
-        $nomeRota === 'home' => 'home',
-        str_starts_with($nomeRota, 'news.') => 'noticias',
-        str_starts_with($nomeRota, 'projects.') => 'projetos',
-        str_starts_with($nomeRota, 'technologies.') => 'tecnologias',
-        str_starts_with($nomeRota, 'suppliers.') => 'fornecedores',
-        str_starts_with($nomeRota, 'jobs.') => 'empregos',
-        str_starts_with($nomeRota, 'training.') => 'formacao',
-        str_starts_with($nomeRota, 'legislation.')
-            || str_starts_with($nomeRota, 'events.')
-            || str_starts_with($nomeRota, 'research.')
-            || str_starts_with($nomeRota, 'interviews.')
-            || str_starts_with($nomeRota, 'directory.') => 'recursos',
-        in_array($nomeRota, ['about', 'contacts', 'errors.404'], true) => 'sobre',
-        default => '',
-    };
+    // FASE 5.1 — Mega Menu (menu.md §2-§3). Os dados (9 secções + 44
+    // subcategorias, na ordem exata do cliente) vêm da tabela `categories`
+    // via MenuSeeder / App\Support\MenuCategorias — o admin pode acrescentar
+    // subcategorias novas que o painel acompanha (menu.md §4).
+    //
+    // Item ativo: página atual (rota) ou filtro de subcategoria
+    // (?cat=prospeccao-e-pesquisa acende "Mineração", etc.).
+    $gruposMenu = \App\Support\MenuCategorias::grupos();
+    $grupoAtivo = \App\Support\MenuCategorias::grupoAtivo();
 @endphp
-<div class="nav-holder main-menu">
-    <nav>
-        <ul>
-            <li><a href="{{ route('home') }}" class="{{ $menuAtivo === 'home' ? 'act-link' : '' }}">Início</a></li>
-            <li>
-                <a href="#" class="{{ $menuAtivo === 'noticias' ? 'act-link' : '' }}">Notícias<i class="fas fa-caret-down"></i></a>
-                <!--second level -->
-                <ul>
-                    <li><a href="{{ route('news.index') }}">Todas as Notícias</a></li>
-                    <li><a href="{{ route('news.index', ['cat' => 'mineracao']) }}">Mineração</a></li>
-                    <li><a href="{{ route('news.index', ['cat' => 'agua']) }}">Água</a></li>
-                    <li><a href="{{ route('news.index', ['cat' => 'ambiente']) }}">Ambiente</a></li>
-                    <li><a href="{{ route('news.index', ['cat' => 'investigacao']) }}">Investigação</a></li>
-                    <li><a href="{{ route('news.index', ['cat' => 'internacional']) }}">Internacional</a></li>
-                </ul>
-                <!--second level end-->
-            </li>
-            <li><a href="{{ route('projects.index') }}" class="{{ $menuAtivo === 'projetos' ? 'act-link' : '' }}">Projetos</a></li>
-            <li><a href="{{ route('technologies.index') }}" class="{{ $menuAtivo === 'tecnologias' ? 'act-link' : '' }}">Tecnologias</a></li>
-            <li><a href="{{ route('suppliers.index') }}" class="{{ $menuAtivo === 'fornecedores' ? 'act-link' : '' }}">Fornecedores</a></li>
-            <li><a href="{{ route('jobs.index') }}" class="{{ $menuAtivo === 'empregos' ? 'act-link' : '' }}">Empregos</a></li>
-            <li><a href="{{ route('training.index') }}" class="{{ $menuAtivo === 'formacao' ? 'act-link' : '' }}">Formação</a></li>
-            <li>
-                <a href="#" class="{{ $menuAtivo === 'recursos' ? 'act-link' : '' }}">Recursos<i class="fas fa-caret-down"></i></a>
-                <!--second level -->
-                <ul>
-                    <li><a href="{{ route('legislation.index') }}">Legislação</a></li>
-                    <li><a href="{{ route('events.index') }}">Eventos</a></li>
-                    <li><a href="{{ route('research.index') }}">Investigação</a></li>
-                    <li><a href="{{ route('interviews.index') }}">Entrevistas</a></li>
-                    <li><a href="{{ route('directory.index') }}">Diretório</a></li>
-                </ul>
-                <!--second level end-->
-            </li>
-            <li>
-                <a href="#" class="{{ $menuAtivo === 'sobre' ? 'act-link' : '' }}">Sobre<i class="fas fa-caret-down"></i></a>
-                <!--second level -->
-                <ul>
-                    <li><a href="{{ route('about') }}">Sobre o PIGEA</a></li>
-                    <li><a href="{{ route('contacts') }}">Contactos</a></li>
-                </ul>
-                <!--second level end-->
-            </li>
+<div class="nav-holder main-menu mega-menu">
+    <nav class="mm-nav" aria-label="Menu principal">
+        <ul class="mm-bar">
+            @foreach ($gruposMenu as $chave => $grupo)
+                <li class="mm-item mm-grupo-{{ $chave }} {{ $grupoAtivo === $chave ? 'mm-item-ativo' : '' }}">
+                    <a href="{{ $grupo['link'] }}"
+                       class="mm-topo {{ $grupoAtivo === $chave ? 'act-link' : '' }}"
+                       aria-haspopup="true">
+                        {{ $grupo['rotulo'] }}
+                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                    </a>
+
+                    @if ($grupo['sublinks']->isNotEmpty())
+                        <div class="mm-panel">
+                            <div class="mm-panel-inner">
+                                <ul class="mm-grelha">
+                                    @foreach ($grupo['sublinks'] as $sublink)
+                                        <li class="mm-grelha-item">
+                                            <a class="mm-link" href="{{ $sublink['url'] }}">
+                                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                                {{ $sublink['name'] }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
+                </li>
+            @endforeach
         </ul>
     </nav>
 </div>

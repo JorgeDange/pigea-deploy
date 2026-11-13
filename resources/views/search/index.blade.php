@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Pesquisa | PIGEA')
-@section('description', 'Pesquise notícias, projetos, empresas e outros conteúdos do portal PIGEA.')
+@section('description', 'Pesquise notícias, empresas e outros conteúdos do portal PIGEA.')
 
 @section('content')
 
@@ -46,7 +46,7 @@
                                                     <div class="list-post-media">
                                                         <a href="{{ route('news.show', $item->slug) }}">
                                                             <div class="bg-wrap">
-                                                                <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
                                                             </div>
                                                         </a>
                                                         <span class="post-media_title">{{ $item->image_caption }}</span>
@@ -57,7 +57,6 @@
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                         <p>{{ $item->excerpt }}</p>
                                                         <ul class="post-opt">
-                                                            <li><i class="far fa-comments-alt"></i> {{ $item->comments_count }} </li>
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
                                                         <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar) }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
@@ -77,13 +76,15 @@
                                             <div class="box-widget-content">
                                                 <div class="search-widget fl-wrap">
                                                     <form action="{{ route('search.index') }}">
-                                                        <input name="se" id="se12" type="text" class="search" placeholder="Pesquisar notícias, projetos, empresas..." value="{{ $termo }}" />
+                                                        <input name="se" id="se12" type="text" class="search" placeholder="Pesquisar notícias, empresas, legislação…" value="{{ $termo }}" />
                                                         <button class="search-submit2" id="submit_btn12"><i class="far fa-search"></i> </button>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- box-widget  end -->						
+                                        <!-- Banner vertical publicitario (FASE 18) -->
+                                        <x-banner-publicitario posicao="lateral" wrapper />
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
                                             <div class="box-widget-content">
@@ -93,7 +94,7 @@
                                                     </div>
                                                     <div class="banner-widget_content">
                                                         <h5>Registe a sua empresa no diretório PIGEA e aceda a novas oportunidades de negócio.</h5>
-                                                        <a href="{{ route('company.register') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
+                                                        <a href="{{ route('registo-empresa') }}" class="btn float-btn color-bg small-btn">Registar Empresa</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -129,34 +130,7 @@
                                         </div>
                                         <!-- box-widget  end -->						
                                         <!-- box-widget -->
-                                        <div class="box-widget fl-wrap">
-                                            <div class="widget-title">Siga-nos</div>
-                                            <div class="box-widget-content">
-                                                <div class="social-widget">
-                                                    <a href="#" target="_blank" class="facebook-soc">
-                                                    <i class="fab fa-facebook-f"></i>
-                                                    <span class="soc-widget-title">Curtidas</span>
-                                                    <span class="soc-widget_counter">2640</span>
-                                                    </a>
-                                                    <a href="#" target="_blank" class="twitter-soc">
-                                                    <i class="fab fa-twitter"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 
-                                                    <a href="#" target="_blank" class="youtube-soc">
-                                                    <i class="fab fa-youtube"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a> 												
-                                                    <a href="#" target="_blank" class="instagram-soc">
-                                                    <i class="fab fa-instagram"></i>
-                                                    <span class="soc-widget-title">Seguidores</span>
-                                                    <span class="soc-widget_counter">1456</span>												
-                                                    </a>														
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- box-widget  end -->						
+                                        @include('components.redes-sociais')						
                                         <!-- box-widget -->
                                         <div class="box-widget fl-wrap">
                                             <div class="box-widget-content">
@@ -178,13 +152,12 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -203,13 +176,12 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ asset($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
                                                                             <ul class="pwic_opt">
                                                                                 <li><span><i class="far fa-clock"></i> {{ $item->display_date }}</span></li>
-                                                                                <li><span><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</span></li>
                                                                                 <li><span><i class="fal fa-eye"></i> {{ $item->views_count }}</span></li>
                                                                             </ul>
                                                                         </div>
@@ -238,7 +210,7 @@
                     <!-- section  -->
                     <div class="gray-bg ad-wrap fl-wrap">
                         <div class="content-banner-wrap">
-                            <img src="{{ asset('images/all/banner.jpg') }}" class="respimg" alt="">
+                            <x-banner-publicitario posicao="largo" />
                         </div>
                     </div>
                     <!-- section end -->

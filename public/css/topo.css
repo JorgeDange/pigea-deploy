@@ -1,0 +1,162 @@
+/* ============================================================================
+   TOP-BAR (pedido do cliente — 11/11/2026)
+   ----------------------------------------------------------------------------
+   Layout da barra superior:
+     esquerda  redes sociais
+     centro    banner publicitário horizontal (área de publicidade)
+     direita   data/hora + ícone de pesquisa
+
+   O ícone de pesquisa saiu do header-inner (junto ao logo), onde ficava sob
+   a barra full-width do mega menu (.mega-menu, z-index 20) — não visível nem
+   clicável. O painel de pesquisa (.header-search-wrap) mantém-se no
+   header-inner; o JS do tema alterna por .show_search-btn, independente da
+   posição do botão.
+
+   Carregado DEPOIS de menu.css no layouts/app.blade.php — vence o tema sem
+   !important. Breakpoints alinhados com o tema (scripts.js muda em 1064px).
+   ============================================================================ */
+
+/* ---------- 1. Regras base (todos os tamanhos) ----------------------------- */
+
+/* Container da top-bar passa a ser a referência do banner centrado */
+.top-bar .container {
+	position: relative;
+}
+
+/* Redes sociais sempre à esquerda (o tema só as desloca à esquerda ≤1064px) */
+.topbar-social {
+	float: left;
+}
+
+/* Banner publicitário: centrado, ignorando os floats dos lados.
+   Largura EXPLÍCITA (não shrink-to-fit): contida, uma box absoluta em
+   `shrink-to-fit` colapsa para a largura do rótulo (~73px) quando a imagem
+   ainda não carregou (0×0) - foi isso que fez a área "não aparecer". */
+.top-banner-area {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+	width: min(560px, 46vw);
+}
+/* Banner horizontal limitado à altura da barra (70px) - imagem não estica.
+   Largura/altura DEFINIDAS (`!important` para vencer o `height:auto`/`max-width`
+   inline do componente): um <img> com height:auto e ainda por carregar tem
+   caixa 0×0 -> nunca "intersecta" o viewport -> com loading="lazy" o Chrome
+   NUNCA faz o pedido e a área fica só com o rótulo. object-fit:contain
+   preserva o aspect ratio (sem distorção). */
+.top-banner-area .banner-publicitario img {
+	width: 100% !important;
+	height: 46px !important;
+	max-height: 46px;
+	object-fit: contain;
+	object-position: center;
+	margin: 0 auto;
+}
+/* Rótulo "Publicidade" (pub.md §7) legível no fundo escuro da top-bar */
+.top-banner-area .banner-publicitario span {
+	color: #fff;
+}
+
+/* Grupo direito: data/hora + pesquisa em linha */
+.topbar-direita {
+	float: right;
+	display: flex;
+	align-items: center;
+}
+.topbar-direita .date-holder {
+	float: none;
+}
+/* Botão de pesquisa no fundo escuro da top-bar (tema usa #666 em fundo
+   claro no header-inner) */
+.top-bar .search_btn {
+	float: none;
+	color: #fff;
+	border-left-color: rgba(255, 255, 255, .2);
+	border-right-color: rgba(255, 255, 255, .2);
+}
+
+/* ---------- 2. 1065-1279px: banner ligeiramente menor ---------------------- */
+@media (max-width: 1279px) {
+	.top-banner-area .banner-publicitario img {
+		max-height: 40px;
+	}
+}
+
+/* ---------- 3. ≤1064px: hamburger do tema; banner compacto ----------------- */
+@media (max-width: 1064px) {
+	.top-banner-area .banner-publicitario img {
+		max-height: 32px;
+	}
+}
+
+/* ---------- 4. ≤700px: sem redes (espaço); data/hora + pesquisa + banner ---- */
+@media (max-width: 700px) {
+	.topbar-social {
+		display: none;
+	}
+}
+
+/* ---------- 5. ≤630px: banner mais compacto (tema força botões a 50px) ----- */
+@media (max-width: 630px) {
+	.top-banner-area .banner-publicitario img {
+		max-height: 26px;
+	}
+}
+
+/* =====================================================================
+   FASE 18 — banner VERTICAL (posição `lateral`, componente
+   banner-publicitario nas sidebars: /noticias/{slug}, /projetos/{slug},
+   /eventos, /legislacao, /fornecedores, /pesquisa e home).
+   Ajustes do cliente (2026-11-12): LARGURA 100% da coluna (alinhado com
+   os widgets abaixo) e ALTURA A MEIO — enquadramento 1:1 com recorte
+   centrado (object-fit: cover), sem distorção.
+   Sem banner ativo, o componente não gera HTML (slot some).
+   ===================================================================== */
+.banner-publicitario--lateral {
+	width: 100%;
+	text-align: center;
+}
+
+.banner-publicitario--lateral img {
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	height: auto;
+	object-fit: cover;
+	display: block;
+	border-radius: 4px;
+}
+
+/* Slider de rotação (FASE 18 — 2..4 slides, autoplay 5s em
+   banner-lateral.js): recorta o conjunto ao enquadramento 1:1. */
+.banner-publicitario--lateral .banner-lateral-slider {
+	overflow: hidden;
+	border-radius: 4px;
+}
+
+.banner-publicitario--lateral .banner-lateral-slider .swiper-slide {
+	width: 100%;
+}
+
+
+/* =====================================================================
+   Largo (editoria_cms.md FASE 1): banner full-width nas zonas horizontais
+   de conteúdo (noticias, projetos, pesquisa, …) — substitui o antigo
+   images/all/banner.jpg do tema. Admin gere a posição "Largo".
+   Sem banner ativo: componente não gera HTML (slot some).
+   ===================================================================== */
+.banner-publicitario--largo {
+	width: 100%;
+	text-align: center;
+	margin: 0;
+}
+
+.banner-publicitario--largo img {
+	width: 100%;
+	height: auto;
+	max-height: 250px;
+	object-fit: cover;
+	object-position: center;
+	display: block;
+}

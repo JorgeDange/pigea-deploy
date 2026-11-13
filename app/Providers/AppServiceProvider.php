@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\Job;
 use App\Models\News;
 use App\Models\Project;
+use App\Models\Video;
+use App\Support\Notificador;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->registarObservers();
+
         // Os comandos artisan não têm de consultar a base de dados para
         // partilhar variáveis de vista (ex.: migrate antes das tabelas
         // existirem). Os testes, mesmo sendo CLI, precisam delas.
@@ -38,18 +41,37 @@ class AppServiceProvider extends ServiceProvider
         // Fase 10.
         View::share('featuredNewsSlug', $this->featuredSlug(News::class));
         View::share('featuredProjectSlug', $this->featuredSlug(Project::class));
-        View::share('featuredJobSlug', $this->featuredSlug(Job::class));
 
         // Itens dos widgets laterais (mesma lista em todas as páginas, como no
         // protótipo, onde o widget é idêntico em todos os HTML).
         View::share('widgetNews', $this->widgetNews());
+
+        // FASE 1 — editoria_cms.md: editado (ordem desc). FASE 2 — pin editorial.
+        // Slides do hero da home — pinned (destaque_editorial) + fallback recentes
+        View::share('heroNews', $this->heroNews());
+        // Zona Destaques — pinned a partir do 5º pinned; face recente como fallback
+        View::share('destaqueNews', $this->destaqueNews());
+
+        // Vídeos para as secções de vídeo da home (módulo Vídeos — admin).
+        View::composer('home', function ($view) {
+            $view->with('videosHome', $this->videosHome());
+        });
 
         // Listas de cartões `list-post` (relacionados, destaques, categorias).
         // A home usa 11 itens distintos (skip/take por bloco), por isso o limite
         // tem de cobrir o maior bloco + os saltos que o precedem.
         View::share('listNews', $this->rows(News::class, 12));
         View::share('listProjects', $this->rows(Project::class, 12));
-        View::share('listJobs', $this->rows(Job::class, 12));
+
+        // Sino/modal de notificações (layouts.dashboard, em todas as páginas admin).
+        // Cache por pedido: obtido uma vez por request, não a cada render.
+        View::composer('layouts.dashboard', function ($view) {
+            static $obtida = null;
+            if ($obtida === null) {
+                $obtida = \App\Support\NotificacoesPainel::obter();
+            }
+            $view->with('adminNotificacoes', $obtida);
+        });
     }
 
     /**
@@ -57,8 +79,85 @@ class AppServiceProvider extends ServiceProvider
      */
     private function widgetNews()
     {
+        // FASE 1 (editoria_cms.md): recentes primeiro (não mais as antigas em destaque).
         try {
-            return News::published()->with(['category', 'author'])->orderBy('id')->take(8)->get();
+            return News::published()->with(['category', 'author'])
+                ->orderByDesc('published_at')->orderByDesc('id')->take(8)->get();
+        } catch (Throwable) {
+            return collect();
+        }
+    }
+
+    /**
+     * Vídeos da home (módulo Vídeos) — as 6 mais recentes, ordenadas por
+     * published_at/desc. Composição direcionada à vista `home` apenas.
+     */
+    private function videosHome()
+    {
+        try {
+            return Video::query()->orderByDesc('published_at')->orderByDesc('id')->take(6)->get();
+        } catch (Throwable) {
+            return collect();
+        }
+    }
+
+    /**
+     * Slides do hero da home — pinned editorial (FASE 2) + fallback recentes.
+     * Prioridade: `destaque_editorial = true` mais recentes, depois complemento
+     * com as restantes mais recentes. Sem pins → 4 recentes (como antes).
+     */
+    private function heroNews()
+    {
+        try {
+            $pinned = News::published()
+                ->where('destaque_editorial', true)
+                ->with(['category', 'author'])
+                ->orderByDesc('published_at')->orderByDesc('id')
+                ->take(4)
+                ->get();
+
+            if ($pinned->count() >= 4) {
+                return $pinned;
+            }
+
+            return $pinned->concat(
+                News::published()->with(['category', 'author'])
+                    ->whereNotIn('id', $pinned->pluck('id'))
+                    ->orderByDesc('published_at')->orderByDesc('id')
+                    ->take(4 - $pinned->count())
+                    ->get()
+            );
+        } catch (Throwable) {
+            return collect();
+        }
+    }
+
+    /**
+     * Zona Destaques (2 cards principais + swiper) — pin editorial a partir do
+     * 5º pin (os 4 primeiros foram para o hero); fallback para as recentes.
+     */
+    private function destaqueNews()
+    {
+        try {
+            $pinned = News::published()
+                ->where('destaque_editorial', true)
+                ->with(['category', 'author'])
+                ->orderByDesc('published_at')->orderByDesc('id')
+                ->skip(4)
+                ->take(5)
+                ->get();
+
+            if ($pinned->count() < 5) {
+                $pinned = $pinned->concat(
+                    News::published()->with(['category', 'author'])
+                        ->whereNotIn('id', $pinned->pluck('id'))
+                        ->orderByDesc('published_at')->orderByDesc('id')
+                        ->take(5 - $pinned->count())
+                        ->get()
+                );
+            }
+
+            return $pinned;
         } catch (Throwable) {
             return collect();
         }
@@ -69,8 +168,10 @@ class AppServiceProvider extends ServiceProvider
      */
     private function rows(string $model, int $limit)
     {
+        // FASE 1 (editoria_cms.md): recentes primeiro.
         try {
-            return $model::published()->with(['category', 'author'])->orderBy('id')->take($limit)->get();
+            return $model::published()->with(['category', 'author'])
+                ->orderByDesc('published_at')->orderByDesc('id')->take($limit)->get();
         } catch (Throwable) {
             return collect();
         }
@@ -87,5 +188,100 @@ class AppServiceProvider extends ServiceProvider
         } catch (Throwable) {
             return 'amostra';
         }
+    }
+
+    /**
+     * Observadores: ligam eventos reais do site ao módulo de Notificações
+     * (opção B — tudo real, nada estático). Uma linha por destinatário,
+     * criada no momento do facto — nunca recriada para factos antigos.
+     */
+    private function registarObservers(): void
+    {
+        \App\Models\Company::created(function ($item): void {
+            if ((string) $item->status === 'pendente') {
+                Notificador::enviarParaEquipa(
+                    'fa-building',
+                    'Empresa à espera de aprovação',
+                    ($item->nome_empresa ?? $item->nif).' submeteu o registo no diretório.',
+                    route('admin.empresas')
+                );
+            }
+        });
+
+        \App\Models\Professional::created(function ($item): void {
+            if ((string) $item->status === 'pendente') {
+                Notificador::enviarParaEquipa(
+                    'fa-user-tie',
+                    'Profissional à espera de aprovação',
+                    ($item->nome_completo ?? $item->contactos).' submeteu o registo no diretório.',
+                    route('admin.profissionais')
+                );
+            }
+        });
+
+        \App\Models\User::created(function ($item): void {
+            // Só contas da equipa interna — n/a para subscritores da newsletter.
+            if (! $item->hasAnyRole(['admin', 'editor'])) {
+                return;
+            }
+            Notificador::enviarParaEquipa(
+                'fa-user-plus',
+                'Novo utilizador na equipa',
+                ($item->name ?? $item->email).' foi acrescentado.',
+                route('admin.utilizadores')
+            );
+        });
+
+        \App\Models\Project::created(function ($item): void {
+            // Área pública de Projetos está excluída (2026-11-13) — não notificamos.
+            if ((string) $item->status !== 'published' || ! config('features.projects_publico')) {
+                return;
+            }
+            Notificador::enviarParaEquipa(
+                'fa-briefcase',
+                'Novo projeto publicado',
+                '«'.$item->title.'» publicado em projetos.',
+                route('admin.projetos')
+            );
+        });
+
+        \App\Models\News::created(function ($item): void {
+            if ((string) $item->status === 'published') {
+                Notificador::enviarParaEquipa(
+                    'fa-newspaper',
+                    'Notícia publicada',
+                    '«'.$item->title.'» já está no ar.',
+                    route('news.show', ['slug' => $item->slug])
+                );
+            } elseif ((string) $item->status === 'em_revisao') {
+                Notificador::enviarParaEquipa(
+                    'fa-newspaper',
+                    'Notícia à espera de revisão',
+                    '«'.$item->title.'» enviada para revisão.',
+                    route('admin.noticia-editar', ['noticia' => $item->id])
+                );
+            }
+        });
+
+        \App\Models\News::updated(function ($item): void {
+            if (! $item->wasChanged('status')) {
+                return;
+            }
+            if ((string) $item->status === 'published') {
+                Notificador::enviarParaEquipa(
+                    'fa-newspaper',
+                    'Notícia publicada',
+                    '«'.$item->title.'» já está no ar.',
+                    route('news.show', ['slug' => $item->slug])
+                );
+            } elseif ((string) $item->status === 'em_revisao') {
+                Notificador::enviarParaEquipa(
+                    'fa-newspaper',
+                    'Notícia à espera de revisão',
+                    '«'.$item->title.'» enviada para revisão.',
+                    route('admin.noticia-editar', ['noticia' => $item->id])
+                );
+            }
+        });
     }
 }

@@ -1,0 +1,276 @@
+/* ============================================================================
+   FASE 5.1 — MEGA MENU (menu.md §2-§3, §5.1)
+   ----------------------------------------------------------------------------
+   Substitui o estilo do menu do tema (nav escura flutuante) pela barra branca
+   do cliente: logo à esquerda (já no header), 9 itens centrados com chevron,
+   badge verde à direita, painel full-width com grelha de 3 colunas.
+
+   Carregado DEPOIS de style.css — todas as regras usam o prefixo .mega-menu
+   para ganhar ao tema sem !important (exceto onde o tema usa display:none).
+
+   Breakpoints alinhados com o tema (scripts.js muda em 1064px):
+     ≥1280px  barra única (menu centrado por cima da linha dos floats)
+     1065-1279px  menu passa a segunda linha do header (header cresce)
+     ≤1064px  hamburger do tema + acordeão (menu.js) — painéis por clique
+   ============================================================================ */
+
+/* ---------- 1. Barra de topo (todos os tamanhos de desktop) --------------- */
+.mega-menu .mm-bar {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.mega-menu .mm-item {
+	position: static;
+	float: none;
+	margin: 0;
+	height: 50px;
+	display: flex;
+	align-items: center;
+}
+.mega-menu .mm-topo {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 7px 13px;
+	border-radius: 5px;
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .3px;
+	color: #22334a;
+	line-height: 20px;
+	white-space: nowrap;
+	transition: background .15s linear, color .15s linear;
+}
+.mega-menu .mm-topo i {
+	font-size: 9px;
+	color: #8b97a5;
+	transition: all .2s linear;
+}
+.mega-menu .mm-topo:hover {
+	background: #f2f6fb;
+	color: #0a3d7a;
+}
+.mega-menu .mm-topo:hover i {
+	transform: rotateX(180deg);
+}
+/* Item ativo (menu.md §2: fundo #e6f0ff, texto azul escuro) */
+.mega-menu .mm-topo.act-link {
+	background: #e6f0ff;
+	color: #0a3d7a;
+}
+.mega-menu .mm-topo.act-link i {
+	color: #2f6bd8;
+}
+
+/* ---------- 2. Painel do Mega Menu (menu.md §3) --------------------------- */
+.mega-menu .mm-panel {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 30;
+	background: #fff;
+	border-top: 1px solid #eef2f7;
+	border-radius: 0 0 10px 10px;
+	box-shadow: 0 18px 40px rgba(16, 42, 76, .14);
+	padding: 20px 26px 26px;
+	opacity: 0;
+	visibility: hidden;
+	/* Os painéis são full-width e sobrepostos — sem isto, o painel escondido
+	   que vem por último no DOM apanha o rato mesmo acima do painel aberto
+	   (irmãos sobrepostos: o último pintado ganha o hit test). */
+	pointer-events: none;
+	transform: translateY(8px);
+	transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+}
+.mega-menu .mm-panel-inner {
+	position: relative;
+}
+/* Grelha de 3 colunas (menu.md §3) */
+.mega-menu .mm-grelha {
+	position: static;   /* tema força (.nav-holder nav li ul) absolute/top53px/z-index — devolver ao fluxo */
+	visibility: visible;
+	opacity: 1;
+	background: none;   /* tema define #292929 — devolver ao painel branco */
+	min-width: 0;
+	top: auto;
+	left: auto;
+	z-index: auto;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px 12px;
+	list-style: none;
+	margin: 16px 0 0;
+	padding: 0;
+}
+.mega-menu .mm-link {
+	float: none;
+	width: auto;
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	background: #f3f5f8;
+	color: #22334a;
+	font-size: 12.5px;
+	font-weight: 600;
+	line-height: 18px;
+	padding: 11px 14px;
+	border-radius: 6px;
+	transition: background .15s linear, color .15s linear;
+}
+.mega-menu .mm-link i {
+	color: #9aa7b8;
+	font-size: 11px;
+	transition: color .15s linear;
+}
+.mega-menu .mm-grelha-item {
+	float: none;          /* tema força float:left — o grid não precisa */
+	height: auto;
+}
+.mega-menu .mm-link:hover {
+	background: #e6f0ff;
+	color: #0a3d7a;
+}
+.mega-menu .mm-link:hover i {
+	color: #2f6bd8;
+}
+/* Abre por intenção (JS, classe .mm-hover — hover-intent com atraso) ou por
+   foco (teclado) — desktop. O :hover instantâneo foi removido de propósito:
+   passagens diagonais pelo topo trocavam o painel e atiravam o alvo ao ar. */
+@media (min-width: 1065px) {
+	.mega-menu .mm-item.mm-hover .mm-panel,
+	.mega-menu .mm-item:focus-within .mm-panel {
+		opacity: 1;
+		visibility: visible;
+		transform: none;
+		pointer-events: auto; /* o painel aberto apanha o rato; os outros não */
+	}
+}
+
+/* ---------- 3. ≥1280px: barra única, menu centrado ------------------------- */
+@media (min-width: 1280px) {
+	.mega-menu {
+		float: none;
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 10px;
+		z-index: 20;
+	}
+}
+
+/* ---------- 4. 1065-1279px: menu em segunda linha do header ---------------- */
+@media (min-width: 1065px) and (max-width: 1279px) {
+	.header-inner {
+		height: auto;
+	}
+	#wrapper {
+		padding-top: 186px; /* top-bar 70 + logo 70 + linha de menu 46 */
+	}
+	.mega-menu {
+		float: none;
+		position: relative;
+		left: auto;
+		right: auto;
+		top: auto;
+		clear: both;
+		z-index: 20;
+	}
+	.mega-menu .mm-item {
+		height: 46px;
+	}
+}
+
+/* ---------- 5. ≤1064px: hamburger do tema + acordeão (menu.js) ------------- */
+@media (max-width: 1064px) {
+	/* Re-display do nav (o tema esconde `.main-menu nav ul` neste tamanho) */
+	.mega-menu .mm-nav > ul.mm-bar {
+		display: block !important;
+	}
+	/* Painel dropdown do tema, restylado: branco e em toda a largura */
+	.mega-menu {
+		position: absolute;
+		top: 70px;
+		left: 0;
+		right: 0;
+		width: auto;
+		float: none;
+		background: #fff;
+		padding: 4px 0 12px;
+		margin: 0;
+		border-bottom: 1px solid #e8edf3;
+		box-shadow: 0 18px 30px rgba(16, 42, 76, .12);
+		visibility: hidden;
+		opacity: 0;
+	}
+	.mega-menu.vismobmenu {
+		opacity: 1;
+		visibility: visible;
+	}
+	/* O tema clona o nav para .menusb + plugin sliding-menu — escondido:
+	   o acordeão é o nav original (menu.js) */
+	.mega-menu .menusb {
+		display: none !important;
+	}
+	.mega-menu .mm-item {
+		display: block;
+		height: auto;
+		border-bottom: 1px solid #eef2f7;
+	}
+	.mega-menu .mm-topo {
+		justify-content: space-between;
+		width: 100%;
+		padding: 13px 22px;
+		border-radius: 0;
+	}
+	.mega-menu .mm-item-ativo > .mm-topo {
+		background: #e6f0ff;
+		color: #0a3d7a;
+	}
+	.mega-menu .mm-item-ativo > .mm-topo i {
+		transform: rotateX(180deg);
+		color: #2f6bd8;
+	}
+	/* Acordeão: painel em fluxo, abre por .mm-aberto (menu.js) */
+	.mega-menu .mm-panel {
+		position: static;
+		display: none;
+		opacity: 1;
+		visibility: visible;
+		transform: none;
+		box-shadow: none;
+		border-radius: 0;
+		border-top: none;
+		padding: 2px 22px 14px;
+		background: #fbfcfe;
+		pointer-events: auto;
+	}
+	.mega-menu .mm-item.mm-aberto .mm-panel {
+		display: block;
+	}
+	.mega-menu .mm-grelha {
+		grid-template-columns: 1fr;
+		gap: 8px;
+		margin-top: 12px;
+	}
+}
+
+/* O tema reduz o header aos 630px (top:50px no dropdown) — acompanhar */
+@media (max-width: 630px) {
+	.mega-menu {
+		top: 50px;
+	}
+	.mega-menu .mm-topo {
+		padding: 12px 16px;
+	}
+	.mega-menu .mm-panel {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+}

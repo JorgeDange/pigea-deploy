@@ -23,20 +23,14 @@ class RoleSeeder extends Seeder
      * @var array<string, list<string>>
      */
     protected array $permissions = [
-        // `*` mantém o admin compatível com qualquer permissão futura; as 4
-        // concretas dão cobertura às rotas admin sem permissão correspondente
-        // (empresas, vagas, utilizadores e configurações) — Fase 13.
-        'admin' => ['*', 'company.moderate', 'job.moderate', 'user.manage', 'settings.manage'],
+        // Reestruturação (restrutura.md): apenas a equipa interna tem login.
+        // `*` mantém o admin compatível com qualquer permissão futura; as
+        // concretas dão cobertura às rotas admin sem permissão correspondente.
+        'admin' => ['*', 'company.moderate', 'user.manage', 'settings.manage'],
         'editor' => [
             'news.manage', 'project.manage', 'event.manage',
             'legislation.manage', 'research.manage', 'interview.manage',
-        ],
-        'company' => [
-            'company.profile', 'job.manage', 'opportunity.manage',
-            'application.receive',
-        ],
-        'user' => [
-            'job.apply', 'job.save', 'profile.manage', 'notification.manage',
+            'document.manage', 'banner.manage', 'video.manage',
         ],
     ];
 

@@ -44,7 +44,7 @@
                                             <div class="grid-post-media">
                                                 <a href="{{ route('news.show', $item->slug) }}" class="gpm_link">
                                                     <div class="bg-wrap">
-                                                        <div class="bg" data-bg="{{ asset($item->image) }}"></div>
+                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
                                                     </div>
                                                 </a>
                                                 <span class="post-media_title">{{ $item->image_caption }}</span>
@@ -58,7 +58,6 @@
                                             <div class="grid-post-footer">
                                                 <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar) }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
                                                 <ul class="post-opt">
-                                                    <li><i class="far fa-comments-alt"></i> {{ $item->comments_count }}</li>
                                                     <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                 </ul>
                                             </div>
@@ -87,7 +86,7 @@
                     <!-- section  -->
                     <div class="gray-bg ad-wrap fl-wrap">
                         <div class="content-banner-wrap">
-                            <img src="{{ asset('images/all/banner.jpg') }}" class="respimg" alt="">
+                            <x-banner-publicitario posicao="largo" />
                         </div>
                     </div>
                     <!-- section end -->

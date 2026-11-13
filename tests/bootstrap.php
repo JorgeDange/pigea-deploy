@@ -147,10 +147,18 @@ if (! $temTabelas) {
         $executar('db:seed --force');
     }
 
-    // Permissões em falta (o RoleSeeder ganhou permissões — Fase 13)?
-    // Idempotente: só cria o que falta e volta a sync todas ao admin.
-    if ((int) $pdo->query('SELECT COUNT(*) FROM permissions')->fetchColumn() < 18) {
+    // Permissões em falta — inclui video.manage (mód Vídeos, 12/11/2026).
+    if ((int) $pdo->query("SELECT COUNT(*) FROM permissions WHERE name IN ('document.manage', 'banner.manage', 'video.manage')")->fetchColumn() < 3) {
         $executar('db:seed --class=RoleSeeder --force');
+    }
+
+    // FASE 5.1 — subcategorias do Mega Menu em falta (migração nova correu
+    // incrementalmente sem re-semear)? Idempotente pelo próprio MenuSeeder.
+    if (
+        (bool) $pdo->query("SHOW TABLES LIKE 'categories'")->fetch()
+        && (int) $pdo->query("SELECT COUNT(*) FROM categories WHERE menu_group IS NOT NULL")->fetchColumn() === 0
+    ) {
+        $executar('db:seed --class=MenuSeeder --force');
     }
 }
 

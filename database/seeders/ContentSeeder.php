@@ -13,7 +13,6 @@ class ContentSeeder extends Seeder
     private const MODELS = [
         'news' => \App\Models\News::class,
         'projects' => \App\Models\Project::class,
-        'jobs' => \App\Models\Job::class,
         'suppliers' => \App\Models\Supplier::class,
         'events' => \App\Models\Event::class,
         'legislation' => \App\Models\Legislation::class,
@@ -58,13 +57,24 @@ class ContentSeeder extends Seeder
                         'status' => 'published',
                         'published_at' => $item['published_at'],
                         'date_label' => $item['date_label'] ?? null,
-                        'comments_count' => (int) ($item['comments_count'] ?? 0),
                         'views_count' => (int) ($item['views_count'] ?? 0),
                     ]
                 );
             }
 
             $this->command?->info("{$module}: ".($class::count())." registos");
+        }
+
+        // Reestruturação (restrutura.md §6): "Petróleo e Gás" e "Geociências"
+        // são itens de topo do novo menu (ligam a /noticias?cat=…) e não
+        // existiam nos dados extraídos — garantem-se por tipo de conteúdo.
+        foreach (self::MODELS as $module => $class) {
+            foreach (['Petróleo e Gás', 'Geociências'] as $nome) {
+                Category::firstOrCreate(
+                    ['type' => $module, 'slug' => Str::slug($nome)],
+                    ['name' => $nome]
+                );
+            }
         }
     }
 

@@ -1,6 +1,5 @@
 @charset "utf-8";
 /*======================================
-
  [ -Main Stylesheet-
   Theme: Gmag
   Version: 1.0
@@ -200,7 +199,8 @@ blockquote:before {
 	float:left;
 	margin-left: 6px;
 }
-.topbar-social li a  {
+.topbar-social li a,
+.topbar-social li span  {
 	font-size:12px;
 	width: 32px;
 	height: 32px;
@@ -208,6 +208,10 @@ blockquote:before {
 	float: left;
 	color: #fff;
 	border-radius: 2px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 }
 .topbar-social a  {	
     transition: all 100ms linear;
@@ -251,63 +255,6 @@ blockquote:before {
 	font-size: 11px;
 	font-weight: 500;
 }
-.header_news-ticker-wrap {
-	float: left;
-	width: 650px;
-	position: relative;
-	padding:0 40px 0 130px;
-	height: 70px;
-	overflow: hidden;
-}
-.header_news-ticker-wrap:before {
-	content: '';
-	position: absolute;
-	top: 0;
-	height: 100%;
-	background: #222;
-	left: 130px;
-	right: 50px;
-}
-.header_news-ticker-wrap li {
-	float: left;
-	width: 100%;
-	height: 70px;
-	line-height: 70px;
-	text-align: left;
-	padding: 0 15px 0 30px;
-}
-.header_news-ticker-wrap li a {
-	color: #fff;
-}
-.hnt_title {
-	position: absolute;
-	left: 10px;
-	top: 20px;
-	width: 100px;
-	height: 30px;
-	line-height: 30px;
-	color: #fff;
-	font-weight: 600;
-	font-size: 11px;
-}
-.n_contr-wrap{
-	position: absolute;
-	right: 0;
-	width: 30px;
-	top: 50%;
-	height: 20px;
-	line-height: 20px;
-	cursor: pointer;
-	margin-top: -10px;
-}
-.n_contr {
-	float: left;
-	cursor: pointer;
-	font-size: 18px;
-}
-.p_btn {
-	margin-right: 14px;
-}
 .header-inner {
     background: #fff;
     height: 70px;
@@ -325,7 +272,7 @@ blockquote:before {
 	width: auto;
 	height:100%;
 }
-.show-cart , .srf_btn , .search_btn {
+.show-cart , .search_btn {
 	float:right;
 	font-size:16px;
 	color:#666;
@@ -343,7 +290,7 @@ blockquote:before {
 .search_btn {
 	border-right:1px solid #eee;
 }
-.show-cart i, .srf_btn i  , .search_btn i{
+.show-cart i, .search_btn i{
 	position: relative;
 	z-index: 2;
 }
@@ -361,7 +308,7 @@ blockquote:before {
 .sc_btn.scwllink:after  , .search_btn.scwllink2:after {
 	top:0;
 }
-.srf_btn , .search_btn  {
+.search_btn  {
 	margin-left:0;
 	font-size:14px;
 }
@@ -1664,7 +1611,7 @@ section {
 .footer-bottom {
 	padding: 18px 0;
 	margin-top: 70px;
-    background: #191919;
+    background: #1A1A1A;
 }
 .footer-logo {
 	margin-bottom: 34px;
@@ -1673,7 +1620,8 @@ section {
 }
 .footer-logo img {
 	width: auto;
-	height: 24px;
+	height: 44px;
+	max-width: 100%;
 }
 .footer-social {
 	margin-top: 22px;
@@ -1682,7 +1630,8 @@ section {
     float: left;
     margin-right: 6px;
 }
-.footer-social li a {
+.footer-social li a,
+.footer-social li span {
     font-size: 12px;
     width: 32px;
     height: 32px;
@@ -1690,6 +1639,11 @@ section {
     float: left;
     color: #fff;
     border-radius: 2px;
+    /* centrado vertical + horizontal — o ícone deixa de colar à esquerda */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 .footer-list li {
     display: block;
@@ -1764,7 +1718,7 @@ section {
 .copyright {
     font-weight: 500;
     font-size: 12px;
-    color: #999;
+    color: #FFFFFF;
 	text-align: left;
 	float: left;
 	line-height: 36px;
@@ -2543,13 +2497,6 @@ section {
 	text-align: left;
 	padding-bottom: 10px;
 	font-weight: 600;
-}
-.has-drop-cap:first-letter {
-	font-size: 70px;
-	float: left;
-	padding: 20px 20px 40px 0;
-	font-family: 'Playfair Display', cursive;
-	color: #000;
 }
 .single-post-content_text_media {
 	margin: 15px 0;
@@ -4393,7 +4340,8 @@ section {
 .contact-social li ul {
 	border: 1px solid #eee;
 }
-.contact-social li a {
+.contact-social li a,
+.contact-social li span {
 	width: 32px;
 	height: 32px;
 	line-height: 32px;
@@ -4402,6 +4350,10 @@ section {
 	float: left;
 	color: #fff;
 	background: #333;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 }
 .contact-social li a:hover {
 	background: #222;
@@ -5165,7 +5117,7 @@ h4.cart-title span {
 }
 /*------  Responsive ------------------------------------------------------*/
 @media only screen and  (max-width: 1064px) {
-.aside-panel , .header_news-ticker-wrap  {
+.aside-panel  {
 	display: none;
 }
 .cen-align-container {
@@ -5423,10 +5375,10 @@ h4.cart-title span {
 	left: 10px;
     height: 15px;
 }
-.header-inner , .show-cart, .srf_btn, .search_btn , .nav-button-wrap{
+.header-inner , .show-cart, .search_btn , .nav-button-wrap{
     height: 50px;
 }
-.show-cart, .srf_btn, .search_btn , .nav-button-wrap {
+.show-cart, .search_btn , .nav-button-wrap {
     width: 50px;
     line-height: 50px;
 }
@@ -5607,3 +5559,588 @@ h4.cart-title span {
 	font-weight: 500;
 	font-family: 'Poppins', sans-serif;
 }
+
+/* ===== Acessibilidade — botões e vínculos com fundo vermelho da marca (AA) =====
+   Evita herança de `color` do tema que poderia tornar o texto pouco legível
+   sobre .btn-primary / buttons coloridos red da marca. */
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus-visible,
+.btn-danger,
+.btn-danger:hover,
+.btn-danger:focus-visible,
+.gs_button,
+.gs_button:hover,
+.cc_btn,
+.to-top,
+.search-submit,
+.search-submit2,
+.subcribe-form .subscribe-button,
+.custom-form .log-submit-btn,
+.color-btn,
+.color-bg,
+.banner-widget_content h5:before,
+.section-title:before,
+.widget-title:before,
+.hero-section_title h2:before {
+    color: #fff;
+}
+
+.dark-btn:hover,
+.qty_btn .btn:hover,
+.qty_btn .btn:hover span,
+.qty_btn .btn:hover i {
+    color: #fff;
+}
+
+.btn-primary i,
+.btn-secondary i,
+.btn-danger i {
+    color: inherit;
+}
+
+/* ===== Fase 15 â€” widget Â«Escolha da EquipaÂ»: banner publicitÃ¡rio rotativo (pub.md) ===== */
+/* O widget mantÃ©m a estrutura/tamanho do protÃ³tipo (.single-grid-slider slider_widget,
+   .grid-post-media gpm_sing, .sgs-pagination). SÃ³ o slide Ã© diferente quando
+   hÃ¡ destaque ativo â€” ver o componente destaque.blade.php. */
+/* especificidade 0,2,0+ para vencer o tema .grid-post-media a (0,1,2) */
+.destaque-equipa-slide .destaque-link,
+.destaque-equipa-slide a.destaque-link,
+.grid-post-media.destaque-equipa-slide .destaque-link {
+	display: block;
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+}
+.destaque-equipa-slide .destaque-tag,
+.grid-post-media.destaque-equipa-slide .destaque-tag {
+	position: absolute;
+	z-index: 10;
+	top: 12px;
+	left: 12px;
+	font-size: 10px;
+	font-family: Poppins, sans-serif;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	color: #fff;
+	background: rgba(0, 0, 0, .55);
+	padding: 3px 9px;
+	border-radius: 3px;
+	pointer-events: none;
+}
+
+/* Pagination dots dos slides de destaque (herda o desenho do tema, com
+   contraste garantido sobre imagens claras) */
+.destaque-slider .sgs-pagination .swiper-pagination-bullet {
+	background: #fff;
+	opacity: .65;
+	box-shadow: 0 0 0 3px rgba(0, 0, 0, .25);
+}
+.destaque-slider .sgs-pagination .swiper-pagination-bullet-active {
+	opacity: 1;
+	background: #C8102E;
+}
+
+.pagination a.current-page,
+.pagination a:hover,
+.gs_button:hover {
+    color: #fff;
+}
+
+/* ===== Fase 15 — widget «Siga-nos»: nome público da conta (não é contador) ===== */
+.social-widget .soc-widget-handle {
+    display: block;
+    font-size: 13px;
+    color: #1A1A1A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.social-widget .soc-widget-estatico {
+    float: left;
+    width: 48%;
+    margin: 0 2% 2% 0;
+    padding: 20px 4px 0 66px;
+    position: relative;
+    height: 60px;
+    border-radius: 2px;
+    background: #f5f5f5;
+    border: 1px solid #eee;
+    display: block;
+}
+.social-widget .soc-widget-estatico i {
+    font-size: 15px;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 6px;
+    background: #fff;
+    left: 8px;
+    top: 50%;
+    margin-top: -20px;
+    box-shadow: 0 5px 5px rgb(0 0 0 / .06);
+}
+
+/* ===== Directorio publico - reforcos minimos (apenas classes existentes do tema) =====
+   - Chip de areas de atuacao dentro de .directorio-listing passa a usar a marca
+     (vermelho #C8102E), como faz a regra color.css .list-post-content .post-category-marker.
+   - .empty-state espelha o bloco identico de dashboard.css, porque o layout publico
+     (layouts/app.blade.php) nao carrega esse ficheiro. Classe NAO nova: ja existe.
+   - Foco vermelho no campo de filtro, igual ao foco dos inputs do dashboard.
+   ================================================================================ */
+.directorio-listing .post-category-marker {
+	background: #C8102E;
+	color: #FFFFFF;
+	display: inline-block;
+	margin: 0 6px 6px 0;
+}
+.directorio-listing .filter-search:focus {
+	border-color: #C8102E;
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(200, 16, 46, .12);
+}
+.directorio-listing .empty-state { text-align: center; padding: 42px 24px; border: 1px dashed #E0E0E0; border-radius: 8px; background: #FFFFFF; }
+.directorio-listing .empty-state-icon { font-size: 40px; color: #A0A0A0; margin-bottom: 10px; }
+.directorio-listing .empty-state-title { font-family: 'Playfair Display', serif; font-size: 18px; color: #1A1A1A; margin: 0 0 6px; }
+.directorio-listing .empty-state-text { color: #666666; font-size: 13px; line-height: 1.55; margin: 0 auto 14px; max-width: 420px; }
+
+/* ===== Directorio publico — Fase 17 · reorganização visual (limpeza de sobras inline) =====
+   Pedido do cliente: eliminar os estilos inline aplicados erradamente nos cards e nos
+   elementos da página; separar visualmente os dois CTAs da sidebar; colocar um banner
+   publicitário na mesma; reorganizar Empresas/Documentos mantendo o agrupamento por card.
+
+   Tudo aqui usa apenas classes existentes no tema (box-widget, box-widget-content,
+   author-widget, pr-subtitle, banner-widget, banner-widget_content, post-category-marker,
+   tabs-widget/tabs-menu, filter-search, pagination, footer-social, empty-state) mais
+   seletores de estrutura (filhos diretos). Dois hooks novos, ambos documentados no
+   relatório (directorio-v2):
+     - .directorio-sidebar  (wrapper da coluna col-md-4 / sidebar do /directorio) —
+       mesmo padrão do hook .directorio-listing introduzido na Fase 15;
+   Paleta herdada do tema, sem hex novos: vermelho #C8102E, dourado #F2A900, tinta
+   #292929 / #1A1A1A, texto #494949 / #666666, linhas #eee / #E0E0E0, superfícies #fff.
+   Zero sombras novas: os cards usam apenas borda 1px #eee (como o resto do tema).
+   ================================================================================ */
+
+/* --- Sidebar esquerda (col-md-4): separação dos CTAs + banner abaixo ---------- */
+.directorio-sidebar .box-widget {
+	padding-left: 0;              /* anula o recuo de 30px pensado para sidebars à direita */
+	margin-bottom: 24px;          /* separação visual entre os CTAs (antes ficavam colados) */
+}
+.directorio-sidebar .box-widget:last-child { margin-bottom: 0; }
+.directorio-sidebar > .box-widget-content { margin-bottom: 28px; }  /* respiro após o texto intro */
+.directorio-sidebar .banner-widget_content p {
+	color: #FFFFFF;             /* texto branco sobre o gradiente escuro do .banner-widget */
+	padding-bottom: 0;
+}
+
+/* --- Conteúdo: cartões iguais por linha — a .row do tema é block/floats (BS3);
+       aqui ela vira flex-wrap para distribuir 2 colunas e igualar alturas por linha --- */
+.directorio-listing .row {
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: -15px;
+	margin-right: -15px;
+}
+.directorio-listing .row > .col-md-6 {
+	flex: 0 0 50%;
+	max-width: 50%;
+	display: flex;
+	flex-direction: column;
+	float: none;               /* anula o float:left do Bootstrap 3 — o flex manda */
+}
+.directorio-listing .row > .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+.directorio-listing .row > .col-md-6 > .box-widget-content {
+	flex: 1 1 auto;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	background: #FFFFFF;
+	border: 1px solid #eee;
+	border-radius: 4px;
+	margin-bottom: 22px;         /* espaço vertical consistente entre as linhas de cards */
+	padding: 20px;               /* respiro interno uniforme */
+}
+
+/* --- Card (media row: avatar/ícone + conteúdo) — semântica do tema, sem inline --- */
+.directorio-listing .author-widget {
+	display: flex;
+	gap: 16px;
+	align-items: flex-start;
+	width: 100%;
+	height: 100%;
+}
+
+.directorio-listing .author-widget > div:last-child {
+	flex: 1 1 auto;
+	min-width: 0;                /* permite truncar conteúdo longo sem rebentar o layout */
+	display: flex;
+	flex-direction: column;
+	text-align: left;
+}
+
+/* título do card — Poppins 600, mesma escala nos dois tipos de card */
+.directorio-listing .author-widget h4 {
+	margin: 2px 0 6px;
+	font-size: 15px;
+	line-height: 1.4;
+	font-weight: 600;
+	color: #292929;
+}
+
+/* linha de estado solta (ex.: "Empresa aprovada") — cinza pequeno com check dourado;
+   exclui os post-category-marker (chips de área / tipo de documento) */
+.directorio-listing .author-widget > div:last-child > span:not(.post-category-marker) {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	align-self: flex-start;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: .08em;
+	color: #666666;
+	margin-bottom: 10px;
+}
+.directorio-listing .author-widget > div:last-child > span:not(.post-category-marker) > i {
+	color: #F2A900;
+}
+
+/* chips (áreas de atuação) alinhados ao início da coluna */
+.directorio-listing .author-widget > div:last-child > .post-category-marker {
+	align-self: flex-start;
+	margin-bottom: 10px;
+}
+/* chip do tipo de documento (é sempre o 1.º filho direto nos cards de documento;
+   os cards de empresa começam pelo h4) — tratamento ouro-sobre-escuro para
+   acompanhar a caixa do ícone, sem inventar classes */
+.directorio-listing .author-widget > div:last-child > span.post-category-marker:first-child {
+	background: #1A1A1A;
+	color: #F2A900;
+}
+
+/* corpo de texto do card */
+.directorio-listing .author-widget p {
+	margin: 0 0 4px;
+	font-size: 12px;
+	line-height: 1.55;
+	color: #494949;
+	padding-bottom: 0;           /* anula o padding-bottom 10px do p do tema */
+	text-align: left;
+}
+.directorio-listing .author-widget p > i {
+	color: #C8102E;
+	width: 15px;
+}
+
+/* rodapé do card: filete #eee + cola no fundo (margin-top auto) — redes sociais ou Download */
+.directorio-listing .author-widget > div:last-child > div:last-child {
+	margin-top: auto;
+	padding-top: 12px;
+	border-top: 1px solid #eee;
+}
+.directorio-listing .footer-social { margin-top: 0; }   /* dentro do card não precisa do respiro 22px do tema */
+
+/* --- Abas e filtro de pesquisa — movimento de inline para o stylesheet -------- */
+.directorio-listing .tabs-widget { margin-bottom: 18px; }
+.directorio-listing .tabs-menu a i { margin-right: 8px; }
+.directorio-listing .filter-search {
+	width: 100%;
+	height: 46px;
+	border: 1px solid #E0E0E0;
+	border-radius: 4px;
+	background: #FFFFFF;
+	padding: 0 16px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 13px;
+	color: #292929;
+	margin-bottom: 22px;
+	box-sizing: border-box;
+}
+.directorio-listing .filter-search::placeholder { color: #A0A0A0; }
+
+/* --- Mobile/tablet: < 992px o cartão ocupa a linha inteira (como col-md-6 → col-md-12) -- */
+@media (max-width: 991px) {
+	.directorio-listing .row > .col-md-6 { flex-basis: 100%; max-width: 100%; }
+}
+@media (max-width: 767px) {
+	.directorio-listing .row > .col-md-6 > .box-widget-content { padding: 16px; margin-bottom: 16px; }
+	.directorio-listing .author-widget { gap: 12px; }
+	.directorio-sidebar .box-widget { margin-bottom: 18px; }
+}
+
+/* ---------- Newsletter (doc/newsletter.md â€” FASE N1) ---------------- */
+.newsletter-form { margin: 0; }
+
+.newsletter-form-escura {
+	margin: 16px 0 22px;
+	padding: 16px;
+	background: rgba(255, 255, 255, .06);
+	border-radius: 6px;
+}
+
+.newsletter-form-clara {
+	margin: 26px 0 0;
+	padding: 22px;
+	background: #FFFFFF;
+	border-radius: 8px;
+	box-shadow: 0 4px 24px rgba(0, 0, 0, .05);
+}
+
+.newsletter-titulo {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	margin: 0 0 4px;
+}
+
+.newsletter-form-escura .newsletter-titulo { color: #FFFFFF; }
+.newsletter-form-clara .newsletter-titulo { color: #1A1A1A; }
+
+.newsletter-subtitulo {
+	font-size: 11.5px;
+	line-height: 1.5;
+	margin: 0 0 10px;
+}
+
+.newsletter-form-escura .newsletter-subtitulo { color: #B9B9B9; }
+.newsletter-form-clara .newsletter-subtitulo { color: #666666; }
+
+.newsletter-label {
+	display: block;
+	font-size: 11px;
+	font-weight: 600;
+	margin: 10px 0 4px;
+}
+
+.newsletter-form-escura .newsletter-label { color: #D8D8D8; }
+.newsletter-form-clara .newsletter-label { color: #555555; }
+
+.newsletter-input {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid transparent;
+	border-radius: 3px;
+	padding: 10px 12px;
+	font-size: 13px;
+	font-family: 'Poppins', sans-serif;
+	transition: border-color .15s ease, outline .15s ease;
+}
+
+.newsletter-form-escura .newsletter-input {
+	background: rgba(255, 255, 255, .08);
+	border-color: rgba(255, 255, 255, .16);
+	color: #FFFFFF;
+}
+
+.newsletter-form-escura .newsletter-input::placeholder { color: #8A8A8A; }
+
+.newsletter-form-clara .newsletter-input {
+	background: #FFFFFF;
+	border-color: #E0E0E0;
+	color: #1A1A1A;
+}
+
+.newsletter-form-clara .newsletter-input::placeholder { color: #A8A8A8; }
+
+.newsletter-input:focus {
+	outline: 2px solid #C8102E;
+	outline-offset: 1px;
+	border-color: transparent;
+}
+
+.newsletter-btn {
+	display: block;
+	width: 100%;
+	margin-top: 12px;
+	padding: 12px 18px;
+	color: #FFFFFF;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	transition: opacity .15s ease;
+}
+
+.newsletter-btn:hover { opacity: .92; }
+
+.newsletter-nota {
+	font-size: 10px;
+	line-height: 1.5;
+	margin: 12px 0 0;
+}
+
+.newsletter-form-escura .newsletter-nota { color: #8E8E8E; }
+.newsletter-form-clara .newsletter-nota { color: #8A8A8A; }
+
+.newsletter-erro {
+	font-size: 11px;
+	margin: 4px 0 0;
+	line-height: 1.4;
+}
+
+.newsletter-form-escura .newsletter-erro { color: #FF8C8C; }
+.newsletter-form-clara .newsletter-erro { color: #C8102E; }
+
+.newsletter-msg {
+	font-size: 12px;
+	line-height: 1.45;
+	padding: 9px 11px;
+	border-radius: 4px;
+	margin: 0 0 10px;
+}
+
+.newsletter-form-escura .newsletter-msg-ok { background: rgba(46, 158, 87, .2); color: #C8F1D4; }
+.newsletter-form-escura .newsletter-msg-erro { background: rgba(229, 64, 79, .22); color: #FFD5D9; }
+.newsletter-form-clara .newsletter-msg-ok { background: #EBFAF0; color: #176B3A; }
+.newsletter-form-clara .newsletter-msg-erro { background: #FDECEF; color: #8A1F1F; }
+
+
+/* ---------- Newsletter â€” modal de subscriÃ§Ã£o (sites de notÃ­cias) ------- */
+
+
+/* ---------- Newsletter — modal de subscrição (design da plataforma) ---- */
+.newsletter-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 1200;
+	display: none;
+	align-items: flex-end;
+	justify-content: center;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+.newsletter-modal.ativo {
+	display: flex;
+	animation: newsletter-modal-entra .25s ease;
+}
+
+@keyframes newsletter-modal-entra {
+	from { opacity: 0; transform: translateY(20px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.newsletter-modal-backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(10, 10, 10, .55);
+}
+
+.newsletter-modal-card {
+	position: relative;
+	width: 100%;
+	max-width: 420px;
+	background: #FFFFFF;
+	border-radius: 4px;
+	border-top: 4px solid #C8102E;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+	padding: 26px 28px 22px;
+}
+
+@media (min-width: 560px) {
+	.newsletter-modal {
+		align-items: center;
+	}
+}
+
+.newsletter-modal-fechar {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 32px;
+	height: 32px;
+	border: none;
+	background: transparent;
+	font-size: 22px;
+	line-height: 1;
+	color: #B3B3B3;
+	cursor: pointer;
+	border-radius: 4px;
+}
+
+.newsletter-modal-fechar:hover { color: #1A1A1A; }
+
+.newsletter-modal-icone {
+	font-size: 24px;
+	color: #C8102E;
+}
+
+.newsletter-modal-card h3 {
+	font-family: 'Playfair Display', serif;
+	font-weight: 700;
+	font-size: 22px;
+	color: #1A1A1A;
+	line-height: 1.3;
+	margin: 12px 0 14px;
+}
+
+.newsletter-modal-form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.newsletter-modal-input {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 12px 14px;
+	border: 1px solid #E0E0E0;
+	border-radius: 4px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 14px;
+	transition: border-color .2s ease;
+}
+
+.newsletter-modal-input:focus {
+	outline: 2px solid #C8102E;
+	outline-offset: 0;
+	border-color: #C8102E;
+}
+
+.newsletter-modal-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	border: none;
+	border-radius: 3px;
+	color: #FFFFFF;
+	font-family: 'Poppins', sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	padding: 13px 18px;
+	cursor: pointer;
+}
+
+.newsletter-modal-btn:hover { opacity: .93; }
+.newsletter-modal-btn:disabled { opacity: .6; cursor: wait; }
+
+.newsletter-modal-sucesso {
+	padding: 8px 0 4px;
+	text-align: center;
+}
+
+.newsletter-modal-sucesso-icone {
+	font-size: 40px;
+	color: #2E9E57;
+	margin-bottom: 12px;
+}
+
+.newsletter-modal-sucesso h3 { margin-bottom: 12px; }
+
+html.newsletter-modal-aberta {
+	overflow: hidden;
+}
+
+

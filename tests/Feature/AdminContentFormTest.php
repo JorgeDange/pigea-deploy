@@ -3,11 +3,9 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\Admin\ContentFormController;
-use App\Livewire\Admin\ContentTable;
-use App\Models\Directory;
+use App\Livewire\Admin\NewsListTable;
 use App\Models\Event;
 use App\Models\Interview;
-use App\Models\Job;
 use App\Models\Legislation;
 use App\Models\News;
 use App\Models\Project;
@@ -34,7 +32,11 @@ class AdminContentFormTest extends TestCase
         return User::where('email', 'test@example.com')->firstOrFail();
     }
 
-    /** Tipo → modelo, para localizar um registo real daquele tipo. */
+    /** Tipo → modelo, para localizar um registo real daquele tipo.
+     *
+     * Reestruturação: "empresas" (Directory) saiu do formulário genérico —
+     * o novo diretório é gerido pela moderação CompaniesTable e os registos
+     * legados Directory mantêm-se só no frontend (ver modificar.md §13). */
     public static function tipos(): array
     {
         return [
@@ -44,8 +46,6 @@ class AdminContentFormTest extends TestCase
             'entrevistas' => ['entrevistas', Interview::class],
             'legislacao' => ['legislacao', Legislation::class],
             'projetos' => ['projetos', Project::class],
-            'vagas' => ['vagas', Job::class],
-            'empresas' => ['empresas', Directory::class],
         ];
     }
 
@@ -73,6 +73,21 @@ class AdminContentFormTest extends TestCase
     public function test_pagina_de_edicao_abre_para_todos_os_tipos(string $tipo, string $modelo): void
     {
         $id = $modelo::query()->firstOrFail()->id;
+
+        // Notícias: o editor próprio (Blade tradicional + TinyMCE) ganha por
+        // precedência de rota — o endpoint genérico nunca é alcançado. O
+        // formulário do editor é um <form> clássico com `name="titulo"` e
+        // `id="titulo"`, submetido por PUT (`_method`).
+        if ($tipo === 'noticias') {
+            $this->actingAs($this->admin())
+                ->get(route('admin.noticia-editar', ['noticia' => $id]))
+                ->assertOk()
+                ->assertSee('id="titulo"', false)
+                ->assertSee('name="titulo"', false)
+                ->assertSee('_method', false);
+
+            return;
+        }
 
         $this->actingAs($this->admin())
             ->get(route('admin.conteudo.editar', ['tipo' => $tipo, 'id' => $id]))
@@ -120,8 +135,15 @@ class AdminContentFormTest extends TestCase
         $excertoAntigo = $registo->excerpt;
         $conteudoAntigo = $registo->content;
 
+        // Notícias: o editor próprio fica antes na rota (`PUT /noticias/{noticia}`),
+        // por isso o endpoint genérico nunca é alcançado para elas. Apontamos
+        // explicitamente ao fluxo real do painel (o formulário do editor).
+        $url = $tipo === 'noticias'
+            ? route('admin.noticia-editor.update', ['noticia' => $registo->id])
+            : route('admin.conteudo.atualizar', ['tipo' => $tipo, 'id' => $registo->id]);
+
         $this->actingAs($this->admin())
-            ->put(route('admin.conteudo.atualizar', ['tipo' => $tipo, 'id' => $registo->id]), [
+            ->put($url, [
                 'titulo' => $tituloAntigo.' (editado)',
                 // Sem `slug`, `estado`, `excerto` nem `conteudo`: o slug tem de
                 // ficar intacto (senão quebrava a URL publicada), o estado como
@@ -167,6 +189,12 @@ class AdminContentFormTest extends TestCase
         $this->actingAs($this->admin())
             ->get(route('admin.conteudo.novo', ['tipo' => 'noticias']))
             ->assertNotFound();
+
+        // Reestruturação: "empresas" saiu do formulário genérico — a gestão do
+        // diretório novo vive em /empresas (moderação) e /documentos.
+        $this->actingAs($this->admin())
+            ->get(route('admin.conteudo.editar', ['tipo' => 'empresas', 'id' => 1]))
+            ->assertNotFound();
     }
 
     public function test_permissao_granular_e_exigida(): void
@@ -196,9 +224,9 @@ class AdminContentFormTest extends TestCase
         $noticia = News::query()->firstOrFail();
 
         Livewire::actingAs($this->admin())
-            ->test(ContentTable::class, ['tipo' => 'noticias'])
+            ->test(NewsListTable::class)
             ->call('editar', $noticia->id)
-            ->assertRedirect(route('admin.conteudo.editar', ['tipo' => 'noticias', 'id' => $noticia->id]));
+            ->assertRedirect(route('admin.noticia-editar', ['noticia' => $noticia->id]));
     }
 
     public function test_botoes_novo_estao_ligados_nas_quatro_paginas(): void

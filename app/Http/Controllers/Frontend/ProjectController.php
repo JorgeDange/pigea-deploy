@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Concerns\ResolvesContent;
 use App\Models\Category;
 use App\Models\Project;
+use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
@@ -13,6 +14,10 @@ class ProjectController extends Controller
 
     public function index()
     {
+        if (! config('features.projects_publico')) {
+            abort(404);
+        }
+
         $items = Project::published()
             ->with(['category', 'author'])
             ->orderBy('id')
@@ -23,15 +28,21 @@ class ProjectController extends Controller
         return view('projects.index', compact('items', 'categories'));
     }
 
-    public function show(string $slug)
+    public function show(Request $request, string $slug)
     {
+        if (! config('features.projects_publico')) {
+            abort(404);
+        }
+
         $post = $this->resolveContent($slug);
 
         if ($post === null) {
             abort(404);
         }
 
-        $post->increment('views_count');
+        // FASE E2 (anti-bot): visitas a projetos contam como leitura real
+        // (sem bots; sessão 1× por 5 minutos), tal como nas notícias.
+        \App\Support\ContadorDeVisitas::contar($request, $post, 'vista_projeto');
 
         [$prev, $next] = $this->adjacentNews($post);
 

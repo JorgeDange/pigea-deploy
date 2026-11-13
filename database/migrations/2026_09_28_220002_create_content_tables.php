@@ -9,7 +9,6 @@ return new class extends Migration
     private const TABLES = [
         'news',
         'projects',
-        'vacancies',
         'suppliers',
         'events',
         'legislation',
@@ -35,7 +34,6 @@ return new class extends Migration
                 $table->string('image_caption')->nullable();
                 $table->string('status', 20)->default('published')->index();
                 $table->date('published_at')->nullable()->index();
-                $table->unsignedInteger('comments_count')->default(0);
                 $table->unsignedInteger('views_count')->default(0);
                 $table->timestamps();
                 $table->softDeletes();

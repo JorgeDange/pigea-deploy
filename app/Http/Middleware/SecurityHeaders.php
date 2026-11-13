@@ -58,9 +58,10 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Sem acesso a APIs de dispositivo que a plataforma não precisa.
+        // (interest-cohort foi descontinuado pelos browsers — mantido google-history-partitioning se necessário no futuro.)
         $response->headers->set(
             'Permissions-Policy',
-            'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()'
+            'camera=(), microphone=(), geolocation=(), payment=(), usb=()'
         );
 
         $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');

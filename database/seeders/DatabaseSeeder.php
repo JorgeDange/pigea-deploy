@@ -20,7 +20,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             ContentSeeder::class,
-            PainelSeeder::class,
+            DirectorySeeder::class,
+            // FASE 5.1: depois do ContentSeeder — as subcategorias de notícias
+            // (Mineração/Petróleo/Geociências) penduram nas categorias pai.
+            MenuSeeder::class,
         ]);
     }
 }
