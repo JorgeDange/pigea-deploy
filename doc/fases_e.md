@@ -133,4 +133,4 @@ O mesmo tratamento anti-bot pode, para a frente, aplicar-se a `ProjectController
 |------|--------|--------|
 | E3 — Rodapé/redes | ✅ feita | `52bd4cf` |
 | E1 — Províncias | ✅ feita | `0515b37` |
-| E2 — Views/KPI | ✅ feita | aguarda autorização do cliente (ver git) |
+| E2 — Views/KPI | ✅ feita | `9358f84` |
