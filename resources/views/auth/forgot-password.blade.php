@@ -18,7 +18,7 @@
       <button type="submit" class="btn-primary btn-block">Enviar link</button>
     </form>
     <div class="auth-divider">ou</div>
-    <p class="auth-footer"><a href="{{ url('/login') }}">Voltar a entrar</a></p>
+    <p class="auth-footer"><a href="{{ route('login') }}">Voltar a entrar</a></p>
     <div class="auth-links"><a href="{{ route('home') }}">← Voltar ao site</a></div>
   </div>
 </div>

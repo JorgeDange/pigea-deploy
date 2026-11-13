@@ -108,6 +108,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Paths (customizable)
+    |--------------------------------------------------------------------------
+    |
+    | Override aqui os caminhos de autenticação do Fortify. O `.env` pode
+    | definir `PIGEA_LOGIN_PATH` para trocar /login por outro opaco.
+    |
+    */
+    'paths' => [
+        'login' => env('PIGEA_LOGIN_PATH', 'login'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Rate Limiting
     |--------------------------------------------------------------------------
     |

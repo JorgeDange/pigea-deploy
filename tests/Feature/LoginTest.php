@@ -24,7 +24,7 @@ class LoginTest extends TestCase
 
     public function test_pagina_de_login_200(): void
     {
-        $this->get('/login')->assertOk();
+        $this->get(route('login'))->assertOk();
     }
 
     public function test_login_com_credenciais_validas_redireciona(): void
@@ -32,7 +32,7 @@ class LoginTest extends TestCase
         $user = User::factory()->create(['password' => Hash::make('segredo-123')]);
         $user->assignRole('admin');
 
-        $resposta = $this->post('/login', [
+        $resposta = $this->post(route('login'), [
             'email' => $user->email,
             'password' => 'segredo-123',
         ]);
@@ -45,7 +45,7 @@ class LoginTest extends TestCase
     {
         $user = User::factory()->create(['password' => Hash::make('segredo-123')]);
 
-        $resposta = $this->from('/login')->post('/login', [
+        $resposta = $this->from(route('login'))->post(route('login'), [
             'email' => $user->email,
             'password' => 'errada',
         ]);

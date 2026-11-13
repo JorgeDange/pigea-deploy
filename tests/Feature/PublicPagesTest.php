@@ -34,7 +34,7 @@ class PublicPagesTest extends TestCase
             'pesquisa (sem termo)' => ['/pesquisa'],
             'sobre' => ['/sobre'],
             'contactos' => ['/contactos'],
-            'login' => ['/login'],
+            'login' => ['/' . (env('PIGEA_LOGIN_PATH') ?: 'login')],
             'password esquecida' => ['/forgot-password'],
             'reset de password' => ['/reset-password/token-de-teste'],
             'página 404 do protótipo' => ['/404'],
