@@ -3063,29 +3063,14 @@ section {
 .share-icon:before {
 	font-family: Font Awesome\ 5 Brands;
 }
-.share-icon-digg:before {
-    content: "\f1a6";
-}
-.share-icon-rss:before {
-    content: "\f09e";
-}
 .share-icon-facebook:before  {
     content: "\f39e";
 }
 .share-icon-twitter:before {
     content: "\f099";
 }
-.share-icon-tumblr:before {
-   content: "\f173";
-}
 .share-icon-linkedin:before {
      content: "\f0e1";
-}
-.share-icon-pinterest:before {
-    content: "\f231";
-}
-.share-icon-stumbleupon:before {
-    content: "\f1a4";
 }
 /*------ btn ------------------------------------------------------*/
 .btn {

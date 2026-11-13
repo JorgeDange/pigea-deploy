@@ -205,7 +205,7 @@ function initGmag() {
     });
     // Share   ------------------
     $(".share-container").share({
-        networks: ['facebook', 'pinterest', 'twitter', 'linkedin', 'tumblr']
+        networks: ['facebook', 'twitter', 'linkedin']
     });
     var swra = $(".share-wrapper"),
         clsh = $(".close-share-btn"),
