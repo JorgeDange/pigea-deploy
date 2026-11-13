@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Contracts\View\View;
+use App\Support\Provincias;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -32,7 +33,8 @@ class ProjectFormController extends Controller
         $dados = $request->validate([
             'nome' => ['required', 'string', 'max:190'],
             'minereral' => ['nullable', Rule::in(['ferro', 'ouro', 'diamantes', 'litio', 'manganes', 'cobre', 'fosfatos'])],
-            'provincia' => ['nullable', Rule::in(['huila', 'namibe', 'uige', 'cuanza-sul', 'benguela', 'cuando-cubango'])],
+            'provincia' => ['nullable', 'string', 'max:100'],
+            'provincia_outro' => ['nullable', 'string', 'max:100', 'required_if:provincia,outros'],
             'fase' => ['nullable', Rule::in(['prospeccao', 'exploracao', 'producao'])],
             'operador' => ['nullable', 'string', 'max:190'],
             'area' => ['nullable', 'numeric', 'min:0'],
@@ -68,7 +70,7 @@ class ProjectFormController extends Controller
             },
             'published_at' => $publicadoEm,
             'date_label' => $publicadoEm?->locale('pt')->translatedFormat('d M Y'),
-            'province' => $dados['provincia'] ?? null,
+            'province' => Provincias::resolve($dados['provincia'] ?? null, $request->input('provincia_outro')),
             'mineral' => $dados['minereral'] ?? null,
             'phase' => $dados['fase'] ?? null,
             'operator' => $dados['operador'] ?? null,

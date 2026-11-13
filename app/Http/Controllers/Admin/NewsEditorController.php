@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\News;
 use App\Services\ArticleSanitizer;
 use App\Support\CategoriasNews;
+use App\Support\Provincias;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -146,7 +147,8 @@ class NewsEditorController extends Controller
             'conteudo' => ['nullable', 'string', 'max:2097152'],
             'subtitulo' => ['nullable', 'string', 'max:500'],
             'categoria' => ['nullable', 'integer', Rule::exists('categories', 'id')->where('type', 'news')],
-            'provincia' => ['nullable', Rule::in(['luanda', 'benguela', 'huila', 'namibe', 'nacional'])],
+            'provincia' => ['nullable', 'string', 'max:100'],
+            'provincia_outro' => ['nullable', 'string', 'max:100'],
         ]);
 
         $novo = empty($dados['id']);
@@ -281,7 +283,8 @@ class NewsEditorController extends Controller
             'slug' => ['nullable', 'string', 'max:190', Rule::unique('news', 'slug')->ignore($noticia?->id)],
             'conteudo' => ['nullable', 'string'],
             'categoria' => ['nullable', 'integer', Rule::exists('categories', 'id')->where('type', 'news')],
-            'provincia' => ['nullable', Rule::in(['luanda', 'benguela', 'huila', 'namibe', 'nacional'])],
+            'provincia' => ['nullable', 'string', 'max:100'],
+            'provincia_outro' => ['nullable', 'string', 'max:100', 'required_if:provincia,outros'],
             'tags' => ['nullable', 'string', 'max:250'],
             'image_alt' => ['nullable', 'string', 'max:250'],
             'image_caption' => ['nullable', 'string', 'max:250'],
@@ -449,7 +452,7 @@ class NewsEditorController extends Controller
                 ? ($dados['categoria'] ?? null)
                 : $atual?->category_id,
             'province' => $tem('provincia')
-                ? (trim((string) ($dados['provincia'] ?? '')) ?: null)
+                ? Provincias::resolve($dados['provincia'] ?? null, $request->input('provincia_outro'))
                 : $atual?->province,
             'tags' => $tem('tags')
                 ? (trim((string) ($dados['tags'] ?? '')) ?: null)

@@ -81,6 +81,10 @@
                     </select>
                     @break
 
+                  @case('provincia')
+                    <x-provincia-select :value="$campo['valor'] ?? null" bare />
+                    @break
+
                   @case('select')
                     <select class="dashboard-form-select" name="{{ $campo['nome'] }}">
                       <option value="">Selecionar…</option>
@@ -105,6 +109,9 @@
                     @break
                 @endswitch
                 @error($campo['nome'])<p class="form-error" role="alert">{{ $message }}</p>@enderror
+                @if (($campo['tipo'] ?? null) === 'provincia')
+                @error('provincia_outro')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+                @endif
               </div>
                 @endforeach
                 </div>

@@ -154,7 +154,17 @@ class ContentTable extends Component
             // na Fase 8); os registos do seeder ficam com `—` (sem dados).
             'mapas' => [
                 'mineral' => ['ferro' => 'Ferro', 'ouro' => 'Ouro', 'diamantes' => 'Diamantes', 'litio' => 'Lítio', 'manganes' => 'Manganês', 'cobre' => 'Cobre', 'fosfatos' => 'Fosfatos'],
-                'province' => ['huila' => 'Huíla', 'namibe' => 'Namibe', 'uige' => 'Uíge', 'cuanza-sul' => 'Cuanza Sul', 'benguela' => 'Benguela', 'cuando-cubango' => 'Cuando Cubango'],
+                // 18 províncias + «Nacional» + slugs legados (cuanza-sul → Cuanza Sul).
+                // Deve espelhar App\Support\Provincias::LISTA + LEGADO.
+                // Valores fora da lista (texto livre «Outros») mostram o próprio texto.
+                'province' => [
+                    'bengo' => 'Bengo', 'benguela' => 'Benguela', 'bie' => 'Bié', 'cabinda' => 'Cabinda',
+                    'cuando-cubango' => 'Cuando Cubango', 'kwanza-norte' => 'Cuanza Norte', 'kwanza-sul' => 'Cuanza Sul',
+                    'cunene' => 'Cunene', 'huambo' => 'Huambo', 'huila' => 'Huíla', 'luanda' => 'Luanda',
+                    'lunda-norte' => 'Lunda Norte', 'lunda-sul' => 'Lunda Sul', 'malanje' => 'Malanje', 'moxico' => 'Moxico',
+                    'namibe' => 'Namibe', 'uige' => 'Uíge', 'zaire' => 'Zaire', 'nacional' => 'Nacional',
+                    'cuanza-sul' => 'Cuanza Sul', 'quando-cubango' => 'Cuando Cubango',
+                ],
                 'phase' => ['prospeccao' => 'Prospecção', 'exploracao' => 'Exploração', 'producao' => 'Produção'],
             ],
             'filtros' => [

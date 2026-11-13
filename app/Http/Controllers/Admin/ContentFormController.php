@@ -139,9 +139,7 @@ class ContentFormController extends Controller
             'criavel' => false,
             'estados' => self::ESTADOS_CONTEUDO,
             'extras' => [
-                ['input' => 'provincia', 'coluna' => 'province', 'rotulo' => 'Província', 'tipo' => 'select', 'opcoes' => [
-                    'luanda' => 'Luanda', 'benguela' => 'Benguela', 'huila' => 'Huíla', 'namibe' => 'Namibe', 'nacional' => 'Nacional',
-                ]],
+                ['input' => 'provincia', 'coluna' => 'province', 'rotulo' => 'Província', 'tipo' => 'provincia'],
                 // Reestruturação (restrutura.md §3.4): vídeo e documento são
                 // APENAS link — validação url (regras por tipo 'text' com url?).
                 ['input' => 'video_link', 'coluna' => 'video_link', 'rotulo' => 'Link do vídeo', 'tipo' => 'url', 'placeholder' => 'https://… (YouTube/Vimeo)'],
@@ -166,10 +164,7 @@ class ContentFormController extends Controller
                     'ferro' => 'Ferro', 'ouro' => 'Ouro', 'diamantes' => 'Diamantes', 'litio' => 'Lítio',
                     'manganes' => 'Manganês', 'cobre' => 'Cobre', 'fosfatos' => 'Fosfatos',
                 ]],
-                ['input' => 'provincia', 'coluna' => 'province', 'rotulo' => 'Província', 'tipo' => 'select', 'opcoes' => [
-                    'huila' => 'Huíla', 'namibe' => 'Namibe', 'uige' => 'Uíge', 'cuanza-sul' => 'Cuanza Sul',
-                    'benguela' => 'Benguela', 'cuando-cubango' => 'Cuando Cubango',
-                ]],
+                ['input' => 'provincia', 'coluna' => 'province', 'rotulo' => 'Província', 'tipo' => 'provincia'],
                 ['input' => 'fase', 'coluna' => 'phase', 'rotulo' => 'Fase', 'tipo' => 'select', 'opcoes' => [
                     'prospeccao' => 'Prospecção', 'exploracao' => 'Exploração', 'producao' => 'Produção',
                 ]],
@@ -382,6 +377,12 @@ class ContentFormController extends Controller
         ];
 
         foreach ($conf['extras'] ?? [] as $extra) {
+            if ($extra['tipo'] === 'provincia') {
+                $regras['provincia'] = ['nullable', 'string', 'max:100'];
+                $regras['provincia_outro'] = ['nullable', 'string', 'max:100', 'required_if:provincia,outros'];
+                continue; // a iteração define apenas a regra deste campo
+            }
+
             $regras[$extra['input']] = match ($extra['tipo']) {
                 'select' => ['nullable', Rule::in(array_keys($extra['opcoes']))],
                 'textarea' => ['nullable', 'string', 'max:2000'],
@@ -421,7 +422,9 @@ class ContentFormController extends Controller
 
         foreach ($conf['extras'] ?? [] as $extra) {
             if (! $edicao || $request->has($extra['input'])) {
-                $modelo->{$extra['coluna']} = $dados[$extra['input']] ?? null;
+                $modelo->{$extra['coluna']} = $extra['tipo'] === 'provincia'
+                    ? \App\Support\Provincias::resolve($dados['provincia'] ?? null, $request->input('provincia_outro'))
+                    : ($dados[$extra['input']] ?? null);
             }
         }
 

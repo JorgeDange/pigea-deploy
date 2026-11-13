@@ -3,59 +3,34 @@
 > Instrução: 3 melhorias pedidas pelo cliente, implementadas por fases sem commitar de uma vez.
 > Documento vivo — atualizar a cada avanço.
 
-## FASE E1 — Provincias (18 + "Outros" com texto livre)
+## FASE E1 — Provincias (18 + "Outros" com texto livre) ✅ (implementada 2026-11-13)
 
-**Objectivo:** antes as províncias eram apenas 5 (`luanda,benguela,huila,namibe,nacional`) — expandir para todas as **18 províncias de Angola** + opção `Outros` que revela um input de texto (para notícias de outros países ou registos sem província).
+**Objecto:** todas as **18 províncias oficiais de Angola** + opção «Outros» (texto livre, máx. 100 caracteres) — para notícias/projetos internacionais ou sem província.
 
-### Scope
-- **18 províncias** (slugs): `luanda,benguela,huila,namibe,cabinda,malanje,uige,zaire,kwanza-norte,kwanza-sul,lunda-norte,lunda-sul,bie,mocimiboi,cunene,huambo,moxico`.
-- **Opção «Outros»**: sempre no fim da lista de opções, revela campo de texto `provincia_outro` (máx. 100 chars) livre para texto (`Internacional`, `Açores`, ...).
+### Implementação real (2026-11-13)
 
-### O que muda
-- Helper `App\Support\Provincias` exportando lista de 18 + label; usada por:
-  - `NewsEditorController@atributos()` (select de Província no editor);
-  - `ContentFormController` (formulário genérico de conteúdo que também listas as províncias);
-  - `NewsListTable` (filtro categorias no admin — sem mudar tags);
-  - `NewsFilter` (filtros públicos `*_create/provecto`).
-- Migration: nenhuma (`province` é `string`; aceitação de valor livre = `Outros` com string `outro:texto livre` ou `Internacional` codificado conforme escolha — ver decisão E1.1 no final).
-- Editor de notícias (`resources/views/admin/noticia-editor.blade.php`):
-  - select com 19 opções (18 + `Outros`);
-  - input `provincia_outro` (style inline visível só com `.dashboard-form-group-outra` com `hidden` por default; JS toggle pela sessão; o form pode submeter ambos — validação ignora o input se `provincia` ≠ `outros`);
-- Admin validação: `provincia` = `nullable|in:18slugs,outros`; `provincia_outro` = `nullable|required_if:provincia,outros|string|max:100`;
-- Armazenamento: `province` = `outros` + `provincia_outro` na coluna actual `province`? Não — campo à parte para não usar coluna como propriedade múltipla? Decidir.
+- **Helper único** `App\Support\Provincias` (`LISTA` = 18 + `nacional`; `resolve()` para «Outros»→texto livre; `normalizar()` aceita os slugs legados `cuanza-sul`→`kwanza-sul`, `quando-cubango`→`cuando-cubango`; `rotulo()` para apresentação).
+- **Componente partilhado** `components/provincia-select.blade.php` (select + campo «Outros» que só aparece nesse caso + `provincia_outro` + JS próprio); modos: completo (rótulo/ajuda/erros próprios) e `bare` (formulário genérico `admin/conteudo-form`).
+- **Editor de notícias** e **Novo projeto**: mesmo componente (o projeto tinha só 6 províncias e slugs legados; agora as 18 + Nacional + Outros).
+- **Formulário genérico** (editar notícia/projeto noutros campos): passou a tipo `provincia` com o mesmo componente.
+- **Validação** (noticia-editor, projeto-novo, autosave, conteudo-form): `provincia` = `nullable|string|max:100`; `provincia_outro` = `nullable|string|max:100` + `required_if:provincia,outros` (exceto no autosave, que não bloqueia).
+- **`province` guarda o texto livre directamente** (decisão do cliente, sem coluna extra). Fora de «Outros», o campo `provincia_outro` é ignorado.
+- **Migração** `2026_11_13_000200_widen_projects_province.php`: `projects.province` VARCHAR(64) → VARCHAR(120) (o texto livre de até 100 caracteres não cabia). Aplicada em dev. Sem tocar em dados.
+- **Dashboard** (`Grafico por província`): rótulos oficiais para slugs conhecidos; texto livre aparece tal como está; os dados ficam os mesmos.
+- **Admin `Projetos`** (Livewire): mapa de rótulos passou a espelhar o helper (18 + nacional + legados).
+- **Default de hábitos**: clientes antigos com `province` de texto livre continuam a mostrar-se (o componente abre em «Outros» com o texto pré-preenchido).
 
-### Implementação visual do select (proposta)
-```html
-<select id="provincia" name="provincia">
-  <option value="">Sem província</option>
-  <option value="luanda">Luanda</option>
-  ...18 opções...
-  <option value="outros">Outros — escrever</option>
-</select>
-<div id="provincia_outro_wrap">
-  <input type="text" id="provincia_outro" name="provincia_outro" placeholder="ex.: Internacional, National Holiday etc." class="dashboard-form-input" maxlength="100" hidden>
-</div>
-<script>
-  provincia.addEventListener('change', function () {
-    document.getElementById('provincia_outro').hidden = this.value !== 'outros';
-  });
-</script>
-```
-
-**Decisões pendentes (do cliente):**
-- **E1.1 Armazenamento** — armazenar como string livre em `province` quando `outros` (ex. `Holanda`), ou 2 colunas: `province` = `outros` (+ `provincia_outro`). Recomendo: `province` recebe o texto livre directamente (depois de sanitizar), default NULL.100Chars.
-- **E1.2 Limpeza limpa** — aceitar qualquer string ≤ 100Chars? Recomendo: aceite livre de texto, validação apenas `max:100` (sanitização extra) Liberdade editorial sem dicionário de países.
-
-### CA (critério de aceitação)
-- [ ] 18 províncias + "Outros" aparecem no editor de notícias.
-- [ ] Selecionar "Outros" revela campo de texto à hora.
-- [ ] Selecionar uma província canónica esconde o texto extra.
-- [ ] Submit sem "Outros" não mantém lixo no campo `provincia_outro`.
-- [ ] Validação rejeita províncias fora da lista + texto vazio com "outros".
-- [ ] Filtro de notícias no admin mostra as 19 opções.
+### CA (critério de aceitação) — resultados
+- [x] 18 províncias + «Nacional» + «Outros» aparecem no editor de notícias e no formulário de projeto.
+- [x] Seleccionar «Outros» revela o campo de texto (recetável, `qa-e1-editor-outros.png`).
+- [x] Seleccionar uma província canónica esconde o texto extra.
+- [x] Submit sem «Outros» não mantém lixo (o campo auxiliar é ignorado fora de «Outros»).
+- [x] «Outros» sem texto → erro de validação `provincia_outro`; >100 caracteres → erro; fora de «Outros» → ignorado; texto livre «Holanda» grava «Holanda». (4 testes em `NoticiaEditorExtrasTest`)
+- [x] Slot «Província» no painel/lista de projetos mostra os rótulos oficiais (18 + nacional + legados).
+- [x] Suite: **233 tests / 793 assertions** verdes (+3 face a 230/784); `view:cache` limpo.
 
 ### Risco
-MFA positivo: nenhum. Remoção de outras províncias antigos em DEV — não mexer (dados dos seed são apelativos). Validar que não são dados de outros países hardcoded.
+Baixo. Nenhuma remoção de dados; slugs legados normalizados na escrita (cuanza-sul vira kwanza-sul só quando alguém voltar a gravar o registo). A tabela `users.province` ficou VARCHAR(64) — fora do âmbito desta fase.
 
 ---
 
@@ -155,7 +130,7 @@ Baixo. A tabela `page_views` (dev) tem `date` unique — suficiente como backup 
 | E3.3 | Twitter/X — adicionar campo no Settings? | E3 | ✅ Sim — inputs `twitter` + `twitter_nome`; X aparece APENAS quando configurado (não mostra greyed) |
 
 ## Ordem de execução (definida pelo cliente, 2026-11-13)
-1. ✅ **E3** — rodapé + redes sociais implementada e verificada (aguarda commit/push).
-2. ⏳ **E1** — províncias (18 + «Outros» com texto livre) — próximo passo.
-3. ⏳ **E2** — views com anti-bot + «Top 5 mais lidas» no dashboard.
+1. ✅ **E3** — rodapé + redes sociais implementada e verificada
+2. ✅ **E1** — províncias (18 + «Outros» com texto livre) implementada e verificada (suite 233/793)
+3. ⏳ **E2** — views com anti-bot + «Top 5 mais lidas» no dashboard — próximo passo
 4. QA completo após cada fase (screenshot + suite) + atualização deste documento.

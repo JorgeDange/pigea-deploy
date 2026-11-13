@@ -39,19 +39,7 @@
                 <option value="fosfatos" @selected(old('minereral') === 'fosfatos')>Fosfatos</option>
               </select>
                 @error('minereral')<p class="form-error" role="alert">{{ $message }}</p>@enderror
-              </div>              <div class="dashboard-form-group">
-                <label class="dashboard-form-label">Província</label>
-                <select class="dashboard-form-select" name="provincia">
-                <option value="">Selecionar província…</option>
-                <option value="huila" @selected(old('provincia') === 'huila')>Huíla</option>
-                <option value="namibe" @selected(old('provincia') === 'namibe')>Namibe</option>
-                <option value="uige" @selected(old('provincia') === 'uige')>Uíge</option>
-                <option value="cuanza-sul" @selected(old('provincia') === 'cuanza-sul')>Cuanza Sul</option>
-                <option value="benguela" @selected(old('provincia') === 'benguela')>Benguela</option>
-                <option value="cuando-cubango" @selected(old('provincia') === 'cuando-cubango')>Cuando Cubango</option>
-              </select>
-                @error('provincia')<p class="form-error" role="alert">{{ $message }}</p>@enderror
-              </div>              <div class="dashboard-form-group">
+              </div>              <x-provincia-select hint="(opcional — usada no gráfico do painel)" />              <div class="dashboard-form-group">
                 <label class="dashboard-form-label">Fase</label>
                 <select class="dashboard-form-select" name="fase">
                 <option value="">Selecionar fase…</option>

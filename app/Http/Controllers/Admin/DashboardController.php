@@ -10,7 +10,6 @@ use App\Models\PageView;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 /**
  * Dashboard do painel admin (protótipo admin/index.html).
@@ -188,16 +187,9 @@ class DashboardController extends Controller
 
         arsort($contagem);
 
-        $rotulos = [
-            'luanda' => 'Luanda',
-            'benguela' => 'Benguela',
-            'huila' => 'Huíla',
-            'namibe' => 'Namibe',
-            'nacional' => 'Nacional',
-        ];
-
         return [
-            'rotulos' => array_map(fn (string $p) => $rotulos[$p] ?? Str::headline($p), array_keys($contagem)),
+            // Rótulo oficial quando conhecido; caso contrário, o próprio texto livre.
+            'rotulos' => array_map(fn (string $p) => \App\Support\Provincias::rotulo($p), array_keys($contagem)),
             'valores' => array_values($contagem),
         ];
     }
