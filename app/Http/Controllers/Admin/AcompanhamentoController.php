@@ -96,6 +96,35 @@ class AcompanhamentoController extends Controller
         // ---- Visitas hoje (mesma métrica do Dashboard)
         $visitasHoje = (int) PageView::query()->where('date', $agora->toDateString())->value('visits');
 
+        // ---- Ritmo de publicação: artigos publicados por mês — todo o histórico
+        $porMes = DB::table('news')
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->selectRaw("DATE_FORMAT(published_at, '%Y-%m') as mes, count(*) as n")
+            ->groupBy('mes')
+            ->orderBy('mes')
+            ->pluck('n', 'mes')
+            ->map(fn ($v) => (int) $v)
+            ->all();
+
+        $ritmoRotulos = array_map(
+            fn (string $mes) => \Illuminate\Support\Carbon::createFromFormat('Y-m', $mes)->locale('pt')->translatedFormat('M y'),
+            array_keys($porMes)
+        );
+        $ritmoValores = array_values($porMes);
+
+        // ---- Prontidão das novidades (doughnut): 6 verificações simples
+        $prontidaoItens = [
+            'Redes configuradas' => $redesConfiguradas === 5,
+            'Banner «Largo» ativo' => $largo['ativos'] > 0,
+            'Províncias preenchidas' => $semProvincia === 0,
+            'Destaques no Hero (4+)' => $pins >= 4,
+            'Imagem de capa' => $semImagem === 0,
+            'Etiquetas' => $semTags === 0,
+        ];
+        $prontidaoOk = collect($prontidaoItens)->filter()->count();
+        $prontidaoTotal = count($prontidaoItens);
+
         // ---- Resumo de atenção: quantos pontos precisam de ação
         $alertas = collect([
             $redesConfiguradas < 5,
@@ -122,6 +151,11 @@ class AcompanhamentoController extends Controller
             'maisLidas' => $maisLidas,
             'visitasHoje' => $visitasHoje,
             'alertas' => $alertas,
+            'ritmoRotulos' => $ritmoRotulos,
+            'ritmoValores' => $ritmoValores,
+            'prontidaoItens' => $prontidaoItens,
+            'prontidaoOk' => $prontidaoOk,
+            'prontidaoTotal' => $prontidaoTotal,
         ]);
     }
 }

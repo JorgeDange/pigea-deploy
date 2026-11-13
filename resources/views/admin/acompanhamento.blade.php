@@ -16,11 +16,9 @@
 <div class="acomp-hero {{ $alertas === 0 ? 'acomp-hero-ok' : 'acomp-hero-atencao' }}">
     <div class="acomp-hero-media" aria-hidden="true"><i class="fa {{ $alertas === 0 ? 'fa-check' : 'fa-exclamation' }}"></i></div>
     <div class="acomp-hero-body">
-        <span class="acomp-kicker">PAINEL DE CONTROLO · ATUALIZADO AGORA</span>
-        <h2>{{ $alertas === 0 ? 'Tudo em ordem' : $alertas . ' ' . ($alertas === 1 ? 'ponto a rever' : 'pontos a rever') }}</h2>
-        <p>{{ $alertas === 0
-            ? 'Redes configuradas e visíveis, destaques pinados, qualidade em dia — o site está pronto para o público.'
-            : 'Há pontos que merecem ação. Toque em «Corrigir…» no cartão destacado a amarelo.' }}</p>
+        <span class="acomp-kicker">ESTADO GERAL</span>
+        <h2>{{ $alertas === 0 ? 'Tudo em ordem' : $alertas . ($alertas === 1 ? ' ponto a rever' : ' pontos a rever') }}</h2>
+        <p>{{ $alertas === 0 ? 'Sem pendências.' : 'Toque em «Corrigir…» no cartão destacado.' }}</p>
     </div>
     <dl class="acomp-hero-stats">
         <div><dt>Redes</dt><dd>{{ $redesConfiguradas }}<small>/5</small></dd></div>
@@ -28,6 +26,40 @@
         <div><dt>Vistas</dt><dd>{{ number_format($totalVistas, 0, ',', '.') }}</dd></div>
         <div><dt>Alertas</dt><dd class="{{ $alertas > 0 ? 'acomp-hero-alerta' : '' }}">{{ $alertas }}</dd></div>
     </dl>
+</div>
+
+<div class="acomp-charts-row">
+    <div class="card acomp-card acomp-card-chart">
+        <div class="card-head">
+            <h3 class="card-title"><span class="acomp-icone"><i class="fa fa-chart-bar" aria-hidden="true"></i></span> Artigos publicados
+                <span class="acomp-kicker acomp-kicker-fase">HISTÓRICO</span></h3>
+        </div>
+        <div class="card-body">
+            <div class="acomp-chart-canvas">
+                <canvas id="acomp-ritmo" role="img" aria-label="Artigos publicados por mês, últimos 12 meses"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="card acomp-card acomp-card-chart acomp-card-chart-doughnut">
+        <div class="card-head">
+            <h3 class="card-title"><span class="acomp-icone"><i class="fa fa-chart-pie" aria-hidden="true"></i></span> Prontidão
+                <span class="acomp-kicker acomp-kicker-fase">PAINEL</span></h3>
+            <span class="acomp-badge acomp-badge-info">{{ $prontidaoOk }}/{{ $prontidaoTotal }}</span>
+        </div>
+        <div class="card-body">
+            <div class="acomp-doughnut-wrap">
+                <div class="acomp-doughnut">
+                    <canvas id="acomp-prontidao" role="img" aria-label="Índice de prontidão das novidades"></canvas>
+                    <div class="acomp-doughnut-center"><strong>{{ $prontidaoOk }}</strong><small>de {{ $prontidaoTotal }}</small></div>
+                </div>
+                <ul class="acomp-legenda">
+                    @foreach ($prontidaoItens as $rotulo => $ok)
+                    <li class="{{ $ok ? 'ok' : 'falta' }}"><i class="fas fa-{{ $ok ? 'check' : 'xmark' }}" aria-hidden="true"></i>{{ $rotulo }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="acomp-grid">
@@ -57,8 +89,7 @@
                 </li>
                 @endforeach
             </ul>
-            <p class="helper-text">Só aparecem onde existem configuradas (rodapé, topo, Contactos, «Siga-nos»). Sem link nem nome → escondida.</p>
-            <div class="acomp-acoes"><a href="{{ route('admin.configuracoes') }}" class="btn-secondary btn-sm"><i class="fa fa-wrench"></i> Corrigir nas Configurações</a></div>
+            <div class="acomp-acoes"><a href="{{ route('admin.configuracoes') }}" class="btn-secondary btn-sm"><i class="fa fa-wrench"></i> Editar redes</a></div>
         </div>
     </div>
 
@@ -71,11 +102,13 @@
             <span class="acomp-badge {{ $largoOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $largo['ativos'] }} ativo(s)</span>
         </div>
         <div class="card-body">
-            <p class="acomp-texto">A faixa horizontal de largura total que substitui o banner estático do tema nas páginas de conteúdo. Sem banner «Largo» ativo → a faixa não aparece (não há espaço vazio).</p>
             <ul class="acomp-kpis">
                 <li><span class="acomp-kpi-num">{{ $largo['ativos'] }}</span><span class="acomp-kpi-label">ativos</span></li>
                 <li><span class="acomp-kpi-num">{{ $largo['total'] }}</span><span class="acomp-kpi-label">criados</span></li>
             </ul>
+            @unless ($largoOk)
+                <p class="helper-text">Sem banner «Largo» → a faixa não aparece.</p>
+            @endunless
             <div class="acomp-acoes"><a href="{{ route('admin.banners') }}" class="btn-secondary btn-sm"><i class="fa fa-plus"></i> {{ $largoOk ? 'Gerir banners' : 'Criar banner «Largo»' }}</a></div>
         </div>
     </div>
@@ -92,21 +125,20 @@
             <span class="acomp-badge {{ $provOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $comProvincia }}/{{ $totalPub }}</span>
         </div>
         <div class="card-body">
-            <p class="acomp-texto">Capa por província nos artigos publicados — e quantos usam «Outros» (texto livre): <strong>{{ $livres }}</strong>.</p>
             @if ($topProvincias->isNotEmpty())
             <ul class="acomp-rank">
                 @foreach ($topProvincias as $p)
                 <li class="acomp-rank-item">
-                    <span class="acomp-rank-rotulo">{{ $p['rotulo'] }}</span>
+                    <span class="acomp-rank-rotulo" title="{{ $p['rotulo'] }}">{{ $p['rotulo'] }}</span>
                     <span class="acomp-rank-barra" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ (int) round($p['n'] / $maxProvs * 100) }}"><span style="width: {{ (int) round($p['n'] / $maxProvs * 100) }}%"></span></span>
                     <span class="acomp-rank-num">{{ $p['n'] }}</span>
                 </li>
                 @endforeach
             </ul>
             @else
-                <p class="helper-text">Ainda não há artigos com província preenchida.</p>
+                <p class="helper-text">Sem províncias registadas.</p>
             @endif
-            <p class="helper-text">Artigos sem província: <strong>{{ $semProvincia }}</strong> · texto livre: <strong>{{ $livres }}</strong></p>
+            <p class="helper-text">Sem província: <strong>{{ $semProvincia }}</strong> · texto livre («Outros»): <strong>{{ $livres }}</strong></p>
             <div class="acomp-acoes"><a href="{{ route('admin.noticias') }}" class="btn-secondary btn-sm"><i class="fa fa-pen"></i> Corrigir artigos</a></div>
         </div>
     </div>
@@ -120,13 +152,12 @@
             <span class="acomp-badge {{ $pinsOk ? 'acomp-badge-ok' : 'acomp-badge-info' }}">{{ $pins }} {{ $pins === 1 ? 'pinado' : 'pinados' }}</span>
         </div>
         <div class="card-body">
-            <p class="acomp-texto">Artigos marcados «★ Destacar na Página Inicial». Os 4 primeiros alimentam o <strong>Hero</strong>; os seguintes entram na Zona <strong>«Destaques»</strong>. Lugares em falta são preenchidos com as mais recentes.</p>
             <p class="acomp-callout {{ $pins >= 4 ? 'acomp-callout-ok' : ($pins > 0 ? 'acomp-callout-mix' : 'acomp-callout-falta') }}">
                 {{ $pins === 0
-                    ? 'Sem pins — o Hero e os Destaques usam as mais recentes.'
-                    : ($pins >= 4 ? 'Hero completo com destaques editoriais.' : ($pins . ' pin(s) — o Hero será completado pelas mais recentes.')) }}
+                    ? 'Sem destaques — entram as mais recentes.'
+                    : ($pins >= 4 ? 'Hero completo.' : ($pins . ' pin(s) — faltam ' . (4 - $pins) . ' para o Hero.')) }}
             </p>
-            <div class="acomp-acoes"><a href="{{ route('admin.noticias') }}" class="btn-secondary btn-sm"><i class="fa fa-pen"></i> Gerir destaques (coluna ★)</a></div>
+            <div class="acomp-acoes"><a href="{{ route('admin.noticias') }}" class="btn-secondary btn-sm"><i class="fa fa-pen"></i> Marcar destaques (★)</a></div>
         </div>
     </div>
 
@@ -140,7 +171,7 @@
     @endphp
     <div class="card acomp-card">
         <div class="card-head">
-            <h3 class="card-title"><span class="acomp-icone"><i class="fa fa-clipboard-check" aria-hidden="true"></i></span> Qualidade dos artigos
+            <h3 class="card-title"><span class="acomp-icone"><i class="fa fa-clipboard-check" aria-hidden="true"></i></span> Qualidade
                 <span class="acomp-kicker acomp-kicker-fase">QUALIDADE</span></h3>
             <span class="acomp-badge {{ $qualidadeOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $qualidadeOk ? 'Em dia' : 'A rever' }}</span>
         </div>
@@ -150,10 +181,9 @@
                 <div class="acomp-barra-trilho" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $pctImagem }}" aria-label="Artigos com imagem de capa"><span class="{{ $semImagem === 0 ? 'ok' : ($pctImagem >= 60 ? 'meio' : 'falta') }}" style="width: {{ $pctImagem }}%"></span></div>
             </div>
             <div class="acomp-barra">
-                <div class="acomp-barra-head"><span><i class="fas fa-tags" aria-hidden="true"></i> Etiquetas (tags)</span><strong>{{ $comTags }}/{{ $totalPub }}</strong></div>
+                <div class="acomp-barra-head"><span><i class="fas fa-tags" aria-hidden="true"></i> Etiquetas</span><strong>{{ $comTags }}/{{ $totalPub }}</strong></div>
                 <div class="acomp-barra-trilho" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $pctTags }}" aria-label="Artigos com etiquetas"><span class="{{ $semTags === 0 ? 'ok' : ($pctTags >= 60 ? 'meio' : 'falta') }}" style="width: {{ $pctTags }}%"></span></div>
             </div>
-            <p class="helper-text">Sem imagem → cartões vazios; sem tags → «Tags Populares» fraco na sidebar.</p>
             <div class="acomp-acoes"><a href="{{ route('admin.noticias') }}" class="btn-secondary btn-sm"><i class="fa fa-pen"></i> Corrigir artigos</a></div>
         </div>
     </div>
@@ -166,13 +196,9 @@
             <span class="acomp-badge acomp-badge-info">{{ number_format($totalVistas, 0, ',', '.') }}</span>
         </div>
         <div class="card-body">
-            <p class="acomp-texto">Anti-bot ativo.
-                @if ($visitasHoje)
-                    Hoje no site: <strong>{{ $visitasHoje }}</strong> visita(s).
-                @endif
-                A mesma sessão conta 1× por 5 minutos; bots não contam.</p>
+            <p class="acomp-texto">Bots não contam. Cada sessão conta 1× por 5 minutos.</p>
             @if ($maisLidas->every(fn ($n) => (int) $n->views_count === 0))
-                <p class="chart-vazio">Ainda sem leituras registadas — a contagem honesta começa após 2026-11-13.</p>
+                <p class="chart-vazio">Sem leituras registadas.</p>
             @else
             <ol class="top5-list">
                 @foreach ($maisLidas as $i => $n)
@@ -184,12 +210,89 @@
                 @endforeach
             </ol>
             @endif
-            <div class="acomp-acoes"><a href="{{ route('admin.noticias') }}" class="btn-secondary btn-sm"><i class="fa fa-arrow-right"></i> Ver a tabela de notícias</a></div>
+            <div class="acomp-acoes"><a href="{{ route('admin.noticias') }}" class="btn-secondary btn-sm"><i class="fa fa-arrow-right"></i> Ver tabela</a></div>
         </div>
     </div>
 
 </div>
 
-<p class="acomp-rodape"><i class="fa fa-circle-info" aria-hidden="true"></i> Contadores recalculados a cada abertura. Cada cartão liga ao sítio onde se corrige — não há acção destrutiva nesta página.</p>
+@push('scripts')
+<script src="{{ asset('js/chart.umd.js') }}" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof Chart === 'undefined') { return; }
+
+    var tinta = '#C8102E';
+    var verde = '#2E9E57';
+    var vermelho = '#E5404F';
+    var grade = 'rgba(26,26,26,.08)';
+
+    var el = document.getElementById('acomp-ritmo');
+    if (el) {
+        new Chart(el, {
+            type: 'bar',
+            data: {
+                labels: @json($ritmoRotulos),
+                datasets: [{
+                    label: 'Artigos',
+                    data: @json($ritmoValores),
+                    backgroundColor: tinta,
+                    borderRadius: 5,
+                    maxBarThickness: 48
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        suggestedMax: 8,
+                        ticks: { precision: 0, font: { family: 'Poppins', size: 11 } },
+                        grid: { color: grade }
+                    },
+                    x: {
+                        ticks: { autoSkip: true, maxTicksLimit: 14, font: { family: 'Poppins', size: 10 } },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    var el2 = document.getElementById('acomp-prontidao');
+    if (el2) {
+        var ok = {{ $prontidaoOk }};
+        var total = {{ $prontidaoTotal }};
+        new Chart(el2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Em dia', 'A rever'],
+                datasets: [{
+                    data: [ok, Math.max(0, total - ok)],
+                    backgroundColor: [verde, vermelho],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '62%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (ctx) { return (ctx.parsed > 1 ? ctx.parsed + ' verificações' : ctx.parsed + ' verificação'); }
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+@endpush
 
 @endsection

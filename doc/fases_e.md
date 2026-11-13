@@ -156,6 +156,10 @@ O mesmo tratamento anti-bot pode, para a frente, aplicar-se a `ProjectController
 
 **E2 estendido aos projetos (2026-11-13):** o mesmo filtro anti-bot + arrefecimento de 5 min por sessão aplicou-se a `ProjectController@show` via o helper central `App\Support\ContadorDeVisitas::contar()` (única fonte da lista de bots; `NewsController` migrado para o mesmo helper; `CountPublicVisits` passa a usar a mesma regex). 3 testes novos (`ProjectViewsTest`).
 
+**Acompanhamento — tipografia única + gráficos (2026-11-13):** toda a página ficou em **Poppins** (mesma família do painel) — removidas as variações (Playfair Display, monospace). Acrescentados dois gráficos reais (Chart.js auto-hospedado):
+- **Artigos publicados — HISTÓRICO** (barras, todo o período): cadência de publicação mês a mês.
+- **Prontidão** (doughnut): 6 verificações — Redes, Banner «Largo», Províncias, Destaques (pins≥4), Imagem, Etiquetas — com contagem central "N de 6" e legenda ✓/✗.
+
 **Redesenho profissional da página Acompanhamento (2026-11-13):**
 - Hero de estado geral: ícone, «Tudo em ordem» / «N pontos a rever», 4 KPIs (Redes · Pins · Vistas · Alertas) com Playfair Display.
 - Cada cartão com ícone quadrado, «kicker» de fase (FASE E3 / FASE E1 / FASE E2 / FASE EDITORIAL / QUALIDADE) e badge de estado à direita.
