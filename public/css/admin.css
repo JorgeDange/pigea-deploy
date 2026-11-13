@@ -1127,6 +1127,68 @@
 	transform: translateX(18px);
 }
 
+/* ---------- Mais lidas — Top 5 (FASE E2) -------------------------- */
+.top5-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.top5-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 4px;
+	border-bottom: 1px solid #EEEEEE;
+}
+
+.top5-item:last-child {
+	border-bottom: none;
+}
+
+.top5-pos {
+	flex: 0 0 30px;
+	height: 30px;
+	border-radius: 50%;
+	background: #F5F5F5;
+	color: #1A1A1A;
+	font-size: 14px;
+	font-weight: 700;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.top5-list li:first-child .top5-pos {
+	background: #C8102E;
+	color: #FFFFFF;
+}
+
+.top5-title {
+	flex: 1 1 auto;
+	font-size: 13px;
+	font-weight: 600;
+	color: #1A1A1A;
+	text-decoration: none;
+	line-height: 1.4;
+}
+
+.top5-title:hover {
+	color: #C8102E;
+	text-decoration: underline;
+}
+
+.top5-views {
+	flex: 0 0 auto;
+	font-size: 12px;
+	font-weight: 600;
+	color: #666666;
+	white-space: nowrap;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
 /* ---------- TOGGLE "Destacar na Página Inicial" (editoria_cms.md) ---- */
 .featured-toggle {
 	display: flex;
@@ -2184,6 +2246,7 @@
 .fa-eye:before {content:"\f06e"}
 .fa-eye-slash:before {content:"\f070"}
 .fa-file-alt:before {content:"\f15c"}
+.fa-fire:before {content:"\f06d"}
 .fa-folder-open:before {content:"\f07c"}
 .fa-link:before {content:"\f0c1"}
 .fa-newspaper:before {content:"\f1ea"}

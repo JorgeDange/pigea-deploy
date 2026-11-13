@@ -34,43 +34,36 @@ Baixo. Nenhuma remoção de dados; slugs legados normalizados na escrita (cuanza
 
 ---
 
-## FASE E2 — Views em notícias (proposta)
+## FASE E2 — Views em notícias ✅ (implementada 2026-11-13)
 
-**Objectivo:** explicitar com o cliente como contabilizar «views» nas notícias e se vai usar isto para ordenação / KPIs (notícias populares / mais lidas / KPI no dashboard).
+**Objecto (decidido pelo cliente, 2026-11-13):**
+- **Anti-bot** no `NewsController@show` — os contadores deixam de inflar com crawlers e F5.
+- **«Top 5 mais lidas» no Dashboard** — KPI do painel com as 5 notícias publicadas mais vistas.
+- Abordagem rejeitada pelo cliente: tabela de tendência diária / filtros completos por IP. O contador actual mantém-se como referência.
 
-### Estado actual
-- Tabela `news` tem `views_count`; o frontend incrementa por pedido `news.show` (via `newsController@show`; ver `NewsController@show` ou similar).
-- Dashboard mostra «Visitas no Site» em agregado (`page_views` da BD de dev).
+### Implementação real
+- **`NewsController@show`** (`contarVista()`):
+  1. **Ignorar bots**: user-agent vazio OU correspondente a Googlebot, Bing/Yandex/Baidu, DuckDuckBot, Facebook ExternalHit, Twitter/LinkedIn/WhatsApp/Telegram/Discord/Slack, Applebot, Pinterest, previews e monitores/validators (regex case-insensitive).
+  2. **Arrefecimento por sessão**: a mesma sessão não conta a mesma notícia duas vezes em 5 minutos (chave `vista_noticia_{id}` com timestamp no store de sessão; sem coluna nova na BD).
+- **Views por página**: o público continua a ver o contador em `news/show` (linha com `far fa-eye`), agora com números mais honestos.
+- **Dashboard → novo cartão «Mais lidas — Top 5»** (`admin/index.blade.php`, antes de «Atividade recente»): pos. 1-5 (nº 1 destacado a vermelho), título clicável para o artigo, visitas à direita; estado vazio quando ainda não há leituras (e a nota explicativa do comportamento anti-bot).
+- **`DashboardController@index`**: `maisLidas` = 5 notícias publicadas ordenadas por `views_count` desc (desempate `published_at`).
+- **Estilos** `.top5-list` em `dashboard.css` → `admin.css` reconstruído.
 
-### Proposta (bloco de decisão pelo cliente, não implementar sem OK)
-**Opção A (recomendada) — Counter actual + filtros анти-b parcial:**
-- Continuar a incrementar `views_count` em página de leitura.
-- Filtrar bots: não incrementar para crawlers conhecidos (Googlebot/Bingbot/FacebookExternalHit), para não inflar número.
-- Contar únicos por sessão: hashit de `session_key` em última vista; mesma sessão não incrementa novamente nas 5 minutos seguintes.
-- (Dica: coluna `last_visit_at` para evitar repetir na mesma sessão sem re-gravar nada na BD.)
-
-**Opção B — Vista por dia (trend):**
-- Nova tabela `page_views_daily (date, article_id, views)` (upsert por dia).
-- Vantagens: dashboard pode mostrar tendência, top artigos por período; mede anomalias.
-- Desvantagens: mais 1 tabela; mais 2 queries por pedido de página.
-- Recommend skip para MVP.
-
-**Opção C — Externo (Plausible / Umami / Google Analytics)**:
-- Sete o cliente não precisa disso; overkill.
-
-### Perguntas ao cliente
-1. Contagem actual (real) é suficiente ou quer filtragem anti-bot? (recomendo anti-b)
-2. Precisa de KPI disponível no dashboard (top 5 notícias no último mês)? (recomendo)
-3. Precisa de relatório diário/semanal? (geralmente não — é extra). Atencão: E2 é decisão do cliente antes de implementar; nada fica em produção sem OK.
-
-### CA (critério de aceitação)
-- [ ] Definição de «unique view» acordada com cliente (sessão ounão).
-- [ ] Implementação acordada (A escolhida ou outra).
-- [ ] Dashboard mostra total acumulado *e* Top 5 mais lidas (нов.) com números reais não random.
-- [ ] Sem sessões infláveis (bots e r&r omitidos por defeito).
+### CA (critério de aceitação) — resultados
+- [x] Bots conhecidos não incrementam o contador (Googlebot, Facebook ExternalHit — 2 testes)
+- [x] User-agent vazio não incrementa (1 teste)
+- [x] A mesma sessão não conta a mesma notícia 2× em 5 min (1 teste)
+- [x] Visita real conta uma vez (1 teste)
+- [x] Dashboard mostra o Top 5 com números reais (`qa-e2-dashboard-top5.png`)
+- [x] Sem sessões «infláveis» por defeito; ordenção por views mantém-se no filtro de notícias do admin
+- [x] Suite: **238 tests / 804 assertions** verdes (+5); `view:cache` limpo
 
 ### Risco
-Baixo. A tabela `page_views` (dev) tem `date` unique — suficiente como backup para KPIs mensais; para trends por artigo é necessário schema extra.
+Baixo. Nenhuma migração. Visitas as antigas continuam na coluna tal como estão (a contagem correcta aplica-se daqui para a frente). Os números do Top 5 refletem o acumulado histórico em dev (inclui visitas antigas já na BD).
+
+### Nota (âmbito)
+O mesmo tratamento anti-bot pode, para a frente, aplicar-se a `ProjectController` e restantes contadores do portal — não foi incluído aqui (o pedido do cliente foi as notícias).
 
 ---
 
@@ -131,6 +124,13 @@ Baixo. A tabela `page_views` (dev) tem `date` unique — suficiente como backup 
 
 ## Ordem de execução (definida pelo cliente, 2026-11-13)
 1. ✅ **E3** — rodapé + redes sociais implementada e verificada
-2. ✅ **E1** — províncias (18 + «Outros» com texto livre) implementada e verificada (suite 233/793)
-3. ⏳ **E2** — views com anti-bot + «Top 5 mais lidas» no dashboard — próximo passo
+2. ✅ **E1** — províncias (18 + «Outros» com texto livre) implementada e verificada
+3. ✅ **E2** — views anti-bot + KPI «Top 5 mais lidas» no dashboard implementada e verificada (238/804)
 4. QA completo após cada fase (screenshot + suite) + atualização deste documento.
+
+### Estado global das fases E
+| Fase | Estado | Commit |
+|------|--------|--------|
+| E3 — Rodapé/redes | ✅ feita | `52bd4cf` |
+| E1 — Províncias | ✅ feita | `0515b37` |
+| E2 — Views/KPI | ✅ feita | aguarda autorização do cliente (ver git) |

@@ -70,6 +70,28 @@
 
 <div class="card">
     <div class="card-head">
+        <h3 class="card-title"><i class="fa fa-fire" aria-hidden="true" style="color:#C8102E;"></i> Mais lidas — Top 5</h3>
+    </div>
+    <div class="card-body">
+        @if (count($maisLidas) === 0 || $maisLidas->every(fn ($n) => (int) $n->views_count === 0))
+            <p class="chart-vazio">Ainda não há visitas registadas em notícias publicadas — as leituras começam a contar daqui para a frente (sem bots, mesma sessão a contar uma vez em 5 minutos).</p>
+        @else
+            <ol class="top5-list">
+                @foreach ($maisLidas as $i => $n)
+                <li class="top5-item">
+                    <span class="top5-pos">{{ $i + 1 }}</span>
+                    <a class="top5-title" href="{{ route('news.show', $n->slug) }}" target="_blank" rel="noopener">{{ $n->title }}</a>
+                    <span class="top5-views"><i class="far fa-eye" aria-hidden="true"></i> {{ number_format((int) $n->views_count, 0, ',', '.') }}</span>
+                </li>
+                @endforeach
+            </ol>
+            <p class="helper-text" style="margin-top:10px">Visitas reais por leitura: bots/crawlers não contam; a mesma sessão conta uma vez a cada 5 minutos.</p>
+        @endif
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-head">
         <h3 class="card-title">Atividade recente</h3>
         <div class="card-actions"><button type="button" class="btn-secondary btn-sm js-modal-open" data-modal="notificacoes-modal"><i class="fa fa-bell"></i> Ver todas</button></div>
     </div>

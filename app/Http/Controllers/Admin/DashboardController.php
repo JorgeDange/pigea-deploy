@@ -67,6 +67,13 @@ class DashboardController extends Controller
             'estatisticas' => $estatisticas,
             'atividades' => $this->atividades(),
             'graficos' => $this->graficos(),
+            // FASE E2 — as 5 notícias publicadas mais vistas (só vistas reais:
+            // o contador ignora bots e repetições da mesma sessão em 5 minutos).
+            'maisLidas' => News::published()
+                ->orderByDesc('views_count')
+                ->orderByDesc('published_at')
+                ->take(5)
+                ->get(['title', 'slug', 'views_count']),
         ]);
     }
 
