@@ -53,10 +53,40 @@ class AcompanhamentoController extends Controller
         }
         $redesConfiguradas = collect($redesEstado)->where('configurada', true)->count();
 
-        // ---- Banners na posição «Largo» (editoria_cms.md FASE 1)
+        // ---- Banners «Largo» (editoria_cms.md FASE 1) + inventário geral
         $largo = [
             'ativos' => Banner::ativos()->where('posicao', 'largo')->count(),
             'total' => Banner::where('posicao', 'largo')->count(),
+        ];
+
+        $largos = Banner::where('posicao', 'largo')
+            ->orderByDesc('ativo')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(fn ($b) => [
+                'titulo' => $b->titulo,
+                'img' => str_starts_with((string) $b->imagem_url, 'http') ? $b->imagem_url : asset($b->imagem_url),
+                'inicio' => $b->data_inicio?->format('d/m/Y'),
+                'fim' => $b->data_fim?->format('d/m/Y'),
+                'estado' => $this->estadoBanner($b),
+                'link' => route('admin.banners.editar', $b->id),
+            ]);
+
+        // Banners «Largo» a expirar nos próximos 30 dias
+        $aExpirar = Banner::ativos()
+            ->where('posicao', 'largo')
+            ->whereNotNull('data_fim')
+            ->where('data_fim', '>=', now()->toDateString())
+            ->where('data_fim', '<=', now()->copy()->addDays(30)->toDateString())
+            ->count();
+
+        // Inventário de banners por posição (anel)
+        $inventario = [
+            'Topo' => Banner::where('posicao', 'topo')->count(),
+            'Sidebar' => Banner::where('posicao', 'sidebar')->count(),
+            'Lateral' => Banner::where('posicao', 'lateral')->count(),
+            'Rodapé' => Banner::where('posicao', 'rodape')->count(),
+            'Largo' => $largo['total'],
         ];
 
         // ---- Províncias (E1)
@@ -139,6 +169,9 @@ class AcompanhamentoController extends Controller
             'redesEstado' => $redesEstado,
             'redesConfiguradas' => $redesConfiguradas,
             'largo' => $largo,
+            'largos' => $largos,
+            'aExpirar' => $aExpirar,
+            'inventario' => $inventario,
             'totalPub' => $totalPub,
             'comProvincia' => $comProvincia,
             'semProvincia' => $semProvincia,
@@ -157,5 +190,32 @@ class AcompanhamentoController extends Controller
             'prontidaoOk' => $prontidaoOk,
             'prontidaoTotal' => $prontidaoTotal,
         ]);
+    }
+
+    /**
+     * Estado visível de um banner agora (mesma semântica do motor público):
+     * «Ativo» = ativo + dentro do período; «Agendado» = data de início no
+     * futuro; «Expirado» = data de fim já passou; «Inativo» = marcado inativo.
+     *
+     * @return array{rotulo: string, classe: string}
+     */
+    private function estadoBanner(\App\Models\Banner $b): array
+    {
+        if (! $b->ativo) {
+            return ['rotulo' => 'Inativo', 'classe' => 'falta'];
+        }
+
+        $inicio = $b->data_inicio?->copy()->startOfDay();
+        $fim = $b->data_fim?->copy()->endOfDay();
+
+        if ($inicio && $inicio->isFuture()) {
+            return ['rotulo' => 'Agendado', 'classe' => 'meio'];
+        }
+
+        if ($fim && $fim->isPast()) {
+            return ['rotulo' => 'Expirado', 'classe' => 'falta'];
+        }
+
+        return ['rotulo' => 'Ativo', 'classe' => 'ok'];
     }
 }

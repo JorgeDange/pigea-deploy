@@ -1664,6 +1664,111 @@
 	line-height: 1.5;
 }
 
+.acomp-kpi-alerta {
+	color: #C8102E;
+}
+
+/* --- Banners «Largo»: lista + anel de inventário ------------------- */
+.acomp-banner-split {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 128px;
+	gap: 16px;
+	align-items: center;
+	margin: 4px 0 10px;
+}
+
+.acomp-banners {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	gap: 8px;
+}
+
+.acomp-banner-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	text-decoration: none;
+	background: #F8F8F8;
+	border: 1px solid #EDEDEA;
+	border-radius: 10px;
+	padding: 6px;
+	transition: border-color .15s ease, background .15s ease;
+}
+
+.acomp-banner-item:hover {
+	border-color: #C8102E;
+	background: #FFFDF7;
+}
+
+.acomp-banner-item img {
+	flex: 0 0 72px;
+	width: 72px;
+	height: 46px;
+	object-fit: cover;
+	background: #FFFFFF;
+	border: 1px solid #E4E4E4;
+	border-radius: 6px;
+}
+
+.acomp-banner-info {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.acomp-banner-titulo {
+	font-size: 12px;
+	font-weight: 600;
+	color: #1A1A1A;
+	line-height: 1.35;
+}
+
+.acomp-banner-data {
+	font-size: 10.5px;
+	color: #777777;
+	font-variant-numeric: tabular-nums;
+}
+
+.acomp-pill {
+	flex: 0 0 auto;
+	font-size: 9px;
+	font-weight: 700;
+	padding: 3px 8px;
+	border-radius: 5px;
+	text-transform: uppercase;
+	letter-spacing: .06em;
+}
+
+.acomp-pill-ok { background: #E4F6EA; color: #166534; }
+.acomp-pill-meio { background: #FDE9C8; color: #8B5A00; }
+.acomp-pill-falta { background: #FBE4E4; color: #A02C2C; }
+
+.acomp-inventario {
+	flex: 0 0 128px;
+	height: 158px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+}
+
+.acomp-inventario canvas {
+	height: 132px !important;
+	width: 128px !important;
+}
+
+.acomp-subtitulo {
+	font-size: 9px;
+	font-weight: 700;
+	letter-spacing: .12em;
+	text-transform: uppercase;
+	color: #8A8A8A;
+}
+
 /* ---------- TOGGLE "Destacar na Página Inicial" (editoria_cms.md) ---- */
 .featured-toggle {
 	display: flex;

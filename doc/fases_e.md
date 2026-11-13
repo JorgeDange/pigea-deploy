@@ -160,6 +160,8 @@ O mesmo tratamento anti-bot pode, para a frente, aplicar-se a `ProjectController
 - **Artigos publicados — HISTÓRICO** (barras, todo o período): cadência de publicação mês a mês.
 - **Prontidão** (doughnut): 6 verificações — Redes, Banner «Largo», Províncias, Destaques (pins≥4), Imagem, Etiquetas — com contagem central "N de 6" e legenda ✓/✗.
 
+**Banners «Largo» — painel completo (2026-11-13):** o cartão passou a ter lista de banners «Largo» (miniatura, título, período `ini → fim`, estado `Ativo/Agendado/Expirado/Inativo` calculado pela mesma semântica do motor público, clique → editar), 3 KPIs (`no ar`, `criados`, `a expirar ≤30d`) e um anel «Posição» com o inventário de banners por posição (Topo/Sidebar/Lateral/Rodapé/Largo) — Chart.js auto-hospedado.
+
 **Redesenho profissional da página Acompanhamento (2026-11-13):**
 - Hero de estado geral: ícone, «Tudo em ordem» / «N pontos a rever», 4 KPIs (Redes · Pins · Vistas · Alertas) com Playfair Display.
 - Cada cartão com ícone quadrado, «kicker» de fase (FASE E3 / FASE E1 / FASE E2 / FASE EDITORIAL / QUALIDADE) e badge de estado à direita.

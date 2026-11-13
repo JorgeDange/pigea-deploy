@@ -95,20 +95,44 @@
 
     {{-- ============ BANNERS «LARGO» (FASE EDITORIAL) ============ --}}
     @php $largoOk = $largo['ativos'] > 0; @endphp
-    <div class="card acomp-card">
+    <div class="card acomp-card acomp-card-largo">
         <div class="card-head">
             <h3 class="card-title"><span class="acomp-icone"><i class="fa fa-bullhorn" aria-hidden="true"></i></span> Banners «Largo»
                 <span class="acomp-kicker acomp-kicker-fase">FASE EDITORIAL</span></h3>
-            <span class="acomp-badge {{ $largoOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $largo['ativos'] }} ativo(s)</span>
+            <span class="acomp-badge {{ $largoOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $largo['ativos'] }} no ar</span>
         </div>
         <div class="card-body">
             <ul class="acomp-kpis">
-                <li><span class="acomp-kpi-num">{{ $largo['ativos'] }}</span><span class="acomp-kpi-label">ativos</span></li>
+                <li><span class="acomp-kpi-num">{{ $largo['ativos'] }}</span><span class="acomp-kpi-label">no ar</span></li>
                 <li><span class="acomp-kpi-num">{{ $largo['total'] }}</span><span class="acomp-kpi-label">criados</span></li>
+                <li><span class="acomp-kpi-num {{ $aExpirar > 0 ? 'acomp-kpi-alerta' : '' }}">{{ $aExpirar }}</span><span class="acomp-kpi-label">a expirar ≤30d</span></li>
             </ul>
-            @unless ($largoOk)
-                <p class="helper-text">Sem banner «Largo» → a faixa não aparece.</p>
-            @endunless
+
+            <div class="acomp-banner-split">
+                @if ($largos->isNotEmpty())
+                <ul class="acomp-banners">
+                    @foreach ($largos as $b)
+                    <li>
+                        <a href="{{ $b['link'] }}" class="acomp-banner-item" title="Editar banner «{{ $b['titulo'] }}»">
+                            <img src="{{ $b['img'] }}" alt="" loading="lazy" onerror="this.onerror=null;this.src='{{ asset('images/logo.png') }}';">
+                            <span class="acomp-banner-info">
+                                <span class="acomp-banner-titulo">{{ \Illuminate\Support\Str::limit($b['titulo'], 34) }}</span>
+                                <span class="acomp-banner-data">{{ $b['inicio'] ?? '—' }} → {{ $b['fim'] ?? '—' }}</span>
+                            </span>
+                            <span class="acomp-pill acomp-pill-{{ $b['estado']['classe'] }}">{{ $b['estado']['rotulo'] }}</span>
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+                @else
+                    <p class="helper-text">Sem banners «Largo» — crie um para exibir a faixa.</p>
+                @endif
+                <div class="acomp-inventario">
+                    <span class="acomp-subtitulo">Posição</span>
+                    <canvas id="acomp-inventario" role="img" aria-label="Banners por posição"></canvas>
+                </div>
+            </div>
+
             <div class="acomp-acoes"><a href="{{ route('admin.banners') }}" class="btn-secondary btn-sm"><i class="fa fa-plus"></i> {{ $largoOk ? 'Gerir banners' : 'Criar banner «Largo»' }}</a></div>
         </div>
     </div>
@@ -285,6 +309,40 @@ document.addEventListener('DOMContentLoaded', function () {
                     tooltip: {
                         callbacks: {
                             label: function (ctx) { return (ctx.parsed > 1 ? ctx.parsed + ' verificações' : ctx.parsed + ' verificação'); }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    var el3 = document.getElementById('acomp-inventario');
+    if (el3) {
+        var inv = @json(array_values($inventario));
+        var invLabels = @json(array_keys($inventario));
+        new Chart(el3, {
+            type: 'doughnut',
+            data: {
+                labels: invLabels,
+                datasets: [{
+                    data: inv,
+                    backgroundColor: ['#C8102E', '#1A1A1A', '#F0B429', '#8A8A8A', '#2E9E57'],
+                    borderWidth: 0,
+                    hoverOffset: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '55%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 8, boxHeight: 8, padding: 8, font: { family: 'Poppins', size: 8.5 }, color: '#555555' }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (ctx) { return ctx.label + ': ' + ctx.parsed + ' banner(s)'; }
                         }
                     }
                 }
