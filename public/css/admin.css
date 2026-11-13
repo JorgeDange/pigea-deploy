@@ -1189,6 +1189,186 @@
 	gap: 6px;
 }
 
+/* ---------- Página «Acompanhamento» ------------------------------ */
+.acomp-summary {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 18px 20px;
+	border-radius: 12px;
+	margin: 0 0 18px;
+	border: 1px solid;
+}
+
+.acomp-summary-ok {
+	background: #F0FAF3;
+	border-color: #BFE5CC;
+	color: #166534;
+}
+
+.acomp-summary-atencao {
+	background: #FFF8E6;
+	border-color: #F5DEA0;
+	color: #8B5A00;
+}
+
+.acomp-summary-icone {
+	font-size: 30px;
+	flex: 0 0 auto;
+}
+
+.acomp-summary-texto h2 {
+	margin: 0 0 4px;
+	font-size: 17px;
+	font-weight: 700;
+}
+
+.acomp-summary-texto p {
+	margin: 0;
+	font-size: 12.5px;
+	line-height: 1.5;
+	opacity: .92;
+}
+
+.acomp-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px;
+}
+
+@media (max-width: 1100px) {
+	.acomp-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.acomp-card .card-body {
+	display: flex;
+	flex-direction: column;
+}
+
+.acomp-badge {
+	display: inline-block;
+	margin-left: 8px;
+	padding: 2px 10px;
+	border-radius: 20px;
+	font-size: 10.5px;
+	font-weight: 700;
+	letter-spacing: .02em;
+	vertical-align: middle;
+}
+
+.acomp-badge-ok { background: #E4F6EA; color: #166534; }
+.acomp-badge-atencao { background: #FDE9C8; color: #8B5A00; }
+.acomp-badge-info { background: #E8EDF5; color: #2F3A4E; }
+
+.acomp-texto {
+	font-size: 12.5px;
+	line-height: 1.55;
+	color: #3F3F3F;
+	margin: 2px 0 12px;
+}
+
+.acomp-kpis {
+	display: flex;
+	gap: 18px;
+	margin: 0 0 10px;
+	padding: 0;
+	list-style: none;
+}
+
+.acomp-kpis li {
+	background: #F6F6F6;
+	border-radius: 10px;
+	padding: 10px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.acomp-kpi-num {
+	font-size: 22px;
+	font-weight: 700;
+	color: #1A1A1A;
+	line-height: 1.1;
+}
+
+.acomp-kpi-label {
+	font-size: 10.5px;
+	color: #777;
+}
+
+.acomp-nota-alerta {
+	font-size: 12px;
+	font-weight: 600;
+	color: #8B5A00;
+	background: #FFF3D6;
+	border-left: 3px solid #F0B429;
+	padding: 8px 10px;
+	border-radius: 6px;
+	margin: 0 0 10px;
+}
+
+.acomp-lista {
+	list-style: none;
+	margin: 0 0 10px;
+	padding: 0;
+}
+
+.acomp-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 7px 4px;
+	border-bottom: 1px solid #EFEFEF;
+	font-size: 12.5px;
+}
+
+.acomp-row:last-child {
+	border-bottom: none;
+}
+
+.acomp-row-nome {
+	flex: 1 1 auto;
+	font-weight: 600;
+	color: #262626;
+}
+
+.acomp-tag {
+	flex: 0 0 auto;
+	font-size: 10.5px;
+	font-weight: 700;
+	padding: 2px 9px;
+	border-radius: 4px;
+}
+
+.acomp-tag-ok { background: #E4F6EA; color: #166534; }
+.acomp-tag-alerta { background: #FDE9C8; color: #8B5A00; }
+
+.acomp-lista-rank .acomp-pos {
+	flex: 0 0 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: #F5F5F5;
+	color: #1A1A1A;
+	font-size: 11px;
+	font-weight: 700;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.acomp-conta-mini {
+	flex: 0 0 auto;
+	font-size: 11px;
+	color: #777;
+}
+
+.acomp-acoes {
+	margin-top: auto;
+	padding-top: 12px;
+}
+
 /* ---------- TOGGLE "Destacar na Página Inicial" (editoria_cms.md) ---- */
 .featured-toggle {
 	display: flex;
@@ -2231,13 +2411,16 @@
  * License - https://fontawesome.com/license (Commercial License)
  */
 .fa,.fab,.fad,.fal,.far,.fas {-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;display:inline-block;font-style:normal;font-variant:normal;text-rendering:auto;line-height:1}
+.fa-arrow-right:before {content:"\f061"}
 .fa-ban:before {content:"\f05e"}
 .fa-bars:before {content:"\f0c9"}
 .fa-bell:before {content:"\f0f3"}
 .fa-building:before {content:"\f1ad"}
 .fa-bullhorn:before {content:"\f0a1"}
+.fa-chart-line:before {content:"\f201"}
 .fa-check:before {content:"\f00c"}
 .fa-check-circle:before {content:"\f058"}
+.fa-clipboard-check:before {content:"\f46c"}
 .fa-clock:before {content:"\f017"}
 .fa-cloud-upload-alt:before {content:"\f382"}
 .fa-cog:before {content:"\f013"}
@@ -2248,16 +2431,20 @@
 .fa-file-alt:before {content:"\f15c"}
 .fa-fire:before {content:"\f06d"}
 .fa-folder-open:before {content:"\f07c"}
+.fa-image:before {content:"\f03e"}
 .fa-link:before {content:"\f0c1"}
+.fa-map-marked-alt:before {content:"\f5a0"}
 .fa-newspaper:before {content:"\f1ea"}
 .fa-paper-plane:before {content:"\f1d8"}
 .fa-pen:before {content:"\f304"}
 .fa-plus:before {content:"\f067"}
 .fa-save:before {content:"\f0c7"}
+.fa-share-alt:before {content:"\f1e0"}
 .fa-sign-out:before {content:"\f08b"}
 .fa-star:before {content:"\f005"}
 .fa-sync:before {content:"\f021"}
 .fa-tachometer-alt:before {content:"\f3fd"}
+.fa-tags:before {content:"\f02c"}
 .fa-times:before {content:"\f00d"}
 .fa-toggle-off:before {content:"\f204"}
 .fa-toggle-on:before {content:"\f205"}
@@ -2268,6 +2455,7 @@
 .fa-user-tie:before {content:"\f508"}
 .fa-users:before {content:"\f0c0"}
 .fa-video:before {content:"\f03d"}
+.fa-wrench:before {content:"\f0ad"}
 .sr-only {border:0;clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}
 .sr-only-focusable:active,.sr-only-focusable:focus {clip:auto;height:auto;margin:0;overflow:visible;position:static;width:auto}
 .fab {font-family:Font Awesome\ 5 Brands}

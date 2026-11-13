@@ -128,9 +128,45 @@ O mesmo tratamento anti-bot pode, para a frente, aplicar-se a `ProjectController
 3. ✅ **E2** — views anti-bot + KPI «Top 5 mais lidas» no dashboard implementada e verificada (238/804)
 4. QA completo após cada fase (screenshot + suite) + atualização deste documento.
 
+---
+
+## FASE E4 — «Acompanhamento» (a sala de controlo) ✅ (implementada 2026-11-13)
+
+**Pedido do cliente:** "pode se criar ou implementar area para companhamento alem da dashboard para acompanhamento dessas novas funcionalidade para ter uma boa gestão" — opção escolhida (2026-11-13): **Opção 2 — área própria** (não cartões no Dashboard, nem feature flags).
+
+**O que é:** página `gestao-pigea/acompanhamento` (sidebar principal, admin+editor) — uma única vista com o estado real de TODAS as funcionalidades novas:
+
+| Cartão | Mostra | Botão |
+|--------|--------|-------|
+| Redes sociais (E3) | As 5 redes configuradas (link OU nome público), contador x/5 | Configurações |
+| Banners «Largo» (editoria_cms.md) | nº de ativos e criados; aviso quando não há «Largo» ativo | Publicidade |
+| Províncias dos artigos (E1) | publicados com/sem província, texto livre «Outros», top 5 | Notícias |
+| Destaque editorial (editoria_cms.md FASE 2) | pins; aviso se Hero não completo | Notícias (coluna ★) |
+| Qualidade dos artigos | publicados sem imagem / sem etiquetas (sinais de alerta) | Notícias |
+| Vistas reais & Top 5 (E2) | total de vistas; Top 5 mais lidas; explica o anti-bot | Notícias |
+
+**Topo de página:** banner de resumo — «Tudo em ordem» (verde) ou «N pontos a rever» (amarelo), contando quantos cartões têm algo por configurar.
+
+**Implementação:**
+- `app/Http/Controllers/Admin/AcompanhamentoController.php` (rota `admin.acompanhamento`, middleware admin+editor — mesma barreira das restantes páginas do painel)
+- `resources/views/admin/acompanhamento.blade.php` — grelha 2 colunas, responsiva; contadores reais a cada visita (sem cache)
+- Sidebar (`Principal`): «Acompanhamento» com ícone `fa-chart-line` (admin+editor)
+- CSS: `.acomp-*` em `dashboard.css` → `admin.css` reconstruído
+- 3 testes (`AcompanhamentoTest`): carrega 200 para admin; anónimo é redireccionado; sem redes configuradas a página não rebenta (mostrando «Por configurar»)
+
+**CA:**
+- [x] Página abre no sidebar para admin (3 testes; `qa-faseb-acompanhamento.png` com dados reais — incl. o alerta «1 ponto a rever»: 10 artigos sem etiquetas)
+- [x] Todos os contadores reais (sem inventar dados)
+- [x] Cada cartão liga ao sítio certo para corrigir
+- [x] Suite: **241 tests / 814 assertions** verdes (+3); `view:cache` limpo
+
+**Nota:** o resumo «N pontos a rever» conta: redes a menos de 5, zero «Largo» ativo, artigos sem província, zero pins editoriais, artigos sem imagem, artigos sem etiquetas — qualquer um liga-se diretamente ao botão de correção do seu cartão.
+
 ### Estado global das fases E
 | Fase | Estado | Commit |
 |------|--------|--------|
 | E3 — Rodapé/redes | ✅ feita | `52bd4cf` |
 | E1 — Províncias | ✅ feita | `0515b37` |
 | E2 — Views/KPI | ✅ feita | `9358f84` |
+| Banners «Largo» (migração) | ✅ feita | `17cf884` |
+| E4 — Acompanhamento (control center) | ✅ feita | aguarda autorização do cliente (ver git) |
