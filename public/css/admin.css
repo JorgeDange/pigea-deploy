@@ -557,7 +557,9 @@
 
 .dashboard-form-input,
 .dashboard-form-select,
-.dashboard-form-textarea {
+.dashboard-form-textarea,
+.newsletter-input,
+.newsletter-estado {
 	display: block;
 	width: 100%;
 	border: 1px solid #E0E0E0;
@@ -577,13 +579,16 @@
 
 .dashboard-form-input:focus,
 .dashboard-form-select:focus,
-.dashboard-form-textarea:focus {
+.dashboard-form-textarea:focus,
+.newsletter-input:focus,
+.newsletter-estado:focus {
 	outline: none;
 	border-color: #C8102E;
 }
 
 .dashboard-form-input::placeholder,
-.dashboard-form-textarea::placeholder {
+.dashboard-form-textarea::placeholder,
+.newsletter-input::placeholder {
 	color: #6E6E6E;
 }
 
@@ -882,6 +887,53 @@
 
 .dashboard-filters .filter-search {
 	flex: 1;
+	min-width: 220px;
+}
+
+/* ---------- Newsletter (admin) — pesquisa + adicionar ------------------ */
+.newsletter-toolbar {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.newsletter-toolbar input,
+.newsletter-toolbar select {
+	flex: 0 0 auto;
+}
+
+.newsletter-toolbar .newsletter-input {
+	flex: 1 1 auto;
+	min-width: 220px;
+}
+
+.newsletter-toolbar .newsletter-estado {
+	max-width: 180px;
+}
+
+.newsletter-adicionar {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 12px 14px;
+	background: #F8F8F8;
+	border: 1px solid #EDEDEA;
+	border-radius: 8px;
+	margin-bottom: 14px;
+}
+
+.newsletter-adicionar-rotulo {
+	flex: 0 0 auto;
+	font-size: 12px;
+	font-weight: 600;
+	color: #3F3F3F;
+}
+
+.newsletter-adicionar .newsletter-input {
+	flex: 1 1 auto;
 	min-width: 220px;
 }
 

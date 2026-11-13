@@ -50,9 +50,9 @@
         @endif
 
         {{-- Filtro + pesquisa + adicionar --}}
-        <form class="dashboard-filters" method="get" action="{{ route('admin.newsletter') }}" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
-            <input type="text" class="filter-search" name="q" value="{{ $busca }}" placeholder="Pesquisar email…" aria-label="Pesquisar subscritor">
-            <select name="estado" aria-label="Filtrar por estado" onchange="this.form.submit()" style="max-width:180px;">
+        <form class="newsletter-toolbar" method="get" action="{{ route('admin.newsletter') }}">
+            <input type="text" class="newsletter-input" name="q" value="{{ $busca }}" placeholder="Pesquisar email…" aria-label="Pesquisar subscritor">
+            <select class="newsletter-estado" name="estado" aria-label="Filtrar por estado" onchange="this.form.submit()">
                 <option value="" @selected($estado === '')>Estado: todos</option>
                 <option value="confirmed" @selected($estado === 'confirmed')>Confirmados</option>
                 <option value="pending" @selected($estado === 'pending')>Pendentes</option>
@@ -63,10 +63,10 @@
             @endif
         </form>
 
-        <form method="post" action="{{ route('admin.newsletter.adicionar') }}" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:12px; background:#F8F8F8; border:1px solid #EDEDEA; border-radius:8px; margin-bottom:14px;">
+        <form class="newsletter-adicionar" method="post" action="{{ route('admin.newsletter.adicionar') }}">
             @csrf
-            <strong style="font-size:12px; color:#3F3F3F; flex:0 0 auto;">Adicionar:</strong>
-            <input type="email" name="email" class="filter-search" placeholder="email@exemplo.com" value="{{ old('email') }}" required maxlength="190" aria-label="Email do subscritor">
+            <strong class="newsletter-adicionar-rotulo">Adicionar:</strong>
+            <input type="email" name="email" class="newsletter-input" placeholder="email@exemplo.com" value="{{ old('email') }}" required maxlength="190" aria-label="Email do subscritor">
             <button type="submit" class="btn-primary btn-sm"><i class="fa fa-user-plus"></i> Adicionar</button>
         </form>
         @error('email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
