@@ -1171,45 +1171,115 @@
 	gap: 6px;
 }
 
-/* ---------- Página «Acompanhamento» ------------------------------ */
-.acomp-summary {
+/* ---------- Página «Acompanhamento» (novo desenho) ---------------------- */
+.acomp-hero {
 	display: flex;
 	align-items: center;
-	gap: 16px;
-	padding: 18px 20px;
-	border-radius: 12px;
-	margin: 0 0 18px;
+	gap: 22px;
+	padding: 20px 24px;
+	border-radius: 14px;
+	margin: 0 0 20px;
 	border: 1px solid;
 }
 
-.acomp-summary-ok {
-	background: #F0FAF3;
-	border-color: #BFE5CC;
-	color: #166534;
+.acomp-hero-ok {
+	background: linear-gradient(135deg, #ECF9EF 0%, #F8FDF9 60%);
+	border-color: #B9E2C8;
 }
 
-.acomp-summary-atencao {
-	background: #FFF8E6;
-	border-color: #F5DEA0;
+.acomp-hero-atencao {
+	background: linear-gradient(135deg, #FFF7E0 0%, #FFFDF3 60%);
+	border-color: #F3DE9B;
+}
+
+.acomp-hero-media {
+	flex: 0 0 58px;
+	height: 58px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 24px;
+	color: #FFFFFF;
+}
+
+.acomp-hero-ok .acomp-hero-media { background: #2E7D32; }
+.acomp-hero-atencao .acomp-hero-media { background: #C8102E; }
+
+.acomp-hero-body {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.acomp-kicker {
+	display: block;
+	font-size: 9.5px;
+	font-weight: 700;
+	letter-spacing: .14em;
+	text-transform: uppercase;
 	color: #8B5A00;
 }
 
-.acomp-summary-icone {
-	font-size: 30px;
+.acomp-hero-ok .acomp-kicker { color: #166534; }
+
+.acomp-hero-body h2 {
+	font-family: 'Playfair Display', serif;
+	margin: 4px 0 6px;
+	font-size: 22px;
+	font-weight: 700;
+	color: #1A1A1A;
+	line-height: 1.25;
+}
+
+.acomp-hero-body p {
+	margin: 0;
+	font-size: 12.5px;
+	line-height: 1.55;
+	color: #4A4030;
+	max-width: 640px;
+}
+
+.acomp-hero-stats {
+	display: flex;
+	gap: 0;
+	margin: 0;
 	flex: 0 0 auto;
 }
 
-.acomp-summary-texto h2 {
-	margin: 0 0 4px;
-	font-size: 17px;
-	font-weight: 700;
+.acomp-hero-stats > div {
+	padding: 0 18px;
+	border-left: 1px solid rgba(0, 0, 0, .14);
+	text-align: center;
+	min-width: 74px;
 }
 
-.acomp-summary-texto p {
+.acomp-hero-stats dt {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: #5A5A5A;
+	margin-bottom: 2px;
+}
+
+.acomp-hero-stats dd {
 	margin: 0;
-	font-size: 12.5px;
-	line-height: 1.5;
-	opacity: .92;
+	font-family: 'Playfair Display', serif;
+	font-size: 22px;
+	font-weight: 700;
+	color: #1A1A1A;
+	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
+}
+
+.acomp-hero-stats dd small {
+	font-size: 12px;
+	font-weight: 600;
+	color: #8A8A8A;
+}
+
+.acomp-hero-stats .acomp-hero-alerta {
+	color: #C8102E;
 }
 
 .acomp-grid {
@@ -1224,20 +1294,53 @@
 	}
 }
 
+.acomp-card .card-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
 .acomp-card .card-body {
 	display: flex;
 	flex-direction: column;
 }
 
-.acomp-badge {
+.acomp-icone {
+	display: inline-flex;
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	align-items: center;
+	justify-content: center;
+	background: #FDF0EA;
+	color: #C8102E;
+	font-size: 15px;
+	margin-right: 10px;
+	vertical-align: -6px;
+}
+
+.acomp-kicker-fase {
 	display: inline-block;
 	margin-left: 8px;
-	padding: 2px 10px;
+	padding: 2px 8px;
+	border-radius: 4px;
+	background: #F0F0F0;
+	color: #5A5A5A;
+	font-size: 8.5px;
+	font-weight: 700;
+	letter-spacing: .1em;
+	vertical-align: 2px;
+}
+
+.acomp-badge {
+	flex: 0 0 auto;
+	display: inline-block;
+	padding: 3px 12px;
 	border-radius: 20px;
 	font-size: 10.5px;
 	font-weight: 700;
-	letter-spacing: .02em;
-	vertical-align: middle;
+	white-space: nowrap;
 }
 
 .acomp-badge-ok { background: #E4F6EA; color: #166534; }
@@ -1251,9 +1354,75 @@
 	margin: 2px 0 12px;
 }
 
+/* --- Redes: linhas com ponto de estado --- */
+.acomp-lista {
+	list-style: none;
+	margin: 0 0 10px;
+	padding: 0;
+}
+
+.acomp-rede {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 9px 4px;
+	border-bottom: 1px solid #F0EFEC;
+	font-size: 12.5px;
+}
+
+.acomp-rede:last-child {
+	border-bottom: none;
+}
+
+.acomp-dot {
+	flex: 0 0 10px;
+	height: 10px;
+	border-radius: 50%;
+}
+
+.acomp-dot-ok { background: #2E9E57; box-shadow: 0 0 0 3px #E4F6EA; }
+.acomp-dot-falta { background: #D9B10A; box-shadow: 0 0 0 3px #FCEFCE; }
+
+.acomp-rede-icone {
+	flex: 0 0 26px;
+	font-size: 15px;
+	color: #3A3A3A;
+	text-align: center;
+}
+
+.acomp-rede-nome {
+	flex: 1 1 auto;
+	font-weight: 600;
+	color: #262626;
+	line-height: 1.35;
+}
+
+.acomp-rede-nome small {
+	display: block;
+	font-weight: 400;
+	font-size: 10.5px;
+	color: #8A8A8A;
+	margin-top: 1px;
+	font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+.acomp-tag {
+	flex: 0 0 auto;
+	font-size: 10px;
+	font-weight: 700;
+	padding: 2px 10px;
+	border-radius: 5px;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+}
+
+.acomp-tag-ok { background: #E4F6EA; color: #166534; }
+.acomp-tag-falta { background: #FDE9C8; color: #8B5A00; }
+
+/* --- KPIs largos (Largo) --- */
 .acomp-kpis {
 	display: flex;
-	gap: 18px;
+	gap: 14px;
 	margin: 0 0 10px;
 	padding: 0;
 	list-style: none;
@@ -1261,94 +1430,147 @@
 
 .acomp-kpis li {
 	background: #F6F6F6;
-	border-radius: 10px;
-	padding: 10px 16px;
+	border: 1px solid #EBEBEB;
+	border-radius: 12px;
+	padding: 12px 20px;
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
+	min-width: 110px;
 }
 
 .acomp-kpi-num {
-	font-size: 22px;
+	font-family: 'Playfair Display', serif;
+	font-size: 24px;
 	font-weight: 700;
 	color: #1A1A1A;
 	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
 }
 
 .acomp-kpi-label {
 	font-size: 10.5px;
-	color: #777;
+	color: #737373;
+	text-transform: uppercase;
+	letter-spacing: .05em;
 }
 
-.acomp-nota-alerta {
-	font-size: 12px;
-	font-weight: 600;
-	color: #8B5A00;
-	background: #FFF3D6;
-	border-left: 3px solid #F0B429;
-	padding: 8px 10px;
-	border-radius: 6px;
-	margin: 0 0 10px;
-}
-
-.acomp-lista {
+/* --- Províncias: barras proporcionais --- */
+.acomp-rank {
 	list-style: none;
 	margin: 0 0 10px;
 	padding: 0;
 }
 
-.acomp-row {
+.acomp-rank-item {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	padding: 7px 4px;
-	border-bottom: 1px solid #EFEFEF;
-	font-size: 12.5px;
+	gap: 12px;
+	padding: 6px 2px;
 }
 
-.acomp-row:last-child {
-	border-bottom: none;
-}
-
-.acomp-row-nome {
-	flex: 1 1 auto;
+.acomp-rank-rotulo {
+	flex: 0 0 120px;
+	font-size: 12px;
 	font-weight: 600;
 	color: #262626;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
-.acomp-tag {
-	flex: 0 0 auto;
-	font-size: 10.5px;
-	font-weight: 700;
-	padding: 2px 9px;
-	border-radius: 4px;
+.acomp-rank-barra {
+	flex: 1 1 auto;
+	height: 8px;
+	border-radius: 99px;
+	background: #EFEFEF;
+	overflow: hidden;
 }
 
-.acomp-tag-ok { background: #E4F6EA; color: #166534; }
-.acomp-tag-alerta { background: #FDE9C8; color: #8B5A00; }
+.acomp-rank-barra span {
+	display: block;
+	height: 100%;
+	border-radius: 99px;
+	background: linear-gradient(90deg, #C8102E, #E5404F);
+}
 
-.acomp-lista-rank .acomp-pos {
-	flex: 0 0 24px;
-	height: 24px;
-	border-radius: 50%;
-	background: #F5F5F5;
-	color: #1A1A1A;
-	font-size: 11px;
+.acomp-rank-num {
+	flex: 0 0 34px;
+	text-align: right;
+	font-size: 12px;
 	font-weight: 700;
-	display: inline-flex;
+	color: #4B4B4B;
+	font-variant-numeric: tabular-nums;
+}
+
+/* --- Callout (Destaque editorial) --- */
+.acomp-callout {
+	margin: 0 0 10px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.5;
+	border-left: 3px solid;
+}
+
+.acomp-callout-ok { background: #F0FAF3; border-color: #2E9E57; color: #166534; }
+.acomp-callout-mix { background: #FFF8E6; border-color: #F0B429; color: #8B5A00; }
+.acomp-callout-falta { background: #FDF3F5; border-color: #C8102E; color: #8B1E2D; }
+
+/* --- Qualidade: barras com total --- */
+.acomp-barra {
+	margin: 0 0 12px;
+}
+
+.acomp-barra-head {
+	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: space-between;
+	gap: 12px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #262626;
+	margin-bottom: 5px;
 }
 
-.acomp-conta-mini {
-	flex: 0 0 auto;
-	font-size: 11px;
-	color: #777;
+.acomp-barra-head i {
+	color: #8A8A8A;
+	margin-right: 6px;
 }
+
+.acomp-barra-head strong {
+	font-variant-numeric: tabular-nums;
+	color: #1A1A1A;
+}
+
+.acomp-barra-trilho {
+	height: 9px;
+	border-radius: 99px;
+	background: #EFEFEF;
+	overflow: hidden;
+}
+
+.acomp-barra-trilho span {
+	display: block;
+	height: 100%;
+	border-radius: 99px;
+}
+
+.acomp-barra-trilho span.ok { background: linear-gradient(90deg, #2E9E57, #5BBE7D); }
+.acomp-barra-trilho span.meio { background: linear-gradient(90deg, #F0B429, #F6D268); }
+.acomp-barra-trilho span.falta { background: linear-gradient(90deg, #C8102E, #E5404F); }
 
 .acomp-acoes {
 	margin-top: auto;
 	padding-top: 12px;
+}
+
+.acomp-rodape {
+	margin-top: 16px;
+	font-size: 11px;
+	color: #8A8A8A;
+	line-height: 1.5;
 }
 
 /* ---------- TOGGLE "Destacar na Página Inicial" (editoria_cms.md) ---- */
@@ -2081,7 +2303,6 @@
 	outline: 2px solid #C8102E;
 	outline-offset: 2px;
 }
-
 
 /* ===== cms_v.md FASE 5 - componentes do painel (novo) ================= */
 

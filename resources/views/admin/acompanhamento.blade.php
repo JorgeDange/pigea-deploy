@@ -12,151 +12,174 @@
 
 @section('content')
 
-{{-- ==================== CABEÇALHO DE RESUMO ==================== --}}
-<div class="acomp-summary {{ $alertas === 0 ? 'acomp-summary-ok' : 'acomp-summary-atencao' }}">
-    <div class="acomp-summary-icone"><i class="fa {{ $alertas === 0 ? 'fa-check-circle' : 'fa-triangle-exclamation' }}" aria-hidden="true"></i></div>
-    <div class="acomp-summary-texto">
+{{-- ================= DESTAQUE GERAL ================= --}}
+<div class="acomp-hero {{ $alertas === 0 ? 'acomp-hero-ok' : 'acomp-hero-atencao' }}">
+    <div class="acomp-hero-media" aria-hidden="true"><i class="fa {{ $alertas === 0 ? 'fa-check' : 'fa-exclamation' }}"></i></div>
+    <div class="acomp-hero-body">
+        <span class="acomp-kicker">PAINEL DE CONTROLO · ATUALIZADO AGORA</span>
         <h2>{{ $alertas === 0 ? 'Tudo em ordem' : $alertas . ' ' . ($alertas === 1 ? 'ponto a rever' : 'pontos a rever') }}</h2>
         <p>{{ $alertas === 0
-            ? 'As funcionalidades novas estão configuradas e a funcionar — redes, banners Largo, destaques, províncias e qualidade editorial.'
-            : 'Há pontos que merecem atenção (ver os cartões marcados a vermelho/amarelo). Clica em «Corrigir…» em cada cartão.' }}</p>
+            ? 'Redes configuradas e visíveis, destaques pinados, qualidade em dia — o site está pronto para o público.'
+            : 'Há pontos que merecem ação. Toque em «Corrigir…» no cartão destacado a amarelo.' }}</p>
     </div>
+    <dl class="acomp-hero-stats">
+        <div><dt>Redes</dt><dd>{{ $redesConfiguradas }}<small>/5</small></dd></div>
+        <div><dt>Pins</dt><dd>{{ $pins }}</dd></div>
+        <div><dt>Vistas</dt><dd>{{ number_format($totalVistas, 0, ',', '.') }}</dd></div>
+        <div><dt>Alertas</dt><dd class="{{ $alertas > 0 ? 'acomp-hero-alerta' : '' }}">{{ $alertas }}</dd></div>
+    </dl>
 </div>
 
 <div class="acomp-grid">
 
-    {{-- ==================== REDES SOCIAIS (E3) ==================== --}}
+    {{-- ============ REDES SOCIAIS (FASE E3) ============ --}}
     @php $redeOk = $redesConfiguradas === 5; @endphp
     <div class="card acomp-card">
         <div class="card-head">
-            <h3 class="card-title"><i class="fa fa-share-alt" aria-hidden="true" style="color:#C8102E;"></i> Redes sociais
-            <span class="acomp-badge {{ $redeOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $redesConfiguradas }}/5 configuradas</span></h3>
+            <h3 class="card-title"><span class="acomp-icone"><i class="fa fa-share-alt" aria-hidden="true"></i></span> Redes sociais
+                <span class="acomp-kicker acomp-kicker-fase">FASE E3</span></h3>
+            <span class="acomp-badge {{ $redeOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $redesConfiguradas }}/5</span>
         </div>
         <div class="card-body">
             <ul class="acomp-lista">
                 @foreach ($redesEstado as $chave => $rede)
-                <li class="acomp-row">
-                    <i class="{{ $rede['icone'] }}" aria-hidden="true" style="width:20px;color:#555;"></i>
-                    <span class="acomp-row-nome">{{ $rede['nome'] }}</span>
+                <li class="acomp-rede">
+                    <span class="acomp-dot {{ $rede['configurada'] ? 'acomp-dot-ok' : 'acomp-dot-falta' }}" aria-hidden="true"></span>
+                    <i class="{{ $rede['icone'] }} acomp-rede-icone" aria-hidden="true"></i>
+                    <span class="acomp-rede-nome">{{ $rede['nome'] }}
+                        @if ($rede['configurada'])<small>{{ \Illuminate\Support\Str::limit($rede['handle'] !== '' ? $rede['handle'] : $rede['url'], 34) }}</small>@endif
+                    </span>
                     @if ($rede['configurada'])
-                        <span class="acomp-tag acomp-tag-ok">Configurada</span>
+                        <span class="acomp-tag acomp-tag-ok">Ativa</span>
                     @else
-                        <span class="acomp-tag acomp-tag-alerta">Por configurar</span>
+                        <span class="acomp-tag acomp-tag-falta">Falta</span>
                     @endif
                 </li>
                 @endforeach
             </ul>
-            <p class="helper-text">As redes só aparecem no rodapé, no topo, em Contactos e no widget «Siga-nos» quando têm link ou nome público.</p>
+            <p class="helper-text">Só aparecem onde existem configuradas (rodapé, topo, Contactos, «Siga-nos»). Sem link nem nome → escondida.</p>
             <div class="acomp-acoes"><a href="{{ route('admin.configuracoes') }}" class="btn-secondary btn-sm"><i class="fa fa-wrench"></i> Corrigir nas Configurações</a></div>
         </div>
     </div>
 
-    {{-- ==================== BANNER «LARGO» (editoria_cms.md) ==================== --}}
+    {{-- ============ BANNERS «LARGO» (FASE EDITORIAL) ============ --}}
     @php $largoOk = $largo['ativos'] > 0; @endphp
     <div class="card acomp-card">
         <div class="card-head">
-            <h3 class="card-title"><i class="fa fa-bullhorn" aria-hidden="true" style="color:#C8102E;"></i> Banners «Largo»
-            <span class="acomp-badge {{ $largoOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $largo['ativos'] }} ativo(s)</span></h3>
+            <h3 class="card-title"><span class="acomp-icone"><i class="fa fa-bullhorn" aria-hidden="true"></i></span> Banners «Largo»
+                <span class="acomp-kicker acomp-kicker-fase">FASE EDITORIAL</span></h3>
+            <span class="acomp-badge {{ $largoOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $largo['ativos'] }} ativo(s)</span>
         </div>
         <div class="card-body">
-            <p class="acomp-texto">Posição «Largo» = a faixa horizontal de largura total (substitui a imagem fixa do tema) nas secções de conteúdo da home, notícias, projetos, pesquisa, eventos, etc.</p>
+            <p class="acomp-texto">A faixa horizontal de largura total que substitui o banner estático do tema nas páginas de conteúdo. Sem banner «Largo» ativo → a faixa não aparece (não há espaço vazio).</p>
             <ul class="acomp-kpis">
-                <li><span class="acomp-kpi-num">{{ $largo['ativos'] }}</span><span class="acomp-kpi-label">ativos agora</span></li>
-                <li><span class="acomp-kpi-num">{{ $largo['total'] }}</span><span class="acomp-kpi-label">criados (incl. inativos)</span></li>
+                <li><span class="acomp-kpi-num">{{ $largo['ativos'] }}</span><span class="acomp-kpi-label">ativos</span></li>
+                <li><span class="acomp-kpi-num">{{ $largo['total'] }}</span><span class="acomp-kpi-label">criados</span></li>
             </ul>
-            @unless ($largoOk)
-                <p class="acomp-nota-alerta"><i class="fa fa-circle-exclamation" aria-hidden="true"></i> Sem banner «Largo» ativo, a faixa simplesmente não aparece — não há placeholder fixo.</p>
-            @endunless
-            <div class="acomp-acoes"><a href="{{ route('admin.banners') }}" class="btn-secondary btn-sm"><i class="fa fa-plus"></i> {{ $largoOk ? 'Gerir banners' : 'Criar o banner «Largo»' }}</a></div>
+            <div class="acomp-acoes"><a href="{{ route('admin.banners') }}" class="btn-secondary btn-sm"><i class="fa fa-plus"></i> {{ $largoOk ? 'Gerir banners' : 'Criar banner «Largo»' }}</a></div>
         </div>
     </div>
 
-    {{-- ==================== PROVÍNCIAS (E1) ==================== --}}
-    @php $provOk = $semProvincia === 0 && $totalPub > 0; @endphp
+    {{-- ============ PROVÍNCIAS (FASE E1) ============ --}}
+    @php
+        $provOk = $semProvincia === 0 && $totalPub > 0;
+        $maxProvs = $topProvincias->isNotEmpty() ? max(1, $topProvincias->max('n')) : 1;
+    @endphp
     <div class="card acomp-card">
         <div class="card-head">
-            <h3 class="card-title"><i class="fa fa-map-marked-alt" aria-hidden="true" style="color:#C8102E;"></i> Províncias dos artigos
-            <span class="acomp-badge {{ $provOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $comProvincia }}/{{ $totalPub }} com província</span></h3>
+            <h3 class="card-title"><span class="acomp-icone"><i class="fa fa-map-marked-alt" aria-hidden="true"></i></span> Províncias
+                <span class="acomp-kicker acomp-kicker-fase">FASE E1</span></h3>
+            <span class="acomp-badge {{ $provOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $comProvincia }}/{{ $totalPub }}</span>
         </div>
         <div class="card-body">
-            <p class="acomp-texto">Como estão os artigos publicados — e como é que «Outros» (texto livre, ex.: internacional) está a ser usada ({{ $livres }} como texto livre).</p>
+            <p class="acomp-texto">Capa por província nos artigos publicados — e quantos usam «Outros» (texto livre): <strong>{{ $livres }}</strong>.</p>
             @if ($topProvincias->isNotEmpty())
-            <ul class="acomp-lista acomp-lista-rank">
+            <ul class="acomp-rank">
                 @foreach ($topProvincias as $p)
-                <li class="acomp-row">
-                    <span class="acomp-pos">{{ $loop->iteration }}</span>
-                    <span class="acomp-row-nome">{{ $p['rotulo'] }}</span>
-                    <span class="acomp-conta-mini">{{ $p['n'] }} artigo(s)</span>
+                <li class="acomp-rank-item">
+                    <span class="acomp-rank-rotulo">{{ $p['rotulo'] }}</span>
+                    <span class="acomp-rank-barra" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ (int) round($p['n'] / $maxProvs * 100) }}"><span style="width: {{ (int) round($p['n'] / $maxProvs * 100) }}%"></span></span>
+                    <span class="acomp-rank-num">{{ $p['n'] }}</span>
                 </li>
                 @endforeach
             </ul>
             @else
                 <p class="helper-text">Ainda não há artigos com província preenchida.</p>
             @endif
-            <p class="helper-text">Artigos sem província: <strong>{{ $semProvincia }}</strong> · como texto livre («Outros»): <strong>{{ $livres }}</strong></p>
+            <p class="helper-text">Artigos sem província: <strong>{{ $semProvincia }}</strong> · texto livre: <strong>{{ $livres }}</strong></p>
             <div class="acomp-acoes"><a href="{{ route('admin.noticias') }}" class="btn-secondary btn-sm"><i class="fa fa-pen"></i> Corrigir artigos</a></div>
         </div>
     </div>
 
-    {{-- ==================== DESTAQUE EDITORIAL (editoria_cms.md) ==================== --}}
+    {{-- ============ DESTAQUE EDITORIAL (FASE EDITORIAL) ============ --}}
     @php $pinsOk = $pins > 0; @endphp
     <div class="card acomp-card">
         <div class="card-head">
-            <h3 class="card-title"><i class="fa fa-star" aria-hidden="true" style="color:#C8102E;"></i> Destaque editorial
-            <span class="acomp-badge {{ $pinsOk ? 'acomp-badge-ok' : 'acomp-badge-info' }}">{{ $pins }} {{ $pins === 1 ? 'artigo pinado' : 'artigos pinados' }}</span></h3>
+            <h3 class="card-title"><span class="acomp-icone"><i class="fa fa-star" aria-hidden="true"></i></span> Destaque editorial
+                <span class="acomp-kicker acomp-kicker-fase">FASE EDITORIAL</span></h3>
+            <span class="acomp-badge {{ $pinsOk ? 'acomp-badge-ok' : 'acomp-badge-info' }}">{{ $pins }} {{ $pins === 1 ? 'pinado' : 'pinados' }}</span>
         </div>
         <div class="card-body">
-            <p class="acomp-texto">Notícias marcadas «★ Destacar na Página Inicial». Os 4 primeiros pinados entram no Hero; os seguintes entram na Zona «Destaques»; as mais recentes preenchem os lugares em falta.</p>
-            <p class="helper-text">{{ $pins === 0
-                ? 'Sem destaques marcados — o Hero e a Zona «Destaques» usam as mais recentes.'
-                : ($pins >= 4 ? 'Hero completo com destaques editoriais — a Zona «Destaques» recebe os pins seguintes.' : 'Pins insuficientes para o Hero (4) — os lugares em falta preenchem-se com as mais recentes.') }}</p>
+            <p class="acomp-texto">Artigos marcados «★ Destacar na Página Inicial». Os 4 primeiros alimentam o <strong>Hero</strong>; os seguintes entram na Zona <strong>«Destaques»</strong>. Lugares em falta são preenchidos com as mais recentes.</p>
+            <p class="acomp-callout {{ $pins >= 4 ? 'acomp-callout-ok' : ($pins > 0 ? 'acomp-callout-mix' : 'acomp-callout-falta') }}">
+                {{ $pins === 0
+                    ? 'Sem pins — o Hero e os Destaques usam as mais recentes.'
+                    : ($pins >= 4 ? 'Hero completo com destaques editoriais.' : ($pins . ' pin(s) — o Hero será completado pelas mais recentes.')) }}
+            </p>
             <div class="acomp-acoes"><a href="{{ route('admin.noticias') }}" class="btn-secondary btn-sm"><i class="fa fa-pen"></i> Gerir destaques (coluna ★)</a></div>
         </div>
     </div>
 
-    {{-- ==================== QUALIDADE DOS ARTIGOS ==================== --}}
-    @php $qualidadeOk = $semImagem === 0 && $semTags === 0; @endphp
+    {{-- ============ QUALIDADE DOS ARTIGOS ============ --}}
+    @php
+        $comImagem = max(0, $totalPub - $semImagem);
+        $comTags = max(0, $totalPub - $semTags);
+        $pctImagem = $totalPub > 0 ? (int) round($comImagem / $totalPub * 100) : 0;
+        $pctTags = $totalPub > 0 ? (int) round($comTags / $totalPub * 100) : 0;
+        $qualidadeOk = $semImagem === 0 && $semTags === 0;
+    @endphp
     <div class="card acomp-card">
         <div class="card-head">
-            <h3 class="card-title"><i class="fa fa-clipboard-check" aria-hidden="true" style="color:#C8102E;"></i> Qualidade dos artigos
-            <span class="acomp-badge {{ $qualidadeOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $qualidadeOk ? 'em dia' : 'a rever' }}</span></h3>
+            <h3 class="card-title"><span class="acomp-icone"><i class="fa fa-clipboard-check" aria-hidden="true"></i></span> Qualidade dos artigos
+                <span class="acomp-kicker acomp-kicker-fase">QUALIDADE</span></h3>
+            <span class="acomp-badge {{ $qualidadeOk ? 'acomp-badge-ok' : 'acomp-badge-atencao' }}">{{ $qualidadeOk ? 'Em dia' : 'A rever' }}</span>
         </div>
         <div class="card-body">
-            <p class="acomp-texto">Sinais de alerta nos artigos publicados que prejudicam a leitura e a pesquisa:</p>
-            <ul class="acomp-lista">
-                <li class="acomp-row">
-                    <i class="far fa-image" aria-hidden="true" style="width:20px;color:#555;"></i>
-                    <span class="acomp-row-nome">Sem imagem de capa</span>
-                    <span class="acomp-tag {{ $semImagem === 0 ? 'acomp-tag-ok' : 'acomp-tag-alerta' }}">{{ $semImagem }}</span>
-                </li>
-                <li class="acomp-row">
-                    <i class="fas fa-tags" aria-hidden="true" style="width:20px;color:#555;"></i>
-                    <span class="acomp-row-nome">Sem etiquetas (Tags)</span>
-                    <span class="acomp-tag {{ $semTags === 0 ? 'acomp-tag-ok' : 'acomp-tag-alerta' }}">{{ $semTags }}</span>
-                </li>
-            </ul>
-            <p class="helper-text">A «Imagem de capa» e «Etiquetas» usam-se nas listagens, no artigo e no widget «Tags Populares».</p>
+            <div class="acomp-barra">
+                <div class="acomp-barra-head"><span><i class="far fa-image" aria-hidden="true"></i> Imagem de capa</span><strong>{{ $comImagem }}/{{ $totalPub }}</strong></div>
+                <div class="acomp-barra-trilho" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $pctImagem }}" aria-label="Artigos com imagem de capa"><span class="{{ $semImagem === 0 ? 'ok' : ($pctImagem >= 60 ? 'meio' : 'falta') }}" style="width: {{ $pctImagem }}%"></span></div>
+            </div>
+            <div class="acomp-barra">
+                <div class="acomp-barra-head"><span><i class="fas fa-tags" aria-hidden="true"></i> Etiquetas (tags)</span><strong>{{ $comTags }}/{{ $totalPub }}</strong></div>
+                <div class="acomp-barra-trilho" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $pctTags }}" aria-label="Artigos com etiquetas"><span class="{{ $semTags === 0 ? 'ok' : ($pctTags >= 60 ? 'meio' : 'falta') }}" style="width: {{ $pctTags }}%"></span></div>
+            </div>
+            <p class="helper-text">Sem imagem → cartões vazios; sem tags → «Tags Populares» fraco na sidebar.</p>
             <div class="acomp-acoes"><a href="{{ route('admin.noticias') }}" class="btn-secondary btn-sm"><i class="fa fa-pen"></i> Corrigir artigos</a></div>
         </div>
     </div>
 
-    {{-- ==================== VISTAS & TOP 5 (E2) ==================== --}}
+    {{-- ============ VISTAS & TOP 5 (FASE E2) ============ --}}
     <div class="card acomp-card">
         <div class="card-head">
-            <h3 class="card-title"><i class="far fa-eye" aria-hidden="true" style="color:#C8102E;"></i> Vistas reais &amp; Top 5
-            <span class="acomp-badge acomp-badge-info">{{ number_format($totalVistas, 0, ',', '.') }} vistas</span></h3>
+            <h3 class="card-title"><span class="acomp-icone"><i class="far fa-eye" aria-hidden="true"></i></span> Vistas reais &amp; Top 5
+                <span class="acomp-kicker acomp-kicker-fase">FASE E2</span></h3>
+            <span class="acomp-badge acomp-badge-info">{{ number_format($totalVistas, 0, ',', '.') }}</span>
         </div>
         <div class="card-body">
-            <p class="acomp-texto">O contador ignora bots/crawlers e conta cada sessão 1× por 5 minutos. Hoje no site: <strong>{{ $visitasHoje }}</strong> visita(s) registada(s).</p>
+            <p class="acomp-texto">Anti-bot ativo.
+                @if ($visitasHoje)
+                    Hoje no site: <strong>{{ $visitasHoje }}</strong> visita(s).
+                @endif
+                A mesma sessão conta 1× por 5 minutos; bots não contam.</p>
             @if ($maisLidas->every(fn ($n) => (int) $n->views_count === 0))
-                <p class="chart-vazio">Ainda não há visitas registadas — a contagem honesta começa após a fase E2 (2026-11-13).</p>
+                <p class="chart-vazio">Ainda sem leituras registadas — a contagem honesta começa após 2026-11-13.</p>
             @else
-            <ol class="top5-list" style="margin-top:6px">
+            <ol class="top5-list">
                 @foreach ($maisLidas as $i => $n)
                 <li class="top5-item">
                     <span class="top5-pos">{{ $i + 1 }}</span>
                     <a class="top5-title" href="{{ route('news.show', $n->slug) }}" target="_blank" rel="noopener">{{ $n->title }}</a>
-                    <span class="top5-views"><i class="far fa-eye" aria-hidden="true"></i> {{ number_format((int) $n->views_count, 0, ',', '.') }}</span>
+                    <span class="top5-views"><i class="far fa-eye" aria-hidden="true"></i>{{ number_format((int) $n->views_count, 0, ',', '.') }}</span>
                 </li>
                 @endforeach
             </ol>
@@ -167,6 +190,6 @@
 
 </div>
 
-<p class="helper-text" style="margin-top:14px"><i class="fa fa-circle-info" aria-hidden="true"></i> Os contadores acima são reais e recalculados a cada abertura da página — sem cache. Cada cartão tem o botão de ida até ao sítio onde se corrige.</p>
+<p class="acomp-rodape"><i class="fa fa-circle-info" aria-hidden="true"></i> Contadores recalculados a cada abertura. Cada cartão liga ao sítio onde se corrige — não há acção destrutiva nesta página.</p>
 
 @endsection

@@ -154,11 +154,23 @@ O mesmo tratamento anti-bot pode, para a frente, aplicar-se a `ProjectController
 - CSS: `.acomp-*` em `dashboard.css` → `admin.css` reconstruído
 - 3 testes (`AcompanhamentoTest`): carrega 200 para admin; anónimo é redireccionado; sem redes configuradas a página não rebenta (mostrando «Por configurar»)
 
+**E2 estendido aos projetos (2026-11-13):** o mesmo filtro anti-bot + arrefecimento de 5 min por sessão aplicou-se a `ProjectController@show` via o helper central `App\Support\ContadorDeVisitas::contar()` (única fonte da lista de bots; `NewsController` migrado para o mesmo helper; `CountPublicVisits` passa a usar a mesma regex). 3 testes novos (`ProjectViewsTest`).
+
+**Redesenho profissional da página Acompanhamento (2026-11-13):**
+- Hero de estado geral: ícone, «Tudo em ordem» / «N pontos a rever», 4 KPIs (Redes · Pins · Vistas · Alertas) com Playfair Display.
+- Cada cartão com ícone quadrado, «kicker» de fase (FASE E3 / FASE E1 / FASE E2 / FASE EDITORIAL / QUALIDADE) e badge de estado à direita.
+- Redes com ponto de estado (verde/âmbar) + handle/url visível (máx. 34 chars).
+- Províncias com barras de progresso proporcionais (vermelho) e contadores.
+- Qualidade com 2 barras de progresso (Imagem de capa · Etiquetas) e cor semântica (verde ≥60%, âmbar, vermelho).
+- Destaque editorial com callout de estado do Hero; Vistas reais & Top 5 com a lista intacta.
+- suite: **244 testes / 821 verificações**; `view:cache` limpo; `qa-faseb-acompanhamento-v2.png`.
+
 **CA:**
 - [x] Página abre no sidebar para admin (3 testes; `qa-faseb-acompanhamento.png` com dados reais — incl. o alerta «1 ponto a rever»: 10 artigos sem etiquetas)
 - [x] Todos os contadores reais (sem inventar dados)
 - [x] Cada cartão liga ao sítio certo para corrigir
-- [x] Suite: **241 tests / 814 assertions** verdes (+3); `view:cache` limpo
+- [x] Suite: **244 tests / 821 assertions** verdes (+6); `view:cache` limpo
+- [x] Anti-bot aplicado a notícias **e projetos** (contador global mantém semântica própria; só a lista de bots é partilhada)
 
 **Nota:** o resumo «N pontos a rever» conta: redes a menos de 5, zero «Largo» ativo, artigos sem província, zero pins editoriais, artigos sem imagem, artigos sem etiquetas — qualquer um liga-se diretamente ao botão de correção do seu cartão.
 

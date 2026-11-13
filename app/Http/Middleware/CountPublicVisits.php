@@ -20,8 +20,8 @@ class CountPublicVisits
     /** Prefixos estaticos que nunca contam (assets, relatorios, excecoes). */
     private const IGNORAR_ESTATICOS = ['livewire', 'csp-report', 'storage', 'build', 'hot', 'favicon'];
 
-    /** Padrões de user-agent considerados bots (ignorar contagem). */
-    private const BOT = '#bot|spider|crawler|slurp|wget|curl|pingdom|uptime|facebookexternalhit#i';
+    /** Padrões de user-agent considerados bots (ignorar contagem) — única fonte: App\Support\ContadorDeVisitas::BOTS. */
+    private const BOT = \App\Support\ContadorDeVisitas::BOTS;
 
     /** Prefixos a ignorar, incluindo o ADMIN_PATH configurado no .env. */
     private function ignorarPrefixos(): array
