@@ -1127,6 +1127,83 @@
 	transform: translateX(18px);
 }
 
+/* ---------- TOGGLE "Destacar na Página Inicial" (editoria_cms.md) ---- */
+.featured-toggle {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 12px 14px;
+	margin: 2px 0 14px;
+	border: 1px solid #E5E5E5;
+	border-radius: 10px;
+	border-left: 4px solid #F4C430;
+	background: #FFFDF5;
+	cursor: pointer;
+	transition: background .15s ease, border-color .15s ease;
+}
+
+.featured-toggle:hover {
+	background: #FFF8E0;
+	border-color: #F4C430;
+}
+
+.featured-toggle input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.featured-toggle-track {
+	position: relative;
+	flex: 0 0 44px;
+	height: 24px;
+	border-radius: 24px;
+	background: #DDDDDD;
+	transition: background .2s ease;
+}
+
+.featured-toggle-thumb {
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #FFFFFF;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+	transition: transform .2s ease;
+}
+
+.featured-toggle input:checked + .featured-toggle-track {
+	background: #F4C430;
+}
+
+.featured-toggle input:checked + .featured-toggle-track .featured-toggle-thumb {
+	transform: translateX(20px);
+}
+
+.featured-toggle input:focus-visible + .featured-toggle-track {
+	outline: 2px solid #C8102E;
+	outline-offset: 2px;
+}
+
+.featured-toggle-text strong {
+	display: block;
+	font-size: 13px;
+	font-weight: 600;
+	color: #1A1A1A;
+}
+
+.featured-toggle-text small {
+	display: block;
+	margin-top: 2px;
+	font-size: 11px;
+	line-height: 1.4;
+	color: #666666;
+}
+}
+
 .danger-zone {
 	border: 1px solid rgba(139, 0, 0, .3);
 	border-radius: 8px;
@@ -2025,6 +2102,7 @@
 .fa,.fab,.fad,.fal,.far,.fas {-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;display:inline-block;font-style:normal;font-variant:normal;text-rendering:auto;line-height:1}
 .fal,.far {font-family:Font Awesome\ 5 Pro}
 .far {font-weight:400}
+.fa,.fas {font-family:Font Awesome\ 5 Pro;font-weight:900}
 .hidden {display:none !important;visibility:hidden !important}
 .hsc-list_item-content .post-date {
 	float: left;

@@ -32,6 +32,8 @@ class News extends Model implements HasMedia
     protected $fillable = [
         'category_id', 'author_id', 'guest_author_name', 'guest_author_avatar', 'title', 'slug', 'excerpt', 'content',
         'image', 'image_alt', 'image_caption', 'status', 'published_at', 'date_label',
+        // editoria_cms.md — FASE 2: destaque editorial (8estrela na tabela)
+        'destaque_editorial',
 
         'province',
 
@@ -48,6 +50,7 @@ class News extends Model implements HasMedia
         return [
             'published_at' => 'datetime',
             'views_count' => 'integer',
+            'destaque_editorial' => 'boolean',
         ];
     }
 

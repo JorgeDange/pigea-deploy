@@ -125,6 +125,19 @@
                     {{-- Categoria + media + links --}}
                     <div class="card">
                         <div class="card-body">
+                            {{-- editoria_cms.md FASE 2: toggle de destaque editorial na home --}}
+                            @php $destaqueEditorial = old('destaque_editorial', $noticia?->destaque_editorial ?? false); @endphp
+                            <label class="featured-toggle">
+                                <input type="checkbox" name="destaque_editorial" value="1" {{ $destaqueEditorial ? 'checked' : '' }}>
+                                <span class="featured-toggle-track" aria-hidden="true">
+                                    <span class="featured-toggle-thumb"></span>
+                                </span>
+                                <span class="featured-toggle-text">
+                                    <strong><i class="fa fa-star" aria-hidden="true" style="color:#F4C430;"></i> Destacar na Página Inicial</strong>
+                                    <small>Aparece no Hero e na secção Destaques da home. Se não existirem, as mais recentes preenchem os lugares.</small>
+                                </span>
+                            </label>
+
                             {{-- Autor do Artigo (autor.md §2.2): interno OU convidado --}}
                             @php
                                 $autorChoice = old('author_choice', ($noticia && $noticia->author_id === null && $noticia->guest_author_name) ? 'convidado' : 'interno');
@@ -218,7 +231,7 @@
 
                                 {{-- Painel: upload do ficheiro --}}
                                 <div id="capa-ficheiro" class="file-upload" data-limit="capa"{{ $fonteAtual === 'link' ? ' hidden' : '' }}>
-                                    <img class="file-upload-preview" @if ($noticia?->image) src="{{ image_url($noticia->image) }}" alt="Capa atual da notícia (imagem em uso)" @else hidden alt="Capa" @endif>
+                                    <img class="file-upload-preview" @if ($noticia?->image) src="{{ image_url($noticia->image, 'images/logo.png') }}" alt="Capa atual da notícia (imagem em uso)" @else hidden alt="Capa" @endif>
                                     <label class="file-upload-button" for="capa"><i class="fa fa-folder-open" aria-hidden="true"></i> Escolher ficheiro</label>
                                     <div class="file-upload-meta">
                                         <span class="file-upload-name">{{ $noticia?->image ? 'Imagem atual: ' . basename($noticia->image) : 'Nenhum ficheiro selecionado' }}</span>

@@ -300,6 +300,7 @@ class NewsEditorController extends Controller
             'guest_author_avatar' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
             'guest_author_avatar_link' => ['nullable', 'url:http,https', 'max:300'],
             'contexto.*' => ['image', 'mimes:png,jpg,jpeg,webp', 'max:4096'],
+            'destaque_editorial' => ['nullable', 'boolean'],
         ];
 
         if ($publicar) {
@@ -479,6 +480,7 @@ class NewsEditorController extends Controller
             'date_label' => $dateLabel,
             'author_id' => $authorId,
             'guest_author_name' => $guestNomeFinal,
+            'destaque_editorial' => $request->boolean('destaque_editorial'),
         ];
     }
 

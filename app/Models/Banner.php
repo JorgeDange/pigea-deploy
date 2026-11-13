@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Banner publicitário (restrutura.md §3.5).
  *
- * Exibido nas posições `topo`/`sidebar`/`rodape`/`lateral` (FASE 18: slot
- * vertical na sidebar — largura da coluna, enquadramento 1:1) enquanto
+ * Exibido nas posições `topo`/`sidebar`/`rodape`/`lateral`/`largo` (FASE 18: slot
+ * vertical na sidebar — largura da coluna, enquadramento 1:1; Largo = banner
+ * full-width substituindo o antigo `images/all/banner.jpg` do tema) enquanto
  * `ativo` e dentro
  * do período `data_inicio`..`data_fim` (limites opcionais = sempre válido
  * nesse limite). O frontend (Fase 6) substitui o `banner-placeholder` do

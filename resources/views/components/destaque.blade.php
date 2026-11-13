@@ -74,7 +74,7 @@
                     <div class="{{ $loop->index === 0 ? 'grid-post-item     fl-wrap' : 'grid-post-item  bold_gpi  fl-wrap' }}">
                         <div class="grid-post-media gpm_sing">
                             <div class="bg-wrap">
-                                <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
+                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
                                 <div class="overlay"></div>
                             </div>
                             <div class="grid-post-media_title">

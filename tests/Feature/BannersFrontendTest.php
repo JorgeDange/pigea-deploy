@@ -144,6 +144,13 @@ class BannersFrontendTest extends TestCase
      * classe própria e lazy (abaixo da dobra). Com 1 só banner é estático
      * (sem slider).
      */
+    /** Apaga todos os banners — os testes assumem que nenhum está ativo por defeito. */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        \App\Models\Banner::query()->delete();
+    }
+
     public function test_posicao_lateral_com_wrapper(): void
     {
         Banner::create([

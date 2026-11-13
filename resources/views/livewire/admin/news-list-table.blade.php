@@ -47,6 +47,7 @@
           <th scope="col">Categoria</th>
           <th scope="col">Autor</th>
           <th scope="col">Estado</th>
+          <th scope="col">Destaque</th>
           <th scope="col"><button type="button" class="dashboard-table-sort" wire:click="ordenarPor('published_at')">Data <span aria-hidden="true">{{ $ordenar === 'published_at' ? ($direccao === 'asc' ? '↑' : '↓') : '' }}</span></button></th>
           <th scope="col"><button type="button" class="dashboard-table-sort" wire:click="ordenarPor('views_count')">Visitas <span aria-hidden="true">{{ $ordenar === 'views_count' ? ($direccao === 'asc' ? '↑' : '↓') : '' }}</span></button></th>
           <th scope="col">Ações</th>
@@ -63,6 +64,9 @@
               $badge = ['published' => ['active', 'Publicado'], 'draft' => ['neutral', 'Rascunho'], 'em_revisao' => ['pending', 'Em revisão']][$registo->status] ?? ['neutral', $registo->status];
             @endphp
             <span class="status-badge {{ $badge[0] }}">{{ $badge[1] }}</span>
+          </td>
+          <td style="text-align: center; width: 60px;" title="{{ $registo->destaque_editorial ? 'Destacada na home' : 'Não destacada' }}">
+            <i class="{{ $registo->destaque_editorial ? 'fas' : 'far' }} fa-star" style="color: {{ $registo->destaque_editorial ? '#F4C430' : '#D0D0D0' }}; font-size: 18px;" aria-label="{{ $registo->destaque_editorial ? 'Destacada na home' : 'Não destacada' }}" aria-hidden="true"></i>
           </td>
           <td>{{ $registo->published_at?->format('d/m/Y') ?? '—' }}</td>
           <td>{{ number_format((int) $registo->views_count, 0, ',', ' ') }}</td>
@@ -100,7 +104,7 @@
         </tr>
         @empty
         <tr>
-          <td colspan="7">
+          <td colspan="8">
             <div class="empty-state">
               <i class="fa fa-newspaper empty-state-icon" aria-hidden="true"></i>
               <p class="empty-state-title">Nada encontrado</p>

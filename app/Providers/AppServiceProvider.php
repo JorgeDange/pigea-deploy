@@ -43,8 +43,11 @@ class AppServiceProvider extends ServiceProvider
         // protótipo, onde o widget é idêntico em todos os HTML).
         View::share('widgetNews', $this->widgetNews());
 
-        // Slides do hero da home — as 4 mais recentes publicadas (ordem por id desc).
+        // FASE 1 — editoria_cms.md: editado (ordem desc). FASE 2 — pin editorial.
+        // Slides do hero da home — pinned (destaque_editorial) + fallback recentes
         View::share('heroNews', $this->heroNews());
+        // Zona Destaques — pinned a partir do 5º pinned; face recente como fallback
+        View::share('destaqueNews', $this->destaqueNews());
 
         // Vídeos para as secções de vídeo da home (módulo Vídeos — admin).
         View::composer('home', function ($view) {
@@ -73,8 +76,10 @@ class AppServiceProvider extends ServiceProvider
      */
     private function widgetNews()
     {
+        // FASE 1 (editoria_cms.md): recentes primeiro (não mais as antigas em destaque).
         try {
-            return News::published()->with(['category', 'author'])->orderBy('id')->take(8)->get();
+            return News::published()->with(['category', 'author'])
+                ->orderByDesc('published_at')->orderByDesc('id')->take(8)->get();
         } catch (Throwable) {
             return collect();
         }
@@ -94,12 +99,62 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Slides do hero da home — as 4 mais recentes (id desc), publicadas.
+     * Slides do hero da home — pinned editorial (FASE 2) + fallback recentes.
+     * Prioridade: `destaque_editorial = true` mais recentes, depois complemento
+     * com as restantes mais recentes. Sem pins → 4 recentes (como antes).
      */
     private function heroNews()
     {
         try {
-            return News::published()->with(['category', 'author'])->orderByDesc('id')->take(4)->get();
+            $pinned = News::published()
+                ->where('destaque_editorial', true)
+                ->with(['category', 'author'])
+                ->orderByDesc('published_at')->orderByDesc('id')
+                ->take(4)
+                ->get();
+
+            if ($pinned->count() >= 4) {
+                return $pinned;
+            }
+
+            return $pinned->concat(
+                News::published()->with(['category', 'author'])
+                    ->whereNotIn('id', $pinned->pluck('id'))
+                    ->orderByDesc('published_at')->orderByDesc('id')
+                    ->take(4 - $pinned->count())
+                    ->get()
+            );
+        } catch (Throwable) {
+            return collect();
+        }
+    }
+
+    /**
+     * Zona Destaques (2 cards principais + swiper) — pin editorial a partir do
+     * 5º pin (os 4 primeiros foram para o hero); fallback para as recentes.
+     */
+    private function destaqueNews()
+    {
+        try {
+            $pinned = News::published()
+                ->where('destaque_editorial', true)
+                ->with(['category', 'author'])
+                ->orderByDesc('published_at')->orderByDesc('id')
+                ->skip(4)
+                ->take(5)
+                ->get();
+
+            if ($pinned->count() < 5) {
+                $pinned = $pinned->concat(
+                    News::published()->with(['category', 'author'])
+                        ->whereNotIn('id', $pinned->pluck('id'))
+                        ->orderByDesc('published_at')->orderByDesc('id')
+                        ->take(5 - $pinned->count())
+                        ->get()
+                );
+            }
+
+            return $pinned;
         } catch (Throwable) {
             return collect();
         }
@@ -110,8 +165,10 @@ class AppServiceProvider extends ServiceProvider
      */
     private function rows(string $model, int $limit)
     {
+        // FASE 1 (editoria_cms.md): recentes primeiro.
         try {
-            return $model::published()->with(['category', 'author'])->orderBy('id')->take($limit)->get();
+            return $model::published()->with(['category', 'author'])
+                ->orderByDesc('published_at')->orderByDesc('id')->take($limit)->get();
         } catch (Throwable) {
             return collect();
         }

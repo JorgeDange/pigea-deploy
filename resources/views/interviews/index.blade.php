@@ -88,7 +88,7 @@
                     <!-- section  -->
                     <div class="gray-bg ad-wrap fl-wrap">
                         <div class="content-banner-wrap">
-                            <img src="{{ asset('images/all/banner.jpg') }}" class="respimg" alt="">
+                            <x-banner-publicitario posicao="largo" />
                         </div>
                     </div>
                     <!-- section end -->

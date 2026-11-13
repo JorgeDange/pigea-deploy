@@ -162,7 +162,7 @@
                                                             <div class="list-post-media">
                                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                                     <div class="bg-wrap">
-                                                                        <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
                                                                     </div>
                                                                 </a>
                                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -183,7 +183,7 @@
                                                             <div class="list-post-media">
                                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                                     <div class="bg-wrap">
-                                                                        <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
                                                                     </div>
                                                                 </a>
                                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -319,7 +319,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -343,7 +343,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image) }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -377,7 +377,7 @@
                     <!-- section  -->
                     <div class="gray-bg ad-wrap fl-wrap">
                         <div class="content-banner-wrap">
-                            <img src="{{ asset('images/all/banner.jpg') }}" class="respimg" alt="">
+                            <x-banner-publicitario posicao="largo" />
                         </div>
                     </div>
                     <!-- section end -->

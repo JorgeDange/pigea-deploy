@@ -45,7 +45,7 @@
                                             <div class="grid-post-media">
                                                 <a href="{{ route('news.show', $item->slug) }}" class="gpm_link">
                                                     <div class="bg-wrap">
-                                                        <div class="bg" data-bg="{{ image_url($item->image) }}"></div>
+                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
                                                     </div>
                                                 </a>
                                                 <span class="post-media_title">{{ $item->image_caption }}</span>
@@ -87,7 +87,7 @@
                     <!-- section  -->
                     <div class="gray-bg ad-wrap fl-wrap">
                         <div class="content-banner-wrap">
-                            <img src="{{ asset('images/all/banner.jpg') }}" class="respimg" alt="">
+                            <x-banner-publicitario posicao="largo" />
                         </div>
                     </div>
                     <!-- section end -->

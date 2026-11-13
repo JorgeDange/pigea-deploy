@@ -138,3 +138,25 @@
 .banner-publicitario--lateral .banner-lateral-slider .swiper-slide {
 	width: 100%;
 }
+
+
+/* =====================================================================
+   Largo (editoria_cms.md FASE 1): banner full-width nas zonas horizontais
+   de conteúdo (noticias, projetos, pesquisa, …) — substitui o antigo
+   images/all/banner.jpg do tema. Admin gere a posição "Largo".
+   Sem banner ativo: componente não gera HTML (slot some).
+   ===================================================================== */
+.banner-publicitario--largo {
+	width: 100%;
+	text-align: center;
+	margin: 0;
+}
+
+.banner-publicitario--largo img {
+	width: 100%;
+	height: auto;
+	max-height: 250px;
+	object-fit: cover;
+	object-position: center;
+	display: block;
+}
