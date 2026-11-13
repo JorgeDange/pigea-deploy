@@ -4,8 +4,12 @@
      O «nome público» vem de `<rede>_nome` (ex.: "pigea.ao"); se vazio,
      usa-se o nome da rede.
 
-     Sem NENHUMA rede configurada, mostramos os nomes das 4 redes como
-     texto não-clicável (não inventamos links; o cliente configura no admin).
+     Apenas as 5 redes aprovadas pelo cliente (2026-11-13):
+     Facebook, Instagram, LinkedIn, YouTube e X (Twitter).
+
+     Uma rede só aparece com link OU nome público configurado. Sem link
+     não inventamos href — mostramos o nome sem ligação. Sem NENHUMA rede
+     configurada, não mostra nada (nada de redes fantasma).
 --}}
 @php
     use App\Models\Setting;
@@ -16,45 +20,40 @@
         'instagram' => ['icone' => 'fab fa-instagram', 'classe' => 'instagram-soc', 'nome' => 'Instagram'],
         'linkedin' => ['icone' => 'fab fa-linkedin-in', 'classe' => 'linkedin-soc', 'nome' => 'LinkedIn'],
         'youtube' => ['icone' => 'fab fa-youtube', 'classe' => 'youtube-soc', 'nome' => 'YouTube'],
+        'twitter' => ['icone' => 'fab fa-twitter', 'classe' => 'twitter-soc', 'nome' => 'X (Twitter)'],
     ];
-    $configuradas = count(array_filter(array_keys($redes), fn ($chave) => filled($definicoes[$chave] ?? null) || filled($definicoes[$chave.'_nome'] ?? null)));
+    $afixar = array_filter(array_keys($redes), function (string $chave) use ($definicoes): bool {
+        return filled($definicoes[$chave] ?? null) || filled($definicoes[$chave . '_nome'] ?? null);
+    });
 @endphp
+@if (count($afixar) > 0)
 <div class="box-widget fl-wrap">
     <div class="widget-title">Siga-nos</div>
     <div class="box-widget-content">
         <div class="social-widget">
-            @foreach ($redes as $chave => $rede)
+            @foreach ($afixar as $chave)
                 @php
-                    $url = $definicoes[$chave] ?? null;
-                    $handle = $definicoes[$chave . '_nome'] ?? null;
+                    $rede = $redes[$chave];
+                    $url = trim((string) ($definicoes[$chave] ?? ''));
+                    $handle = trim((string) ($definicoes[$chave . '_nome'] ?? ''));
                 @endphp
-                @if (filled($url) || filled($handle))
-                    @if (filled($url))
+                @if ($url !== '')
                     <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" class="{{ $rede['classe'] }}">
                         <i class="{{ $rede['icone'] }}"></i>
                         <span class="soc-widget-title">{{ $rede['nome'] }}</span>
-                        <span class="soc-widget_counter soc-widget-handle">{{ filled($handle) ? $handle : $rede['nome'] }}</span>
+                        <span class="soc-widget_counter soc-widget-handle">{{ $handle !== '' ? $handle : $rede['nome'] }}</span>
                     </a>
-                    @else
+                @else
                     {{-- Handle configurado sem link: mostra o nome, sem inventar href --}}
                     <span class="{{ $rede['classe'] }} soc-widget-estatico">
                         <i class="{{ $rede['icone'] }}"></i>
                         <span class="soc-widget-title">{{ $rede['nome'] }}</span>
                         <span class="soc-widget_counter soc-widget-handle">{{ $handle }}</span>
                     </span>
-                    @endif
                 @endif
             @endforeach
-            @if ($configuradas === 0)
-                @foreach ($redes as $rede)
-                <span class="{{ $rede['classe'] }} soc-widget-estatico">
-                    <i class="{{ $rede['icone'] }}"></i>
-                    <span class="soc-widget-title">{{ $rede['nome'] }}</span>
-                    <span class="soc-widget_counter soc-widget-handle">{{ $rede['nome'] }}</span>
-                </span>
-                @endforeach
-            @endif
         </div>
     </div>
 </div>
 <!-- box-widget  end -->
+@endif

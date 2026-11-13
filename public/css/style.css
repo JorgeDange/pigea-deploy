@@ -199,7 +199,8 @@ blockquote:before {
 	float:left;
 	margin-left: 6px;
 }
-.topbar-social li a  {
+.topbar-social li a,
+.topbar-social li span  {
 	font-size:12px;
 	width: 32px;
 	height: 32px;
@@ -1610,7 +1611,7 @@ section {
 .footer-bottom {
 	padding: 18px 0;
 	margin-top: 70px;
-    background: #191919;
+    background: #1A1A1A;
 }
 .footer-logo {
 	margin-bottom: 34px;
@@ -1619,7 +1620,8 @@ section {
 }
 .footer-logo img {
 	width: auto;
-	height: 24px;
+	height: 44px;
+	max-width: 100%;
 }
 .footer-social {
 	margin-top: 22px;
@@ -1628,7 +1630,8 @@ section {
     float: left;
     margin-right: 6px;
 }
-.footer-social li a {
+.footer-social li a,
+.footer-social li span {
     font-size: 12px;
     width: 32px;
     height: 32px;
@@ -1715,7 +1718,7 @@ section {
 .copyright {
     font-weight: 500;
     font-size: 12px;
-    color: #999;
+    color: #FFFFFF;
 	text-align: left;
 	float: left;
 	line-height: 36px;
@@ -4337,7 +4340,8 @@ section {
 .contact-social li ul {
 	border: 1px solid #eee;
 }
-.contact-social li a {
+.contact-social li a,
+.contact-social li span {
 	width: 32px;
 	height: 32px;
 	line-height: 32px;
@@ -4346,6 +4350,10 @@ section {
 	float: left;
 	color: #fff;
 	background: #333;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 }
 .contact-social li a:hover {
 	background: #222;

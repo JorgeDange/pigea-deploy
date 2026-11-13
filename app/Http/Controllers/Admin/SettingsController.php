@@ -49,6 +49,8 @@ class SettingsController extends Controller
             'linkedin_nome' => 'nullable|string|max:120',
             'youtube' => 'nullable|string|max:190',
             'youtube_nome' => 'nullable|string|max:120',
+            'twitter' => 'nullable|string|max:190',
+            'twitter_nome' => 'nullable|string|max:120',
         ],
         'seo' => [
             'meta_title' => 'nullable|string|max:60',
@@ -76,7 +78,7 @@ class SettingsController extends Controller
         return $this->guardar($request, 'contactos');
     }
 
-    /** Cartão "Redes sociais" (facebook, instagram, linkedin, youtube). */
+    /** Cartão "Redes sociais" (facebook, instagram, linkedin, youtube, x/twitter). */
     public function redes(Request $request): RedirectResponse
     {
         return $this->guardar($request, 'redes');

@@ -157,6 +157,16 @@
                 <input class="dashboard-form-input" type="text" id="youtube_nome" name="youtube_nome" placeholder="pigea.ao" value="{{ old('youtube_nome', $definicoes['youtube_nome'] ?? '') }}">
                 @error('youtube_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
               </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="twitter">X / Twitter (link)</label>
+                <input class="dashboard-form-input" type="text" id="twitter" name="twitter" placeholder="https://x.com/pigea" value="{{ old('twitter', $definicoes['twitter'] ?? '') }}">
+                @error('twitter')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="twitter_nome">Nome público da conta (X / Twitter)</label>
+                <input class="dashboard-form-input" type="text" id="twitter_nome" name="twitter_nome" placeholder="pigea.ao" value="{{ old('twitter_nome', $definicoes['twitter_nome'] ?? '') }}">
+                @error('twitter_nome')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
                 </div>
               </div>
               <p class="helper-text">Os links alimentam o rodapé e a página de contactos; os «nomes públicos» aparecem na caixa «Siga-nos» do site (ex.: <strong>pigea.ao</strong>). Sem link não configurado, a rede não aparece no site.</p>

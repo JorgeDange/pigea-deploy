@@ -2,15 +2,11 @@
     <!-- top bar -->
     <div class="top-bar fl-wrap">
         <div class="container">
-            {{-- Redes sociais (esquerda). Links ainda placeholder '#'; os URLs
-                 de gestão ficam nas Configurações do admin (facebook/instagram/
-                 linkedin/youtube) — ligação a implementar mais tarde. --}}
+            {{-- Redes sociais (esquerda) — dinâmicas a partir das Configurações
+                 do admin (facebook/instagram/linkedin/youtube/twitter, link ou nome).
+                 Sem nenhuma configurada, a barra fica sem ícones (nada de links mortos). --}}
             <ul class="topbar-social">
-                <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
-                <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                <li><a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
-                <li><a href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
+                @include('components.social-icons')
             </ul>
 
             {{-- O banner da barra superior (posicao="topo") foi removido a pedido do cliente: coexistia com a data e a pesquisa e não agradava. Caso se pretenda reativar, repor o <x-banner-publicitario posicao="topo" />. --}}
