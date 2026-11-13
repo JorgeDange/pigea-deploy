@@ -39,11 +39,18 @@
   <form id="form-sair" action="{{ route('logout') }}" method="POST" hidden>
     @csrf
   </form>
-  {{-- Modal de notificações (cms_v.md v11/11/2026) — o sino abre-o; mostra a mesma lista que o dashboard usa. --}}
+  {{-- Modal de notificações — o sino abre-o; mostra notificações reais (módulo). --}}
   <div class="dashboard-modal" id="notificacoes-modal" role="dialog" aria-modal="true" aria-labelledby="notificacoes-modal-title">
     <div class="dashboard-modal-content">
       <div class="dashboard-modal-header">
+        @php $totalNaoLidas = collect($adminNotificacoes)->where('lida', false)->count(); @endphp
         <h3 id="notificacoes-modal-title">Notificações</h3>
+        @if ($totalNaoLidas > 0)
+          <form method="POST" action="{{ route('admin.notificacoes.ler') }}" style="margin:0">
+            @csrf
+            <button type="submit" class="dashboard-modal-close js-modal-close" style="position:static; margin-right:10px; font-size:12px; width:auto; height:auto; color:#666; padding:4px 10px; border:1px solid #E0E0E0; border-radius:4px; font-weight:600; cursor:pointer">Marcar todas lido</button>
+          </form>
+        @endif
         <button type="button" class="dashboard-modal-close js-modal-close" aria-label="Fechar notificações"><i class="fa fa-times" aria-hidden="true"></i></button>
       </div>
       <div class="dashboard-modal-body">

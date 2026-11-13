@@ -18,7 +18,7 @@
 
     $ehAdmin = auth()->user()?->hasRole('admin') ?? false;
 
-    // Mesmos 9 itens do cms_pro.md, agrupados nos 5 blocos do spec.
+    // Mesmos 9 itens do cms_pro.md, agrupados nos blocos do spec.
     $grupos = [
         ['rotulo' => 'Principal', 'itens' => [
             ['chave' => 'index', 'nome' => 'Dashboard', 'icone' => 'fa-tachometer-alt', 'rota' => 'admin.index', 'can' => null],
@@ -29,22 +29,28 @@
             ['chave' => 'noticias', 'nome' => 'Notícias', 'icone' => 'fa-newspaper', 'rota' => 'admin.noticias', 'can' => 'news.manage'],
             ['chave' => 'videos', 'nome' => 'Vídeos', 'icone' => 'fa-video', 'rota' => 'admin.videos', 'can' => 'video.manage'],
         ]],
-        ['rotulo' => 'Diretório', 'itens' => [
-            ['chave' => 'empresas', 'nome' => 'Empresas', 'icone' => 'fa-building', 'rota' => 'admin.empresas', 'can' => 'company.moderate'],
-            ['chave' => 'profissionais', 'nome' => 'Profissionais', 'icone' => 'fa-user-tie', 'rota' => 'admin.profissionais', 'can' => 'company.moderate'],
-            ['chave' => 'documentos', 'nome' => 'Documentos', 'icone' => 'fa-file-alt', 'rota' => 'admin.documentos', 'can' => 'document.manage'],
-        ]],
-        ['rotulo' => 'Comercial', 'itens' => [
-            ['chave' => 'banners', 'nome' => 'Publicidade', 'icone' => 'fa-bullhorn', 'rota' => 'admin.banners', 'can' => 'banner.manage'],
-            ['chave' => 'destaques', 'nome' => 'Destaques', 'icone' => 'fa-star', 'rota' => 'admin.destaques', 'can' => 'banner.manage'],
-        ]],
     ];
+
+    if ($ehAdmin) {
+        $grupos[] = ['rotulo' => 'Subscrições', 'itens' => [
+            ['chave' => 'newsletter', 'nome' => 'Newsletter', 'icone' => 'fa-envelope', 'rota' => 'admin.newsletter', 'can' => null],
+        ]];
+    }
+
+    $grupos[] = ['rotulo' => 'Diretório', 'itens' => [
+        ['chave' => 'empresas', 'nome' => 'Empresas', 'icone' => 'fa-building', 'rota' => 'admin.empresas', 'can' => 'company.moderate'],
+        ['chave' => 'profissionais', 'nome' => 'Profissionais', 'icone' => 'fa-user-tie', 'rota' => 'admin.profissionais', 'can' => 'company.moderate'],
+        ['chave' => 'documentos', 'nome' => 'Documentos', 'icone' => 'fa-file-alt', 'rota' => 'admin.documentos', 'can' => 'document.manage'],
+    ]];
+    $grupos[] = ['rotulo' => 'Comercial', 'itens' => [
+        ['chave' => 'banners', 'nome' => 'Publicidade', 'icone' => 'fa-bullhorn', 'rota' => 'admin.banners', 'can' => 'banner.manage'],
+        ['chave' => 'destaques', 'nome' => 'Destaques', 'icone' => 'fa-star', 'rota' => 'admin.destaques', 'can' => 'banner.manage'],
+    ]];
 
     if ($ehAdmin) {
         $grupos[] = ['rotulo' => 'Sistema', 'itens' => [
             ['chave' => 'utilizadores', 'nome' => 'Utilizadores', 'icone' => 'fa-users', 'rota' => 'admin.utilizadores', 'can' => 'user.manage'],
             ['chave' => 'configuracoes', 'nome' => 'Configurações', 'icone' => 'fa-cog', 'rota' => 'admin.configuracoes', 'can' => 'settings.manage'],
-            ['chave' => 'newsletter', 'nome' => 'Newsletter', 'icone' => 'fa-envelope', 'rota' => 'admin.newsletter', 'can' => null],
         ]];
     }
 @endphp

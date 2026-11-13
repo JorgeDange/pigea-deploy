@@ -783,6 +783,20 @@
 	border-left: 3px solid #C8102E;
 }
 
+.notif-badge-nova {
+	display: inline-block;
+	margin-right: 6px;
+	padding: 1px 7px;
+	border-radius: 4px;
+	background: #C8102E;
+	color: #FFFFFF;
+	font-size: 9px;
+	font-weight: 700;
+	letter-spacing: .05em;
+	text-transform: uppercase;
+	vertical-align: 1px;
+}
+
 .notification-item:last-child {
 	border-bottom: none;
 }

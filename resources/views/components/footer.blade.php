@@ -26,7 +26,6 @@
                             <div class="footer-list footer-box fl-wrap">
                                 <ul>
                                     <li> <a href="{{ route('news.index') }}">Notícias</a></li>
-                                    <li> <a href="{{ route('projects.index') }}">Projetos Mineiros</a></li>
                                     <li> <a href="{{ route('legislation.index') }}">Legislação</a></li>
                                 </ul>
                             </div>
@@ -58,7 +57,7 @@
                                 <ul>
                                     <li> <a href="{{ route('suppliers.index') }}">Fornecedores</a></li>
                                     <li> <a href="{{ route('directory.index') }}">Directório</a></li>
-                                    <li> <a href="{{ route('projects.index') }}">Oportunidades</a></li>
+                                    <li> <a href="{{ route('news.index', ['cat' => 'oportunidades']) }}">Oportunidades</a></li>
                                     <li> <a href="{{ route('registo-empresa') }}">Registar Empresa</a></li>
                                     <li> <a href="{{ route('registo-profissional') }}">Registar Profissional</a></li>
                                 </ul>

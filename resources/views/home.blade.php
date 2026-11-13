@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'PIGEA — Plataforma de Impulsionamento das Geociências em Angola')
-@section('description', 'PIGEA reúne notícias, projetos mineiros, empregos, formação e investigação das geociências em Angola.')
+@section('description', 'PIGEA reúne notícias, empregos, formação e investigação das geociências em Angola.')
 
 @section('content')
 
@@ -464,7 +464,7 @@
                         <div class="container">
                             <div class="section-title sect_dec">
                                 <h2>Melhores por Categoria</h2>
-                                <h4>Projetos, empregos e eventos em destaque</h4>
+                                <h4>Notícias, empregos e eventos em destaque</h4>
                             </div>
                             <div class="row">
                                 <div class="col-md-5">
@@ -472,7 +472,7 @@
                                         @foreach ($listNews->skip(6)->take(1) as $item)
 <!--list-post-->	
                                         <div class="list-post fl-wrap">
-                                            <a class="post-category-marker" href="{{ route('projects.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
+                                            <a class="post-category-marker" href="{{ $item->category ? route('news.index', ['cat' => $item->category->slug]) : route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                             <div class="list-post-media">
                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                     <div class="bg-wrap">
@@ -519,7 +519,7 @@
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
                                                     </div>
                                                     <div class="list-post-content">
-                                                        <a class="post-category-marker" href="{{ route('projects.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
+                                                        <a class="post-category-marker" href="{{ $item->category ? route('news.index', ['cat' => $item->category->slug]) : route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                                         <h3><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h3>
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                         <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
@@ -543,7 +543,7 @@
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
                                                     </div>
                                                     <div class="list-post-content">
-                                                        <a class="post-category-marker" href="{{ route('projects.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
+                                                        <a class="post-category-marker" href="{{ $item->category ? route('news.index', ['cat' => $item->category->slug]) : route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                                         <h3><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h3>
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
                                                         <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
@@ -663,7 +663,7 @@
  <div class="container">
   <div style="text-align:center;max-width:100%;margin:0 auto;">
    <h2 style="font-family:'Playfair Display',serif;font-size:34px;color:#fff;margin:0 0 14px;">Registe a sua empresa no diretório PIGEA</h2>
-   <p style="text-align:center;font-family:Poppins,sans-serif;font-size:15px;color:#CFCFCF;margin:0 0 26px;text-align:center;">Aceda a novas oportunidades de negócio, projetos e parceiros das geociências em Angola.</p>
+   <p style="text-align:center;font-family:Poppins,sans-serif;font-size:15px;color:#CFCFCF;margin:0 0 26px;text-align:center;">Aceda a novas oportunidades de negócio e parceiros das geociências em Angola.</p>
    <a href="{{ route('registo-empresa') }}" style="display:inline-block;background:#C8102E;color:#fff;padding:15px 36px;border-radius:4px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:.03em;">Registar Empresa</a>
   </div>
  </div>

@@ -55,7 +55,7 @@
                                             <div class="box-widget-content">
                                                 <div class="search-widget fl-wrap">
                                                     <form action="{{ route('search.index') }}">
-                                                        <input name="se" id="se12" type="text" class="search" placeholder="Pesquisar notícias, projetos, empresas..." value="" />
+                                                        <input name="se" id="se12" type="text" class="search" placeholder="Pesquisar notícias, empresas, legislação…" value="" />
                                                         <button class="search-submit2" id="submit_btn12"><i class="far fa-search"></i> </button>
                                                     </form>
                                                 </div>

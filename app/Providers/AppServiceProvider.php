@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\News;
 use App\Models\Project;
 use App\Models\Video;
+use App\Support\Notificador;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->registarObservers();
+
         // Os comandos artisan não têm de consultar a base de dados para
         // partilhar variáveis de vista (ex.: migrate antes das tabelas
         // existirem). Os testes, mesmo sendo CLI, precisam delas.
@@ -185,5 +188,100 @@ class AppServiceProvider extends ServiceProvider
         } catch (Throwable) {
             return 'amostra';
         }
+    }
+
+    /**
+     * Observadores: ligam eventos reais do site ao módulo de Notificações
+     * (opção B — tudo real, nada estático). Uma linha por destinatário,
+     * criada no momento do facto — nunca recriada para factos antigos.
+     */
+    private function registarObservers(): void
+    {
+        \App\Models\Company::created(function ($item): void {
+            if ((string) $item->status === 'pendente') {
+                Notificador::enviarParaEquipa(
+                    'fa-building',
+                    'Empresa à espera de aprovação',
+                    ($item->nome_empresa ?? $item->nif).' submeteu o registo no diretório.',
+                    route('admin.empresas')
+                );
+            }
+        });
+
+        \App\Models\Professional::created(function ($item): void {
+            if ((string) $item->status === 'pendente') {
+                Notificador::enviarParaEquipa(
+                    'fa-user-tie',
+                    'Profissional à espera de aprovação',
+                    ($item->nome_completo ?? $item->contactos).' submeteu o registo no diretório.',
+                    route('admin.profissionais')
+                );
+            }
+        });
+
+        \App\Models\User::created(function ($item): void {
+            // Só contas da equipa interna — n/a para subscritores da newsletter.
+            if (! $item->hasAnyRole(['admin', 'editor'])) {
+                return;
+            }
+            Notificador::enviarParaEquipa(
+                'fa-user-plus',
+                'Novo utilizador na equipa',
+                ($item->name ?? $item->email).' foi acrescentado.',
+                route('admin.utilizadores')
+            );
+        });
+
+        \App\Models\Project::created(function ($item): void {
+            // Área pública de Projetos está excluída (2026-11-13) — não notificamos.
+            if ((string) $item->status !== 'published' || ! config('features.projects_publico')) {
+                return;
+            }
+            Notificador::enviarParaEquipa(
+                'fa-briefcase',
+                'Novo projeto publicado',
+                '«'.$item->title.'» publicado em projetos.',
+                route('admin.projetos')
+            );
+        });
+
+        \App\Models\News::created(function ($item): void {
+            if ((string) $item->status === 'published') {
+                Notificador::enviarParaEquipa(
+                    'fa-newspaper',
+                    'Notícia publicada',
+                    '«'.$item->title.'» já está no ar.',
+                    route('news.show', ['slug' => $item->slug])
+                );
+            } elseif ((string) $item->status === 'em_revisao') {
+                Notificador::enviarParaEquipa(
+                    'fa-newspaper',
+                    'Notícia à espera de revisão',
+                    '«'.$item->title.'» enviada para revisão.',
+                    route('admin.noticia-editar', ['noticia' => $item->id])
+                );
+            }
+        });
+
+        \App\Models\News::updated(function ($item): void {
+            if (! $item->wasChanged('status')) {
+                return;
+            }
+            if ((string) $item->status === 'published') {
+                Notificador::enviarParaEquipa(
+                    'fa-newspaper',
+                    'Notícia publicada',
+                    '«'.$item->title.'» já está no ar.',
+                    route('news.show', ['slug' => $item->slug])
+                );
+            } elseif ((string) $item->status === 'em_revisao') {
+                Notificador::enviarParaEquipa(
+                    'fa-newspaper',
+                    'Notícia à espera de revisão',
+                    '«'.$item->title.'» enviada para revisão.',
+                    route('admin.noticia-editar', ['noticia' => $item->id])
+                );
+            }
+        });
     }
 }

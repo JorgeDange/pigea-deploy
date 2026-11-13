@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Pesquisa | PIGEA')
-@section('description', 'Pesquise notícias, projetos, empresas e outros conteúdos do portal PIGEA.')
+@section('description', 'Pesquise notícias, empresas e outros conteúdos do portal PIGEA.')
 
 @section('content')
 
@@ -76,7 +76,7 @@
                                             <div class="box-widget-content">
                                                 <div class="search-widget fl-wrap">
                                                     <form action="{{ route('search.index') }}">
-                                                        <input name="se" id="se12" type="text" class="search" placeholder="Pesquisar notícias, projetos, empresas..." value="{{ $termo }}" />
+                                                        <input name="se" id="se12" type="text" class="search" placeholder="Pesquisar notícias, empresas, legislação…" value="{{ $termo }}" />
                                                         <button class="search-submit2" id="submit_btn12"><i class="far fa-search"></i> </button>
                                                     </form>
                                                 </div>

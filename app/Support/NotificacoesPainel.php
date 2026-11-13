@@ -2,75 +2,52 @@
 
 namespace App\Support;
 
-use App\Models\Company;
-use App\Models\News;
-use App\Models\Project;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Notifications\DatabaseNotification;
 
 /**
- * Notificações do painel admin (fonte única para o sino/modal e para a
- * lista de atividade recente no dashboard).
+ * Notificações do painel — módulo real (opção B, 2026-11-13).
  *
- * Cada item inclui um `href` — clicável.
- *
- * @return list<array{icone: string, titulo: string, texto: string, tempo: ?string, href: string}>
+ * Lê a tabela `notifications` (Laravel polymorphic), scoped ao utilizador
+ * autenticado. Devolve a mesma forma de antes (`icone/titulo/texto/tempo/
+ * href`) + `lida`, consumida pelo partial e pelo sino de notificações —
+ * nunca devolve dados de outros utilizadores.
  */
 class NotificacoesPainel
 {
-    public static function obter(): array
+    /** @param \App\Models\User|null $user Por omissão: o utilizador autenticado. */
+    public static function obter(?User $user = null): array
     {
-        $itens = [];
+        $user = $user ?? auth()->user();
 
-        if ($empresa = Company::pendente()->latest('created_at')->first()) {
-            $itens[] = [
-                'icone' => 'fa-building',
-                'titulo' => 'Empresa à espera de aprovação',
-                'texto' => ($empresa->nome_empresa ?? $empresa->nif).' submeteu registo no diretório.',
-                'tempo' => $empresa->created_at?->diffForHumans(),
-                'href' => route('admin.empresas'),
-            ];
+        if ($user === null) {
+            return [];
         }
 
-        if ($tarefa = News::where('status', 'em_revisao')->latest('updated_at')->first()) {
-            $itens[] = [
-                'icone' => 'fa-newspaper',
-                'titulo' => 'Notícia à espera de revisão',
-                'texto' => '«'.$tarefa->title.'» enviada para revisão.',
-                'tempo' => $tarefa->updated_at?->diffForHumans(),
-                'href' => route('admin.noticia-editar', ['noticia' => $tarefa->id]),
-            ];
+        /** @var Collection<int, DatabaseNotification> $notificacoes */
+        $notificacoes = $user->notifications()->latest('created_at')->latest('id')->limit(8)->get();
+
+        return $notificacoes->map(fn (DatabaseNotification $n) => [
+            'id' => strtolower((string) $n->id),
+            'icone' => $n->data['icone'] ?? 'fa-bell',
+            'titulo' => $n->data['titulo'] ?? 'Notificação',
+            'texto' => $n->data['texto'] ?? '',
+            'tempo' => $n->created_at?->diffForHumans(),
+            'href' => $n->data['href'] ?? null,
+            'lida' => $n->read_at !== null,
+        ])->all();
+    }
+
+    /** Quantidade de notificações por ler para o utilizador autenticado. */
+    public static function naoLidas(?User $user = null): int
+    {
+        $user = $user ?? auth()->user();
+
+        if ($user === null) {
+            return 0;
         }
 
-        if ($publicada = News::where('status', 'published')->latest('published_at')->first()) {
-            $itens[] = [
-                'icone' => 'fa-newspaper',
-                'titulo' => 'Notícia publicada',
-                'texto' => '«'.$publicada->title.'» já está no ar.',
-                'tempo' => $publicada->published_at?->diffForHumans(),
-                'href' => route('news.show', ['slug' => $publicada->slug]),
-            ];
-        }
-
-        if ($utilizador = User::latest('created_at')->first()) {
-            $itens[] = [
-                'icone' => 'fa-user-plus',
-                'titulo' => 'Novo utilizador',
-                'texto' => ($utilizador->name ?? $utilizador->email).' criou conta.',
-                'tempo' => $utilizador->created_at?->diffForHumans(),
-                'href' => route('admin.utilizadores'),
-            ];
-        }
-
-        if ($projeto = Project::latest('created_at')->first()) {
-            $itens[] = [
-                'icone' => 'fa-handshake',
-                'titulo' => 'Nova oportunidade',
-                'texto' => '«'.$projeto->title.'» publicado em projetos.',
-                'tempo' => $projeto->created_at?->diffForHumans(),
-                'href' => route('admin.projetos'),
-            ];
-        }
-
-        return $itens;
+        return $user->unreadNotifications()->count();
     }
 }

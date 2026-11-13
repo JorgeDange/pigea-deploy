@@ -35,7 +35,7 @@
             <div class="header-search-wrap novis_sarch">
                 <div class="widget-inner">
                     <form action="{{ route('search.index') }}">
-                        <input name="se" id="se" type="text" class="search" placeholder="Pesquisar notícias, projetos, empresas..." value="" />
+                        <input name="se" id="se" type="text" class="search" placeholder="Pesquisar notícias, empresas, legislação…" value="" />
                         <button class="search-submit" id="submit_btn"><i class="fa fa-search transition"></i> </button>
                     </form>
                 </div>

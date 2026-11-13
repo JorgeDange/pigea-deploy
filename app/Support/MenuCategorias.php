@@ -52,12 +52,16 @@ final class MenuCategorias
             'destaques' => ['home'],
             'noticias-recentes' => ['news.index'],
             'empresas-em-destaque' => ['directory.index', ['aba' => 'empresas']],
-            'oportunidades' => ['projects.index'],
+            // Projetos excluídos (decisão do cliente, 2026-11-13): Oportunidades
+            // já tem categoria própria em notícias (promovida à Fase 14).
+            'oportunidades' => ['news.index', ['cat' => 'oportunidades']],
         ],
         'noticias' => [
             'actualidade-nacional-e-internacional' => ['news.index'],
             'inovacao-e-tecnologia' => ['technologies.index'],
-            'projectos-e-iniciativas' => ['projects.index'],
+            // Fase 14 promoveu este item a notícias; o destino apontava para
+            // /projetos (excluído em 2026-11-13). Vai para a listagem geral.
+            'projectos-e-iniciativas' => ['news.index'],
             'eventos' => ['events.index'],
         ],
         'academia' => [

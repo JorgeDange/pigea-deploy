@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\VideoFormController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserFormController;
+use App\Http\Controllers\Admin\NotificacoesController;
 use App\Http\Controllers\CspReportController;
 use App\Http\Controllers\Frontend\DirectoryController;
 use App\Http\Controllers\Frontend\EventController;
@@ -135,6 +136,8 @@ Route::post('/csp-report', CspReportController::class)
 Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'))->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::get('/acompanhamento', [AcompanhamentoController::class, 'index'])->name('acompanhamento');
+    // Notificações — marcagem em massa de todas como lidas (módulo real)
+    Route::post('/notificacoes/ler', [NotificacoesController::class, 'lerTodas'])->name('notificacoes.ler');
     // Newsletter (doc/newsletter.md FASE N1) — dados pessoais: só role:admin
     Route::get('/newsletter', [NewsletterAdminController::class, 'index'])->middleware('role:admin')->name('newsletter');
     Route::post('/newsletter/adicionar', [NewsletterAdminController::class, 'adicionar'])->middleware('role:admin')->name('newsletter.adicionar');

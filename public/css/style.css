@@ -6003,6 +6003,9 @@ h4.cart-title span {
 
 
 /* ---------- Newsletter â€” modal de subscriÃ§Ã£o (sites de notÃ­cias) ------- */
+
+
+/* ---------- Newsletter — modal de subscrição (design da plataforma) ---- */
 .newsletter-modal {
 	position: fixed;
 	inset: 0;
@@ -6020,7 +6023,7 @@ h4.cart-title span {
 }
 
 @keyframes newsletter-modal-entra {
-	from { opacity: 0; transform: translateY(24px); }
+	from { opacity: 0; transform: translateY(20px); }
 	to { opacity: 1; transform: translateY(0); }
 }
 
@@ -6035,12 +6038,10 @@ h4.cart-title span {
 	width: 100%;
 	max-width: 420px;
 	background: #FFFFFF;
-	border-radius: 12px;
+	border-radius: 4px;
+	border-top: 4px solid #C8102E;
 	box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
-	padding: 26px 26px 22px;
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
+	padding: 26px 28px 22px;
 }
 
 @media (min-width: 560px) {
@@ -6051,54 +6052,39 @@ h4.cart-title span {
 
 .newsletter-modal-fechar {
 	position: absolute;
-	top: 10px;
-	right: 10px;
+	top: 8px;
+	right: 8px;
 	width: 32px;
 	height: 32px;
 	border: none;
 	background: transparent;
-	font-size: 26px;
+	font-size: 22px;
 	line-height: 1;
-	color: #999;
+	color: #B3B3B3;
 	cursor: pointer;
-	border-radius: 6px;
-	transition: background .15s ease, color .15s ease;
+	border-radius: 4px;
 }
 
-.newsletter-modal-fechar:hover {
-	background: #F3F3F3;
-	color: #1A1A1A;
-}
+.newsletter-modal-fechar:hover { color: #1A1A1A; }
 
 .newsletter-modal-icone {
-	font-size: 30px;
+	font-size: 24px;
 	color: #C8102E;
-	margin-bottom: 10px;
 }
 
 .newsletter-modal-card h3 {
-	font-size: 20px;
+	font-family: 'Playfair Display', serif;
 	font-weight: 700;
+	font-size: 22px;
 	color: #1A1A1A;
-	margin: 0 0 8px;
 	line-height: 1.3;
+	margin: 12px 0 14px;
 }
 
-.newsletter-modal-texto {
-	font-size: 13px;
-	line-height: 1.55;
-	color: #4B4B4B;
-	margin: 0 0 14px;
-}
-
-.newsletter-modal-label {
-	display: block;
-	font-size: 11px;
-	font-weight: 600;
-	color: #666;
-	margin-bottom: 5px;
-	text-transform: uppercase;
-	letter-spacing: .04em;
+.newsletter-modal-form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
 .newsletter-modal-input {
@@ -6108,66 +6094,53 @@ h4.cart-title span {
 	padding: 12px 14px;
 	border: 1px solid #E0E0E0;
 	border-radius: 4px;
-	font-size: 14px;
 	font-family: 'Poppins', sans-serif;
-	transition: border-color .15s ease, box-shadow .15s ease;
+	font-size: 14px;
+	transition: border-color .2s ease;
 }
 
 .newsletter-modal-input:focus {
 	outline: 2px solid #C8102E;
-	outline-offset: 1px;
-	border-color: transparent;
+	outline-offset: 0;
+	border-color: #C8102E;
 }
 
 .newsletter-modal-btn {
-	display: block;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
 	width: 100%;
-	margin-top: 10px;
-	padding: 12px 18px;
 	border: none;
-	border-radius: 4px;
+	border-radius: 3px;
 	color: #FFFFFF;
-	font-size: 12.5px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 12px;
 	font-weight: 700;
-	letter-spacing: .05em;
+	letter-spacing: .08em;
 	text-transform: uppercase;
+	padding: 13px 18px;
 	cursor: pointer;
 }
 
-.newsletter-modal-btn:hover { opacity: .92; }
-.newsletter-modal-btn:disabled { opacity: .65; cursor: wait; }
-
-.newsletter-modal-nota {
-	font-size: 10.5px;
-	color: #9A9A9A;
-	margin: 10px 0 0;
-	line-height: 1.5;
-}
+.newsletter-modal-btn:hover { opacity: .93; }
+.newsletter-modal-btn:disabled { opacity: .6; cursor: wait; }
 
 .newsletter-modal-sucesso {
-	text-align: center;
 	padding: 8px 0 4px;
+	text-align: center;
 }
 
-.newsletter-modal-sucesso-icon {
-	font-size: 44px;
+.newsletter-modal-sucesso-icone {
+	font-size: 40px;
 	color: #2E9E57;
-	margin: 6px 0 12px;
+	margin-bottom: 12px;
 }
 
-.newsletter-modal-sucesso h3 {
-	margin: 0 0 8px;
-	font-size: 20px;
-	color: #1A1A1A;
-}
-
-.newsletter-modal-sucesso p {
-	font-size: 13px;
-	color: #4B4B4B;
-	line-height: 1.55;
-	margin: 0 0 12px;
-}
+.newsletter-modal-sucesso h3 { margin-bottom: 12px; }
 
 html.newsletter-modal-aberta {
 	overflow: hidden;
 }
+
+

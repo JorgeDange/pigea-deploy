@@ -14,6 +14,10 @@ class ProjectController extends Controller
 
     public function index()
     {
+        if (! config('features.projects_publico')) {
+            abort(404);
+        }
+
         $items = Project::published()
             ->with(['category', 'author'])
             ->orderBy('id')
@@ -26,6 +30,10 @@ class ProjectController extends Controller
 
     public function show(Request $request, string $slug)
     {
+        if (! config('features.projects_publico')) {
+            abort(404);
+        }
+
         $post = $this->resolveContent($slug);
 
         if ($post === null) {

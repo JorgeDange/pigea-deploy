@@ -17,17 +17,9 @@ use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    /**
-     * Todos os módulos de conteúdo público do protótipo (tabelas com o mesmo
-     * esquema), pesquisados de uma só vez com o driver `database` do Scout.
-     */
+    /** Todos os módulos de conteúdo público do protótipo (tabelas com o mesmo esquema). */
     private const MODELOS = [
         News::class,
-        Project::class,
-        // FASE 8 (9–11/11/2026): Directory REMOVIDO do índice público — as 8
-        // entradas legadas de demonstração apareciam em /pesquisa sem passar
-        // pela aprovação do diretório (restrutura.md §5/§6). O modelo continua
-        // disponível para o admin (gestão dos registos legados).
         Technology::class,
         Supplier::class,
         Event::class,
@@ -48,7 +40,12 @@ class SearchController extends Controller
         $resultados = [];
 
         if ($termo !== '') {
-            foreach (self::MODELOS as $modelo) {
+            $modelos = self::MODELOS;
+            if (config('features.projects_publico')) {
+                $modelos[] = Project::class;
+            }
+
+            foreach ($modelos as $modelo) {
                 $encontrados = $modelo::search($termo, fn ($query) => $query->published()->whereNull('deleted_at'))
                     ->get();
 

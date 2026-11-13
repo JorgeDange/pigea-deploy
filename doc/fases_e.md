@@ -187,4 +187,29 @@ O mesmo tratamento anti-bot pode, para a frente, aplicar-se a `ProjectController
 | E1 — Províncias | ✅ feita | `0515b37` |
 | E2 — Views/KPI | ✅ feita | `9358f84` |
 | Banners «Largo» (migração) | ✅ feita | `17cf884` |
-| E4 — Acompanhamento (control center) | ✅ feita | aguarda autorização do cliente (ver git) |
+| E4 — Acompanhamento (control center) | ✅ feita | `931ca62` |
+| N1 — Newsletter | ✅ feita | `04f909a` |
+
+---
+
+## FASE P — Exclusão da área pública de Projetos ✅ (2026-11-13)
+
+**Pedido do cliente:** "NOtei que a area de projectos ainda tem … inicialmente a area de projecto fica excluida, futuramente esta a se pensar em implementar" — escolha no questionário guiado: **Esconder do menu público** + **Ocultar no deploy, ligar depois**.
+
+**Decisão de implementação:**
+- **`config/features.php`** (novo) — `projects_publico` (env `PROJECTS_PUBLICO`, **default false**). Controla `ProjectController@index/show` (404 quando desligado) e a presença de `Project::class` na pesquisa pública (`SearchController`).
+- **`phpunit.xml`** — `PROJECTS_PUBLICO=true` na suite (as páginas de projetos continuam testáveis).
+- **Menu mega (`App\Support\MenuCategorias`)**: "Oportunidades" (Início) → `noticias?cat=oportunidades`; "Projectos e iniciativas" (Notícias) → `noticias` simples — nunca mais `projects.index`.
+- **Rodapé**: removido o link "Projetos Mineiros"; "Oportunidades" aponta para `noticias?cat=oportunidades`.
+- **Home**: os marcadores de categoria nos artigos passam a indicar a categoria real da notícia (`/noticias?cat=<slug>`) em vez de `/projetos`; subtítulo "Melhores por Categoria" idem.
+- **SEO/meta**: removidas as menções a "projetos mineiros" de títulos/meta/placeholders da pesquisa.
+- **Deploy**: nada a fazer — `.env` recebe `PROJECTS_PUBLICO=false`; para voltar a ligar basta `PROJECTS_PUBLICO=true` (+ refazer menu se necessário).
+- **Semântica admin**: `/gestao-pigea/projetos` e `/projetos/novo` mantêm-se funcionais para quando o cliente quiser (com `project.manage`); o item continua sem estar ligado ao sidebar por omissão.
+
+**CA:**
+- [x] `/projetos` → 404 público (verificado ao vivo em :8001 com flag off)
+- [x] `/projetos/{slug}` → 404 público (verificado)
+- [x] `/gestao-pigea/projetos` → 200 para admin (verificado)
+- [x] Suite: **257/857** verdes; `view:cache` limpo (a suite corre com flag ON)
+
+**Nota:** os testes passam porque o phpunit.xml força `PROJECTS_PUBLICO=true`; o ambiente real (php artisan serve, `.env`) protege o público. Para confirmar no site de dev, o servidor tem de ser **reiniciado** para apanhar o `.env` novo.

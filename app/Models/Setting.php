@@ -76,7 +76,7 @@ class Setting extends Model
 
         return $seo !== ''
             ? $seo
-            : 'PIGEA reúne notícias, projetos mineiros, empregos, formação e legislação do setor das geociências em Angola, com informação verificada e gratuita.';
+            : 'PIGEA reúne notícias, empregos, formação e legislação do setor das geociências em Angola, com informação verificada e gratuita.';
     }
 
     /** Meta title/og padrão — SEO configurado OU nome do portal. */
