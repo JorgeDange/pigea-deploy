@@ -141,6 +141,12 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
     // Newsletter (doc/newsletter.md FASE N1) — dados pessoais: só role:admin
     Route::get('/newsletter', [NewsletterAdminController::class, 'index'])->middleware('role:admin')->name('newsletter');
     Route::post('/newsletter/adicionar', [NewsletterAdminController::class, 'adicionar'])->middleware('role:admin')->name('newsletter.adicionar');
+    Route::post('/newsletter/confirmar/{id}', [NewsletterAdminController::class, 'confirmar'])->middleware('role:admin')->whereNumber('id')->name('newsletter.confirmar');
+    Route::post('/newsletter/cancelar/{id}', [NewsletterAdminController::class, 'cancelar'])->middleware('role:admin')->whereNumber('id')->name('newsletter.cancelar');
+    Route::post('/newsletter/reabilitar/{id}', [NewsletterAdminController::class, 'reabilitar'])->middleware('role:admin')->whereNumber('id')->name('newsletter.reabilitar');
+    Route::post('/newsletter/confirmar-pendentes', [NewsletterAdminController::class, 'confirmarPendentes'])->middleware('role:admin')->name('newsletter.confirmar-pendentes');
+    Route::post('/newsletter/reenviar/{id}', [NewsletterAdminController::class, 'reenviarConfirmacao'])->middleware('role:admin')->whereNumber('id')->name('newsletter.reenviar');
+    Route::post('/newsletter/reenviar-pendentes', [NewsletterAdminController::class, 'reenviarPendentes'])->middleware('role:admin')->name('newsletter.reenviar-pendentes');
     Route::delete('/newsletter/{id}', [NewsletterAdminController::class, 'remover'])->middleware('role:admin')->whereNumber('id')->name('newsletter.remover');
     Route::get('/newsletter/exportar.csv', [NewsletterAdminController::class, 'exportar'])->middleware('role:admin')->name('newsletter.exportar');
     Route::get('/perfil', [ProfileController::class, 'index'])->name('perfil');
