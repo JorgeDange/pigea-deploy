@@ -43,6 +43,7 @@
                                         </div>
                                         <!-- single-post-header end   -->
                                         <!-- single-post-media   -->
+                                        @php $imagemPost = image_url($post->image, 'images/logo.png'); @endphp
                                         <div class="single-post-media fl-wrap">
                                             <div class="single-slider-wrap fl-wrap">
                                                 <div class="single-slider fl-wrap">
@@ -50,33 +51,20 @@
                                                         <div class="swiper-wrapper lightgallery">
                                                             <!-- swiper-slide   -->
                                                             <div class="swiper-slide hov_zoom">
-                                                                <img src="{{ asset('images/all/20.jpg') }}" alt="">
-                                                                <a href="{{ asset('images/all/20.jpg') }}" class="box-media-zoom   popup-image"><i class="fas fa-search"></i></a>
-                                                                <span class="post-media_title pmd_vis">© Image Copyrights Title</span>
-                                                            </div>
-                                                            <!-- swiper-slide end   -->
-                                                            <!-- swiper-slide   -->
-                                                            <div class="swiper-slide hov_zoom">
-                                                                <img src="{{ asset('images/all/13.jpg') }}" alt="">
-                                                                <a href="{{ asset('images/all/13.jpg') }}" class="box-media-zoom   popup-image"><i class="fas fa-search"></i></a>
-                                                                <span class="post-media_title pmd_vis">© Image Copyrights Title</span>
-                                                            </div>
-                                                            <!-- swiper-slide end   -->
-                                                            <!-- swiper-slide   -->
-                                                            <div class="swiper-slide hov_zoom">
-                                                                <img src="{{ asset('images/all/15.jpg') }}" alt="">
-                                                                <a href="{{ asset('images/all/15.jpg') }}" class="box-media-zoom   popup-image"><i class="fas fa-search"></i></a>
-                                                                <span class="post-media_title pmd_vis">© Image Copyrights Title</span>
+                                                                <img src="{{ $imagemPost }}" alt="{{ $post->image_alt }}">
+                                                                <a href="{{ $imagemPost }}" class="box-media-zoom   popup-image" aria-label="Ver imagem ampliada"><i class="fas fa-eye"></i></a>
+                                                                @if ($post->image_caption)
+                                                                    <span class="post-media_title pmd_vis">{{ $post->image_caption }}</span>
+                                                                @else
+                                                                    <span class="post-media_title pmd_vis">&copy; Foto: PIGEA</span>
+                                                                @endif
                                                             </div>
                                                             <!-- swiper-slide end   -->
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="ss-slider-controls2">
-                                                    <div class="ss-slider-pagination pag-style"></div>
-                                                </div>
-                                                <div class="ss-slider-cont ss-slider-cont-prev"><i class="fas fa-caret-left"></i></div>
-                                                <div class="ss-slider-cont ss-slider-cont-next"><i class="fas fa-caret-right"></i></div>
+                                                <div class="ss-slider-cont ss-slider-cont-prev" aria-hidden="true"><i class="fas fa-caret-left"></i></div>
+                                                <div class="ss-slider-cont ss-slider-cont-next" aria-hidden="true"><i class="fas fa-caret-right"></i></div>
                                             </div>
                                         </div>
                                         <!-- single-post-media end   -->
@@ -113,7 +101,7 @@
     
 <div class="spn_box_img">
     
-    <img src="{{ image_url($prev->image, 'images/all/2.jpg') }}" class="respimg" alt="">
+    <img src="{{ image_url($prev->image, 'images/logo.png') }}" class="respimg" alt="">
     
 </div>
     
@@ -133,7 +121,7 @@
     
 <div class="spn_box_img">
     
-    <img src="{{ image_url($next->image, 'images/all/20.jpg') }}" class="respimg" alt="">
+    <img src="{{ image_url($next->image, 'images/logo.png') }}" class="respimg" alt="">
     
 </div>
     
