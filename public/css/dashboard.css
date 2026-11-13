@@ -2733,3 +2733,23 @@
 	.upload-async { padding: 12px; }
 	.upload-async-img { max-width: 100%; }
 }
+
+
+/* ---------- Newsletter (admin) â€” flash de aÃ§Ãµes ---------------------- */
+.newsletter-msg {
+	font-size: 12px;
+	line-height: 1.45;
+	padding: 9px 12px;
+	border-radius: 4px;
+	margin: 0 0 12px;
+}
+
+.newsletter-msg-ok {
+	background: #EBFAF0;
+	color: #176B3A;
+}
+
+.newsletter-msg-erro {
+	background: #FDECEF;
+	color: #8A1F1F;
+}

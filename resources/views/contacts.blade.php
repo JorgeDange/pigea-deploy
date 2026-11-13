@@ -64,7 +64,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- box-widget  end -->				
+                                    <!-- box-widget  end -->
+                                    <!-- newsletter (doc/newsletter.md) -->
+                                    <x-newsletter-form variante="contacto" />
                                 </div>
                                 <div class="col-md-8">
                                     <div class="pad-con fl-wrap">

@@ -44,6 +44,7 @@
         $grupos[] = ['rotulo' => 'Sistema', 'itens' => [
             ['chave' => 'utilizadores', 'nome' => 'Utilizadores', 'icone' => 'fa-users', 'rota' => 'admin.utilizadores', 'can' => 'user.manage'],
             ['chave' => 'configuracoes', 'nome' => 'Configurações', 'icone' => 'fa-cog', 'rota' => 'admin.configuracoes', 'can' => 'settings.manage'],
+            ['chave' => 'newsletter', 'nome' => 'Newsletter', 'icone' => 'fa-envelope', 'rota' => 'admin.newsletter', 'can' => null],
         ]];
     }
 @endphp

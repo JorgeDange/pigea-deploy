@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\NewsEditorController;
 use App\Http\Controllers\Admin\NoticiaImagemController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AcompanhamentoController;
+use App\Http\Controllers\Admin\NewsletterAdminController;
 use App\Http\Controllers\Admin\BannerFormController;
 use App\Http\Controllers\Admin\DestaquesController;
 use App\Http\Controllers\Admin\PublicidadeImagemController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Frontend\LegislationController;
 use App\Http\Controllers\Frontend\NewsController;
 use App\Http\Controllers\Frontend\ProjectController;
 use App\Http\Controllers\Frontend\ResearchController;
+use App\Http\Controllers\Frontend\NewsletterController;
 use App\Http\Controllers\Frontend\SearchController;
 use App\Http\Controllers\Frontend\SupplierController;
 use App\Http\Controllers\Frontend\TechnologyController;
@@ -80,6 +82,18 @@ Route::get('/pesquisa', [SearchController::class, 'index'])->name('search.index'
 Route::view('/sobre', 'about')->name('about');
 Route::view('/contactos', 'contacts')->name('contacts');
 
+// Newsletter — inscrição pública com dupla opt-in (doc/newsletter.md FASE N1).
+// throttle:10,1 — anti-spam por IP; o email de confirmação é já a 2.ª barreira.
+Route::post('/newsletter', [NewsletterController::class, 'subscribe'])
+    ->middleware('throttle:10,1')
+    ->name('newsletter.subscribe');
+Route::get('/newsletter/confirmar/{token}', [NewsletterController::class, 'confirmar'])
+    ->where('token', '[A-Za-z0-9]{20,100}')
+    ->name('newsletter.confirmar');
+Route::get('/newsletter/cancelar/{token}', [NewsletterController::class, 'cancelar'])
+    ->where('token', '[A-Za-z0-9]{20,100}')
+    ->name('newsletter.cancelar');
+
 // Registo público no Diretório (restrutura.md §4 — sem login; a submissão
 // cria o registo com status `pendente` para aprovação no /admin). As vistas
 // embutem os componentes Livewire RegistoEmpresa/RegistoProfissional.
@@ -121,6 +135,11 @@ Route::post('/csp-report', CspReportController::class)
 Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'))->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::get('/acompanhamento', [AcompanhamentoController::class, 'index'])->name('acompanhamento');
+    // Newsletter (doc/newsletter.md FASE N1) — dados pessoais: só role:admin
+    Route::get('/newsletter', [NewsletterAdminController::class, 'index'])->middleware('role:admin')->name('newsletter');
+    Route::post('/newsletter/adicionar', [NewsletterAdminController::class, 'adicionar'])->middleware('role:admin')->name('newsletter.adicionar');
+    Route::delete('/newsletter/{id}', [NewsletterAdminController::class, 'remover'])->middleware('role:admin')->whereNumber('id')->name('newsletter.remover');
+    Route::get('/newsletter/exportar.csv', [NewsletterAdminController::class, 'exportar'])->middleware('role:admin')->name('newsletter.exportar');
     Route::get('/perfil', [ProfileController::class, 'index'])->name('perfil');
     Route::post('/perfil', [ProfileController::class, 'update'])->name('perfil.update');
     Route::view('/noticias', 'admin.noticias')->middleware('can:news.manage')->name('noticias');

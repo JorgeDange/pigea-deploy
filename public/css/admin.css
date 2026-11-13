@@ -2753,6 +2753,26 @@
 }
 
 
+/* ---------- Newsletter (admin) â€” flash de aÃ§Ãµes ---------------------- */
+.newsletter-msg {
+	font-size: 12px;
+	line-height: 1.45;
+	padding: 9px 12px;
+	border-radius: 4px;
+	margin: 0 0 12px;
+}
+
+.newsletter-msg-ok {
+	background: #EBFAF0;
+	color: #176B3A;
+}
+
+.newsletter-msg-erro {
+	background: #FDECEF;
+	color: #8A1F1F;
+}
+
+
 /* ---------- 3) resgatadas de style.css/plugins.css (usadas pelo admin) ---------- */
 /*!
  * Font Awesome Pro 5.12.0 by @fontawesome - https://fontawesome.com
@@ -2844,13 +2864,16 @@
 .fa-cloud-upload-alt:before {content:"\f382"}
 .fa-cog:before {content:"\f013"}
 .fa-copy:before {content:"\f0c5"}
+.fa-envelope:before {content:"\f0e0"}
 .fa-exclamation:before {content:"\f12a"}
 .fa-external-link-alt:before {content:"\f35d"}
 .fa-eye:before {content:"\f06e"}
 .fa-eye-slash:before {content:"\f070"}
 .fa-file-alt:before {content:"\f15c"}
+.fa-file-csv:before {content:"\f6dd"}
 .fa-fire:before {content:"\f06d"}
 .fa-folder-open:before {content:"\f07c"}
+.fa-hourglass-half:before {content:"\f252"}
 .fa-image:before {content:"\f03e"}
 .fa-link:before {content:"\f0c1"}
 .fa-map-marked-alt:before {content:"\f5a0"}
@@ -2872,6 +2895,7 @@
 .fa-undo:before {content:"\f0e2"}
 .fa-user-circle:before {content:"\f2bd"}
 .fa-user-plus:before {content:"\f234"}
+.fa-user-slash:before {content:"\f506"}
 .fa-user-tie:before {content:"\f508"}
 .fa-users:before {content:"\f0c0"}
 .fa-video:before {content:"\f03d"}

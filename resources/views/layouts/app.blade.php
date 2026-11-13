@@ -71,6 +71,8 @@
         <script src="{{ asset('js/destaque.js') }}" defer></script>
         {{-- FASE 18 — rotação dos banners verticais `lateral` (autoplay 5s) --}}
         <script src="{{ asset('js/banner-lateral.js') }}" defer></script>
+        {{-- Newsletter — modal de subscrição (aparece em todas as páginas após ~3s) --}}
+        <x-newsletter-modal />
         @stack('scripts')
     </body>
 </html>
