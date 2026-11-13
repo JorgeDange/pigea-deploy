@@ -1,10 +1,10 @@
-/* ==========================================================================
-   PIGEA — Dashboard / Painéis  (design system do frontend PIGEA)
-   Paleta: sidebar #1A1A1A · primário #C8102E · hover #A00D25 ·
-           secundário/dourado #F2A900 · perigo #8B0000 ·
-           ativo #2E7D32 · pendente #F2A900 · fundo #F5F5F5 ·
-           cards #FFFFFF · borda #E0E0E0 · texto #1A1A1A / #666666
-   Tipografia: títulos Playfair Display · corpo/UI Poppins
+﻿/* ==========================================================================
+   PIGEA â€” Dashboard / PainÃ©is  (design system do frontend PIGEA)
+   Paleta: sidebar #1A1A1A Â· primÃ¡rio #C8102E Â· hover #A00D25 Â·
+           secundÃ¡rio/dourado #F2A900 Â· perigo #8B0000 Â·
+           ativo #2E7D32 Â· pendente #F2A900 Â· fundo #F5F5F5 Â·
+           cards #FFFFFF Â· borda #E0E0E0 Â· texto #1A1A1A / #666666
+   Tipografia: tÃ­tulos Playfair Display Â· corpo/UI Poppins
    ========================================================================== */
 
 *,
@@ -36,7 +36,7 @@
 	color: #A00D25;
 }
 
-/* Botões do painel também são <a> — não devem herdar o vermelho de texto.
+/* BotÃµes do painel tambÃ©m sÃ£o <a> â€” nÃ£o devem herdar o vermelho de texto.
    Especificidade (0,2,1) vence ".dashboard-wrap a" (0,1,1) sem tocar em
    `.sidebar-item a` nem em links de texto puro. */
 .dashboard-wrap a.btn-primary,
@@ -243,7 +243,7 @@
 	transition: border-color .2s ease, color .2s ease;
 }
 
-/* Sino + logout: sempre visíveis no topbar (regra do cms_pro.md),
+/* Sino + logout: sempre visÃ­veis no topbar (regra do cms_pro.md),
    desktop e mobile. */
 .header-icon,
 .header-logout {
@@ -313,7 +313,7 @@
 }
 
 .dashboard-breadcrumb li::after {
-	content: "›";
+	content: "\203A";
 	margin-left: 6px;
 	color: #767676;
 }
@@ -335,7 +335,7 @@
 	font-weight: 600;
 }
 
-/* ---------- CARDS / SECÇÕES --------------------------------------------- */
+/* ---------- CARDS / SECÃ‡Ã•ES --------------------------------------------- */
 .card {
 	background: #FFFFFF;
 	border: 1px solid #E0E0E0;
@@ -524,7 +524,7 @@
 	color: #8B0000;
 }
 
-/* ---------- FORMULÁRIOS -------------------------------------------------- */
+/* ---------- FORMULÃRIOS -------------------------------------------------- */
 .dashboard-form-group {
 	margin-bottom: 18px;
 }
@@ -677,7 +677,7 @@
 	color: #C8102E;
 }
 
-/* ---------- BOTÕES ------------------------------------------------------- */
+/* ---------- BOTÃ•ES ------------------------------------------------------- */
 .btn-primary,
 .btn-secondary,
 .btn-danger,
@@ -773,7 +773,7 @@
 	color: #C8102E;
 }
 
-/* ---------- NOTIFICAÇÕES ------------------------------------------------- */
+/* ---------- NOTIFICAÃ‡Ã•ES ------------------------------------------------- */
 .notification-item {
 	display: flex;
 	align-items: flex-start;
@@ -781,11 +781,12 @@
 	padding: 15px 16px;
 	border-bottom: 1px solid #E0E0E0;
 	border-radius: 6px;
+	text-decoration: none;
+	color: #1A1A1A;
 }
 
 .notification-item.unread {
 	background: #FDF3F5;
-	border-left: 3px solid #C8102E;
 }
 
 .notif-badge-nova {
@@ -872,7 +873,7 @@
 	min-width: 220px;
 }
 
-/* ---------- Newsletter (admin) — pesquisa + adicionar ------------------ */
+/* ---------- Newsletter (admin) â€” pesquisa + adicionar ------------------ */
 .newsletter-toolbar {
 	display: flex;
 	gap: 10px;
@@ -1175,7 +1176,7 @@
 	transform: translateX(18px);
 }
 
-/* ---------- Mais lidas — Top 5 (FASE E2) -------------------------- */
+/* ---------- Mais lidas â€” Top 5 (FASE E2) -------------------------- */
 .top5-list {
 	list-style: none;
 	margin: 0;
@@ -1237,7 +1238,7 @@
 	gap: 6px;
 }
 
-/* ---------- Página «Acompanhamento» (novo desenho) ---------------------- */
+/* ---------- PÃ¡gina Â«AcompanhamentoÂ» (novo desenho) ---------------------- */
 .acomp-charts-row {
 	display: grid;
 	grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -1612,7 +1613,7 @@
 	letter-spacing: .05em;
 }
 
-/* --- Províncias: barras proporcionais --- */
+/* --- ProvÃ­ncias: barras proporcionais --- */
 .acomp-rank {
 	list-style: none;
 	margin: 0 0 10px;
@@ -1734,7 +1735,7 @@
 	color: #C8102E;
 }
 
-/* --- Banners «Largo»: lista + anel de inventário ------------------- */
+/* --- Banners Â«LargoÂ»: lista + anel de inventÃ¡rio ------------------- */
 .acomp-banner-split {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) 128px;
@@ -1835,7 +1836,7 @@
 	color: #8A8A8A;
 }
 
-/* ---------- TOGGLE "Destacar na Página Inicial" (editoria_cms.md) ---- */
+/* ---------- TOGGLE "Destacar na PÃ¡gina Inicial" (editoria_cms.md) ---- */
 .featured-toggle {
 	display: flex;
 	align-items: center;
@@ -2223,10 +2224,11 @@
 	}
 }
 
-/* ---------- Extras de conteúdo ---------- */
+/* ---------- Extras de conteÃºdo ---------- */
 .notification-list {
   display: flex;
   flex-direction: column;
+  gap: 12px;
 }
 .notification-item {
   display: flex;
@@ -2304,7 +2306,7 @@
 /* --- PIGEA: graficos Chart.js (no prototipo as caixas eram placeholder) ---
    O `.chart-box` original era flex para centrar o texto "reservado para
    Chart.js"; com um canvas passa a block, para o grafico ocupar a largura da
-   caixa. A altura fixa de 250px mantem-se — as tres caixas continuam alinhadas
+   caixa. A altura fixa de 250px mantem-se â€” as tres caixas continuam alinhadas
    na mesma grelha. */
 .chart-box {
   display: block;
@@ -2328,28 +2330,28 @@
 }
 
 /* --- PIGEA: inputs de ficheiro --------------------------------------------
-   O protótipo deixava o `<input type="file">` no aspecto nativo do browser
+   O protÃ³tipo deixava o `<input type="file">` no aspecto nativo do browser
     (botao cinzento em degrade + 'No file selected') - nunca houve upload a
     funcionar para justificar mais nada. Aqui o botao passa a ser o da marca e
-   o nome do ficheiro escolhido fica legível.
+   o nome do ficheiro escolhido fica legÃ­vel.
 
-   Feito **só com CSS, sem mexer no markup**: os 10 formulários mantêm
-   exactamente a linha do protótipo
+   Feito **sÃ³ com CSS, sem mexer no markup**: os 10 formulÃ¡rios mantÃªm
+   exactamente a linha do protÃ³tipo
    (`<div class="upload-box">texto<br><input type="file"></div>`), por isso a
-   fidelidade visual continua íntegra e a mudança é só de estilo.
+   fidelidade visual continua Ã­ntegra e a mudanÃ§a Ã© sÃ³ de estilo.
 
     ::file-selector-button estiliza o botao nativo (Chrome/Edge 89+,
-   Firefox 82+, Safari 14.1+). Foi preferido a esconder o input atrás de um
-   `<label>` de propósito: `display:none` tirava o campo do percurso do Tab e
+   Firefox 82+, Safari 14.1+). Foi preferido a esconder o input atrÃ¡s de um
+   `<label>` de propÃ³sito: `display:none` tirava o campo do percurso do Tab e
     deixava o leitor de ecra sem controlo do upload, e exigia reescrever o
     markup das 10 vistas. Num browser sem suporte degrada para o botao
-   original — nunca fica partido.
+   original â€” nunca fica partido.
 
    Cores casadas com `.btn-primary` (mesmo vermelho, mesmo hover). */
 .upload-box input[type="file"] {
    /* Remove a moldura/degrade que cada browser da por omissao ao conjunto
       botao+texto, para ficar so o botao da marca e o nome do ficheiro -
-     é o que torna o resultado igual em Chrome, Firefox e Safari. */
+     Ã© o que torna o resultado igual em Chrome, Firefox e Safari. */
   appearance: none;
   -webkit-appearance: none;
   background: transparent;
@@ -2381,12 +2383,12 @@
   background: #A00D25;
 }
 
-/* O anel de foco continua no input inteiro (visível, inclui o nome do
+/* O anel de foco continua no input inteiro (visÃ­vel, inclui o nome do
     ficheiro) - e o comportamento nativo, nao se mexe. */
 
 /* ===== CMS PRO (cms_pro.md) - dashboard e components ===================== */
 
-/* Gráfico central dos 7 dias de visitas (CMS Pro §4.1) */
+/* GrÃ¡fico central dos 7 dias de visitas (CMS Pro Â§4.1) */
 .chart-box-principal canvas {
 	height: 260px !important;
 }
@@ -2399,7 +2401,7 @@
 	gap: 24px;
 	padding: 22px 26px;
 	margin-bottom: 22px;
-	border-left: 4px solid #C8102E;
+	
 }
 .quick-action h2 {
 	font-family: 'Playfair Display', serif;
@@ -2491,7 +2493,7 @@
 .news-preview { font-family: 'Poppins', sans-serif; color: #1A1A1A; }
 .news-preview-capa { display: block; width: 100%; max-height: 320px; object-fit: cover; border-radius: 6px; margin: 0 0 16px; }
 .news-preview-capa[hidden] { display: none; }
-/* Imagem da capa actual no formul�rio (substitui inline style) */
+/* Imagem da capa actual no formulï¿½rio (substitui inline style) */
 .capa-atual { max-width: 100%; height: auto; max-height: 90px; object-fit: cover; border-radius: 4px; }
 .news-preview-meta { display: flex; gap: 12px; align-items: center; margin: 6px 0 10px; font-size: 12px; color: #666666; }
 .news-preview-meta .post-category { background: #C8102E; color: #fff; font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: .06em; padding: 4px 10px; border-radius: 3px; }
@@ -2522,12 +2524,12 @@
 	color: #A06F00;
 }
 
-/* Texto auxiliar "ok" (verde-sucesso, mesma família do sistema) */
+/* Texto auxiliar "ok" (verde-sucesso, mesma famÃ­lia do sistema) */
 .help-text-ok {
 	color: #2E7D32;
 }
 
-/* Coluna de ações do editor de notícias (sem flex auxiliar inexistente) */
+/* Coluna de aÃ§Ãµes do editor de notÃ­cias (sem flex auxiliar inexistente) */
 .editor-actions-body {
 	display: flex;
 	flex-direction: column;
@@ -2585,7 +2587,7 @@
 }
 .skip-link:focus-visible { top: 10px; }
 
-/* Breadcrumb numa UNICA linha (ol E ul — as vistas usam ol) */
+/* Breadcrumb numa UNICA linha (ol E ul â€” as vistas usam ol) */
 .dashboard-breadcrumb ul,
 .dashboard-breadcrumb ol {
 	display: flex;
@@ -2601,7 +2603,7 @@
 }
 .dashboard-breadcrumb li { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; }
 
-/* Coluna de acções do editor — estática (não acompanha o scroll) */
+/* Coluna de acÃ§Ãµes do editor â€” estÃ¡tica (nÃ£o acompanha o scroll) */
 .editor-actions { position: static; top: auto; align-self: start; }
 
 /* Toast global (substitui o flash simples) */
@@ -2642,13 +2644,13 @@
 
 /* Preview ao CRIAR (imagem escolhida antes de guardar) */
 .file-upload-preview[hidden] { display: none; }
-/* Faixa de miniaturas — várias imagens (contexto, projeto-novo) */
+/* Faixa de miniaturas â€” vÃ¡rias imagens (contexto, projeto-novo) */
 .file-upload-previews { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .file-upload-previews[hidden] { display: none; }
 .file-upload-preview-item { width: 96px; text-align: center; }
 .file-upload-preview-item img { width: 96px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid #E0E0E0; }
 .file-upload-preview-item span { display: block; font-size: 10px; color: #717171; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; }
-/* Miniaturas de PDF — SÓ se o ficheiro for PDF (preview por iframe local) */
+/* Miniaturas de PDF â€” SÃ“ se o ficheiro for PDF (preview por iframe local) */
 .file-upload-docs { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
 .file-upload-docs[hidden] { display: none; }
 .file-upload-doc { display: flex; gap: 10px; align-items: center; border: 1px solid #E0E0E0; border-radius: 6px; background: #FFFFFF; padding: 6px 8px; }
@@ -2657,27 +2659,27 @@
 .file-upload-remove { background: none; border: none; color: #C8102E; font-size: 12px; cursor: pointer; padding: 4px 8px; text-decoration: underline; }
 .file-upload-erro { margin-top: 8px; color: #8B0000; font-size: 12px; }
 
-/* Barra de contadores de caracteres (titulo/subtítulo/SEO) */
+/* Barra de contadores de caracteres (titulo/subtÃ­tulo/SEO) */
 .form-counter { display: flex; justify-content: flex-end; margin-top: 4px; font-size: 11px; color: #666666; font-variant-numeric: tabular-nums; }
 .form-counter.warn { color: #A06F00; }
 .form-counter.over { color: #C8102E; font-weight: 600; }
 
-/* ===== cms_v.md FASE 6 - campos do formulário e badges ================= */
+/* ===== cms_v.md FASE 6 - campos do formulÃ¡rio e badges ================= */
 
 /* Hint inline dentro do label */
 .form-label-hint { font-weight: 400; color: #666666; font-size: 11px; margin-left: 6px; }
 
-/* Slug em monoespaçado */
+/* Slug em monoespaÃ§ado */
 .slug-input { font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; font-size: 13px; letter-spacing: .01em; }
 .slug-state { display: none; font-size: 11.5px; margin-top: 4px; }
 .slug-state.ok { display: block; color: #2E7D32; }
 .slug-state.taken { display: block; color: #C8102E; }
 
-/* Painel «Mais opções» */
+/* Painel Â«Mais opÃ§ÃµesÂ» */
 .editor-more { border: 1px solid #E0E0E0; border-radius: 8px; background: #FFFFFF; overflow: hidden; }
 .editor-more summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; padding: 14px 18px; font-family: 'Playfair Display', serif; font-size: 15px; color: #1A1A1A; }
 .editor-more summary::-webkit-details-marker { content: ''; }
-.editor-more summary::after { content: '▸'; color: #A0A0A0; transition: transform .2s ease; }
+.editor-more summary::after { content: 'â–¸'; color: #A0A0A0; transition: transform .2s ease; }
 .editor-more[open] summary::after { transform: rotate(90deg); }
 .editor-more summary:focus-visible { outline: 2px solid #C8102E; outline-offset: 2px; }
 .editor-more-body { padding: 4px 18px 18px; border-top: 1px solid #E0E0E0; display: flex; flex-direction: column; gap: 4px; }
@@ -2687,15 +2689,15 @@
 .editor-more-seo summary { display: flex; cursor: pointer; padding: 10px 14px; font-size: 13px; font-weight: 600; color: #1A1A1A; }
 .editor-more-seo summary::-webkit-details-marker { content: ''; }
 .editor-more-seo summary::after { content: '+'; font-size: 15px; color: #C8102E; margin-left: auto; }
-.editor-more-seo[open] summary::after { content: '−'; }
+.editor-more-seo[open] summary::after { content: 'âˆ’'; }
 .editor-more-seo .dashboard-form-group { padding: 10px 14px 0; }
 
 /* Estado badge como par no h2 */
 .card-head .status-badge { margin-left: auto; }
 
-/* ===== cms_v.md FASE 7 - lista de notícias ============================= */
+/* ===== cms_v.md FASE 7 - lista de notÃ­cias ============================= */
 
-/* Cabeçalho ordenável (↑ / ↓) */
+/* CabeÃ§alho ordenÃ¡vel (â†‘ / â†“) */
 .dashboard-table-sort {
 	background: none;
 	border: none;
@@ -2731,24 +2733,24 @@
 .autosave.saved { color: #2E7D32; }
 .autosave.error { color: #C8102E; font-weight: 600; }
 
-/* ===== Fase 11 - toggle «Ficheiro vs Link» da capa =================== */
+/* ===== Fase 11 - toggle Â«Ficheiro vs LinkÂ» da capa =================== */
 .cover-source { display: flex; gap: 18px; padding: 10px 2px 6px; border-bottom: 1px solid #F0F0F0; margin-bottom: 14px; }
 
-/* ===== Dashboard: correção dos gráficos (vaza do card) ================= */
+/* ===== Dashboard: correÃ§Ã£o dos grÃ¡ficos (vaza do card) ================= */
 
 .chart-box { display: block; height: 280px !important; overflow: hidden; box-sizing: border-box !important; border-left: 0; }
 .chart-titulo { margin: 0 0 12px !important; text-align: left !important; }
 .chart-box canvas { display: block; width: 100% !important; height: 220px !important; max-width: 100% !important; border: 0; }
-.chart-box-principal { grid-column: 1 / -1; border-left: 3px solid #C8102E !important; height: 300px !important; }
+.chart-box-principal { grid-column: 1 / -1; height: 300px !important; }
 .chart-box-principal canvas { height: 240px !important; }
 .charts-grid { grid-template-columns: 1fr 1fr; gap: 18px; }
 @media (max-width: 1064px) { .charts-grid { grid-template-columns: 1fr; } .chart-box, .chart-box-principal { height: auto !important; } .chart-box canvas { height: 240px !important; } }
 
-.notification-item.notification-item-link { text-decoration: none; color: #1A1A1A; cursor: pointer; border-left: 3px solid transparent; }
-.notification-item-link:hover { background: #FDF3F5; border-left-color: #C8102E; }
+.notification-item.notification-item-link { text-decoration: none; color: #1A1A1A; cursor: pointer; }
+.notification-item-link:hover { background: #FDF3F5; }
 .notification-item-link:focus-visible { outline: 2px solid #C8102E; outline-offset: -2px; border-radius: 4px; }
 
-/* ===== Fase 16 — Upload assíncrono (Publicidade) ===== */
+/* ===== Fase 16 â€” Upload assÃ­ncrono (Publicidade) ===== */
 .upload-async {
 	display: flex;
 	flex-wrap: wrap;
@@ -2779,7 +2781,7 @@
 .upload-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #C8102E 0%, #E11D2E 100%); border-radius: 99px; transition: width .15s ease; }
 .upload-progress-value { font-size: 11px; color: #666666; margin-top: 4px; }
 
-/* Preview do banner no painel lateral (card de pré-visualização) */
+/* Preview do banner no painel lateral (card de prÃ©-visualizaÃ§Ã£o) */
 .preview-banner { border: 1px solid #ECECEC; border-radius: 8px; padding: 14px; text-align: center; background: linear-gradient(#FCFCFC, #F5F5F5); }
 .preview-banner-box { position: relative; height: 120px; border-radius: 6px; overflow: hidden; background: #EFEFEF; display: flex; align-items: center; justify-content: center; }
 .preview-banner-img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -2801,7 +2803,7 @@
 }
 
 
-/* ---------- Newsletter (admin) â€” flash de aÃ§Ãµes ---------------------- */
+/* ---------- Newsletter (admin) Ã¢â‚¬â€ flash de aÃƒÂ§ÃƒÂµes ---------------------- */
 .newsletter-msg {
 	font-size: 12px;
 	line-height: 1.45;

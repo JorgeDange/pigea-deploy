@@ -1,5 +1,6 @@
 @props(['itens' => []])
 
+<div class="notification-list">
 @if (count($itens) === 0)
     <div class="notification-item">
         <div class="notification-content"><p>Sem atividade recente.</p></div>
@@ -18,3 +19,4 @@
         </a>
     @endforeach
 @endif
+</div>
