@@ -2983,3 +2983,7 @@
 .fa-rotate:before { content: "\f021"; }
 .fa-cloud-check:before { content: "\f058"; }
 
+
+/* Texto de apoio abaixo do cabecalho dos cards (alinhado ao padding de .card-body). Era usado em 8 views sem qualquer regra CSS. */
+.helper-text { margin: 0; padding: 0 24px 14px; font-size: 13px; line-height: 1.45; color: #5A5A5A; }
+.helper-text strong { color: #1A1A1A; font-weight: 600; }
