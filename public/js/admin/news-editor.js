@@ -127,11 +127,32 @@ tinymce.init({
 	if (campo) campo.focus();
 })();
 
-/* ---------- Guarda contra duplo clique nos botões de submit ---------- */
+/* ---------- Guarda contra duplo clique nos botões de submit ----------
+   Capturamos o submitter ANTES de desativar os botoes: botoes disabled sao
+   excluidos do corpo da requisicao, por isso `acao` nunca chegava ao servidor
+   e o botao "Publicar" caia no fallback "rascunho". */
 (function () {
 	var form = document.getElementById('news-editor-form');
 	if (!form) return;
-	form.addEventListener('submit', function () {
+	var acaoClicada = null;
+	form.addEventListener('click', function (e) {
+		var btn = e.target && e.target.closest ? e.target.closest('button[type="submit"]') : null;
+		if (btn) acaoClicada = btn.value;
+	});
+	form.addEventListener('submit', function (e) {
+		form.dataset.submetendo = '1';
+		// Garante que o acao chega server-side (evento.submitter e fiável no Chrome/Edge/Firefox; fallback = acaoClicada).
+		var valor = (e && e.submitter && e.submitter.value) ? e.submitter.value : acaoClicada;
+		if (valor) {
+			var hidden = form.querySelector('input[type="hidden"][name="acao"]');
+			if (!hidden) {
+				hidden = document.createElement('input');
+				hidden.type = 'hidden';
+				hidden.name = 'acao';
+				form.appendChild(hidden);
+			}
+			hidden.value = valor;
+		}
 		// Garantia de sincronização mesmo sem eventos do TinyMCE
 		if (window.tinymce) tinymce.triggerSave();
 		form.querySelectorAll('button[type="submit"]').forEach(function (b) { b.disabled = true; });
@@ -478,6 +499,7 @@ tinymce.init({
     // (envio fire-and-forget garantido pelo browser mesmo a fechar a aba).
     window.addEventListener('beforeunload', function () {
         if (!sujo) return;
+        if (form.dataset.submetendo) return; // o form vai ser submetido já — não duplicar envio
         var ed = window.tinymce && tinymce.get('conteudo-editor');
         var assinatura = assinaturaAtual();
         if (assinatura === ultimoPayload) { sujo = false; return; }
