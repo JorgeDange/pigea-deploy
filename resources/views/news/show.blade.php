@@ -89,17 +89,26 @@
                                             </div>
                                             <div class="clearfix"></div>
                                             @include('news.partials.article-body', ['content' => $post->content])
+                                            @php
+                                                $tagsPost = collect(explode(',', (string) $post->tags))
+                                                    ->map(fn ($t) => trim($t))
+                                                    ->filter()
+                                                    ->unique()
+                                                    ->take(10)
+                                                    ->values();
+                                            @endphp
+                                            @if ($tagsPost->isNotEmpty())
                                             <div class="single-post-footer fl-wrap">
                                                 <div class="post-single-tags">
                                                     <span class="tags-title"><i class="fas fa-tag"></i> Tags : </span>
                                                     <div class="tags-widget">
-                                                        <a href="#">Internacional</a>
-                                                        <a href="#">Água</a>
-                                                        <a href="#">Ambiente</a>
-                                                        <a href="#">Lifestyle</a>
+                                                        @foreach ($tagsPost as $tag)
+                                                            <a href="{{ route('search.index', ['se' => $tag]) }}">{{ $tag }}</a>
+                                                        @endforeach
                                                     </div>
                                                 </div>
                                             </div>
+                                            @endif
                                             <!-- single-post-nav"   -->
                                             <div class="single-post-nav fl-wrap">
                                                 @if ($prev)
