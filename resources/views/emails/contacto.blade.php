@@ -32,7 +32,7 @@
         <!-- Cabeçalho escuro + barra vermelha -->
         <tr>
           <td class="pad-head" style="background:#1A1A1A; padding: 26px 30px 20px; text-align:left;">
-            <img src="{{ $message->embed(public_path('images/logo2.webp')) }}" alt="PIGEA — Plataforma de Impulsionamento das Geociências em Angola" width="150" height="63" style="display:block; width:150px; max-width:150px; height:auto; border:0;">
+            <img src="https://i.ibb.co/jvhNs1zv/logo.png" alt="PIGEA — Plataforma de Impulsionamento das Geociências em Angola" width="150" style="display:block; width:150px; max-width:150px; height:auto; border:0;">
             <div style="border-bottom: 3px solid #C8102E; line-height:3px; font-size:3px; margin: 18px 0 0;">&nbsp;</div>
           </td>
         </tr>

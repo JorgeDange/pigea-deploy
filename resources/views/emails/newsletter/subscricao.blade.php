@@ -5,7 +5,7 @@
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#FFFFFF; padding:40px 20px;">
         <tr><td align="center">
             <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px; width:100%;">
-                <tr><td align="center" style="padding:0 0 30px 0;"><img src="https://pigea.ao/images/logo.webp" alt="PIGEA" width="150" style="display:block; max-width:150px; height:auto;"></td></tr>
+                <tr><td align="center" style="padding:0 0 30px 0;"><img src="https://i.ibb.co/jvhNs1zv/logo.png" alt="PIGEA" width="150" style="display:block; width:150px; max-width:150px; height:auto; border:0;"></td></tr>
                 <tr><td align="center" style="padding:0 0 20px 0;">
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr><td align="center" style="width:80px; height:80px; background-color:#F2A900; border-radius:50%;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
