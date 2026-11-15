@@ -2,10 +2,10 @@
 
 **Projeto:** PIGEA
 **Localização:** `C:\Users\Jorge Dange\Documents\PROJECTOS DE CLIENTES\QNB\pigea\pigea-deploy\`
-**Última atualização:** 15/11/2026 (esta revisão cobre **tudo** até esta data)
+**Última atualização:** 15/11/2026 (noite — inclui a **release «Produção 2026-11-16»**, o deploy, o **incidente/correção do route cache** em produção, a **reparação da árvore de categorias de notícias** (news=37/menu=16) e a **análise dos 3 uploads de imagem** no editor de notícias)
 **Propósito:** Manter contexto de tudo o que foi analisado, instalado, decidido e planeado para não perder rastro do trabalho.
 
-> Estado no fecho desta atualização (15/11/2026): **branch `updates` e `main` sincronizadas em `cdc6cf7`**; suíte local **261 testes / 884 assertions verdes**; `php artisan view:cache` limpo; tudo o que está em `main` foi push para o GitHub.
+> Estado no fecho desta atualização (15/11/2026, noite): **branch `updates` e `main` sincronizadas em `046930f`**; suíte local **279 testes / 962 assertions verdes**; **produção restaurada** em 2026-11-15 à noite após o erro «Route [equipa] not defined» (o `routes/web.php` no servidor estava desatualizado / a route cache antiga em `bootstrap/cache/` sombreava as rotas novas). Site volta a funcionar; smoke tests do cliente em curso.
 
 ---
 
@@ -30,8 +30,20 @@ O PIGEA é um portal de notícias + directório (Empresas/Profissionais/Document
 | **Performance/CLS** (otimização) | ✅ 15/11/2026 (`90c1f96`; §4 async-CSS revertida por FOUC) |
 | **Autosave (trava, bónus por fechada sem guardar)** | ✅ 15/11/2026 (`b9dee36`, Opção B) |
 | **Email (gatilho SMTP de produção + email HTML do contacto)** | ✅ 14–15/11/2026 (`d5985d7`) |
+| **Newsletter simplificada** | ✅ 15/11/2026 — 3 templates HTML (subscrição/confirmação/cancelamento); estados `pending`/`active`/`cancelled` (migrados: `confirmed`→`active`, `unsubscribed`→`cancelled`, ENUM widened→converter→estreitar); mailables `NewsletterConfirmacao`/`NewsletterCancelamento`; rota `/newsletter/resubscrever/{token}`; migração `2026_11_16_000000_newsletter_simplificar_statuses` |
+| **Home — "Últimas Notícias" server-rendered** | ✅ 15/11/2026 — abas AJAX (Mineração/Água/Ambiente/Investigação) **removidas**; lista das 5 mais recentes por `published_at` (reusa `$listNews`, view direto no `home.blade.php`) |
+| **Widget publicitário sem título** | ✅ 15/11/2026 — "Escolha da Equipa" apagada de `components/destaque.blade.php`; textos admin/docs/tests ajustados |
+| **Mega menu — "Missão, visão e valores" removida** | ✅ 15/11/2026 — saiu do grupo sobre (redundante com /sobre); migração `2026_11_19_000000_remove_missao_menu_item` remove a subcategoria e renumera o grupo 1–4 (**sobre = 4 itens**, 43 items no total no teste MegaMenuTest); `MenuCategorias::DESTINOS` limpo |
+| **Institucional — Equipa + Parceiros** | ✅ 15/11/2026 (`18b9c82`) — páginas públicas `/equipa` e `/parceiros`; CRUD Livewire+FormRequest admin completo (Cargo select "Outros" + input `cargo_outro` obrigatório); sidebar admin institucional + rotas `admin.equipa*`/`admin.parceiros*`; `TeamMember`/`Partner` models; `App\Support\Institucional` |
+| **Sobre Nós editável** | ✅ 15/11/2026 — painel definido em Admin → Configurações (subtitle "Sobre Nós"): Missão, Visão, Valores, vídeo institucional, overlay; defaults aplicados; **suite 279/962 verde** |
+| **Diretório — emails transacionais** | ✅ 15/11/2026 — mailables `RegistoConfirmacao`/`RegistoAprovado`/`RegistoRejeitado` (templates `emails/registo/*`) via novo mailer **`geral`** (host `mail.pigea.ao:465 smtps`, remetente `geral@pigea.ao`) **separado** do mailer da newsletter (`newsletter@pigea.ao`, **intocado**); `replyTo` do contacto = visitante; campo `email` **obrigatório** no formulário de registo; migração `2026_11_17_000000_add_email_to_companies_professionals` |
+| **`config/mail.php`** | ✅ 15/11/2026 — nova chave `mailers.geral` + `geral_from` (endereço/nome); nada do bloco `mail` atual alterado |
+| **Deploy manual FTP — release 2026-11-16** | ✅ 15/11/2026 — backup pré-deploy; patch **`prod-patch-2026-11-16.sql` aplicado no phpMyAdmin do servidor** (Secção 1 diagnóstica; índice `companies_nif_unique` protegido via information_schema; **migrações marcadas como executadas = 29**); upload FTP; ~~`prod-categorias-news.sql` fica opcional~~ → **aplicado de facto e verificado** (news=37/menu=16) porque o select do editor mostrava «poucas»; ver linha abaixo |
+| **INCIDENTE de produção 15/11 20:59 — RESOLVIDO** | ✅ 15/11/2026 — "Route [equipa] not defined. (View: …/components/main-menu.blade.php)" em todas as páginas públicas. **Causa:** o `routes/web.php` no servidor estava desatualizado / a route cache (`bootstrap/cache/routes-v7.php`/`config.php`) sombreava as rotas novas (a home renderiza `home.blade.php` → componente `main-menu` → `MenuCategorias::grupos()` → `DESTINOS['sobre']['equipa']` → `route('equipa')` → exceção). **Correção:** completar o deploy FTP da release (`routes/web.php` + código novo) + apagar `bootstrap/cache/routes-v7.php`/`config.php` (ou `php artisan optimize:clear` com SSH) + limpar `storage/framework/views/*.php` + Ctrl+F5. Detalhe completo em `doc/fix-equipa-route-2026-11-15.md`. **Resultado: site volta 200; smoke tests do cliente em curso.** |
+| **Categorias de notícias — produção REPARADA** | ✅ 15/11/2026 (noite) — o select «Categoria» no «Criar Notícia» mostrava «poucas»: produção tinha **news=30** (vs local 37) e **menu=16**. **Causa:** na produção os 7 topos de news (`Água`, `Ambiente`, `Internacional`, `Investigação`, `Mineração`, `Petróleo e Gás`, `Geociências`) **não existiam** como `type='news'`; o `prod-categorias-news.sql` usava `WHERE NOT EXISTS (slug=…)` **sem filtrar o tipo** (a tabela tem `UNIQUE(type,slug)`) → os 7 topos não foram criados e os 17 filhos de Mineração/Petróleo e Gás/Geociências ficaram órfãos (`parent_id NULL`, `menu_group` correto). Academia/Oportunidades escaparam porque o patch `2026_11_11_220000` os promoveu. **Correção (phpMyAdmin, executada e verificada):** 7 INSERTs de topos + 3 UPDATEs (religar 17 órfãos, `Affected rows 5/5/7`) → **news=37, menu=16** ✔ |
+| **Uploads de imagem no «Criar Notícia» — análise dos 3 campos** | ⚠️ Analisado 15/11/2026 (decisão do cliente pendente) — **Foto do autor convidado** e **Imagem de capa** aceitam ficheiro OU link (URL guardado direto nas colunas `guest_author_avatar` / `news.image`). **«Imagens de contexto» não aceita link:** vai **sempre** para a coleção MediaLibrary `contexto` com conversão WebP `nonQueued` (validação só de ficheiro `image/mimes/max:4096` em `NewsEditorController@validar`, loop `processarMidia` com `$request->file('contexto')`); não existe campo `contexto_link` nem validação de URL (nunca implementado). **Nota extra:** a coleção `contexto` **não é renderizada em nenhuma página pública hoje** (código morto para o front). Pedido do cliente: aceitar link também aqui — opções: **(a)** `addMediaFromUrl()` (baixa + converte; save mais lento, falível); **(b)** guardar URLs (coluna JSON `contexto_links`) e `<img src>` direto (rápido, sem WebP) |
 
-**Produção atual**: site live em `https://pigea.ao/` (Laravel serve raiz). O domínio `pigea.qnbangola.ao` deixou de ser alvo. O site usa mesmo servidor de Mail (mesma máquina cPanel, `mail.pigea.ao:465 smtps`).
+**Produção atual**: site LIVE em `https://pigea.ao/` — **restaurada em 15/11/2026 à noite** após o incidente do route cache (ver tabela acima). Domínio de produção é `pigea.ao` (raiz). `pigea.qnbangola.ao` deixou de ser alvo. O site usa mesmo servidor de Mail (mesma máquina cPanel, `mail.pigea.ao:465 smtps`). O `.env` de produção mantém o bloco `MAIL_*` da newsletter **intocado** e acrescenta apenas `MAIL_GERAL_*` (transacional: `geral@pigea.ao`); `MAIL_GERAL_PASSWORD` é a password real da caixa geral (nunca comitada). **Pendente de confirmação pelo cliente:** `MAIL_GERAL_*` efetivamente presente no `.env` do servidor + smoke tests pós-recuperação.
 
 ---
 
@@ -100,6 +112,10 @@ Aplicação web construída com **Laravel 12**, **Livewire 3**, **MariaDB 10.4+*
 |---------|----------|
 | `doc/restrutura.md` | (Fornecido pelo cliente) instruções da reestruturação |
 | `doc/fase_all.md` | Plano-mestre Fases 0–10 |
+| `doc/orienta_deploy.md` | Manual de deploy da release 2026-11-16 (FTP, patch SQL no phpMyAdmin, `.env` MAIL_GERAL_*, apagar 4 ficheiros obsoletos, smoke tests §8) |
+| `doc/fix-equipa-route-2026-11-15.md` | Post-mortem do erro «Route [equipa] not defined» em produção (diagnóstico, correção passo a passo, prevenção de recorrência) |
+| `prod-patch-2026-11-16.sql` | Patch SQL idempotente para produção (29 migrações; Secção 1 diagnóstica) — na raiz do projeto, **nunca** em `public/` |
+| `prod-categorias-news.sql` | Patch SQL idempotente para repor a árvore news na produção (10 topos + 27 filhos; guard `type='news' AND slug=…` desde a v5.6) — na raiz do projeto, **nunca** em `public/` |
 | `doc/modificar.md` | Implementação e correções detalhadas de cada fase |
 | `doc/pub.md` | Módulo de publicidade e tabela banners |
 | `doc/fases_e.md` | Estado e decisões das fases E1–E6 + N |
@@ -134,6 +150,9 @@ Aplicação web construída com **Laravel 12**, **Livewire 3**, **MariaDB 10.4+*
 14. **Screenshots:** QA screenshots para o cliente (`qa-home-desktop-1440.png`, `qa-home-mobile-390.png`, etc.) guardados fora do repositório (`QNB\pigea\`).
 15. **Pasta `storage/`:** apenas esqueleto no git; uploads reais vivem exclusivamente em `storage/app/public/` (ignorado).
 16. **`otp:build`:** não aplicável — o projeto não usa Vite build no deploy (ver `deploy.md`).
+17. **Mailer transacional separado da newsletter:** `MAIL_*` (`newsletter@pigea.ao`) intocado; todos os emails da loja Diretório/Contacto saem como `PIGEA <geral@pigea.ao>` via novo mailer `geral`. `replyTo` do contacto continua o visitante.
+18. **Deploy nunca parcial:** release multi-ficheiro subida «timidamente» derruba o site inteiro (o `main-menu` é incluído por todas as páginas públicas e um `route()` em falta é 500 instantâneo). Regra nova: subir `app/`+`routes/`+`resources/`+`config/`+`database/` sempre em conjunto e, no fim, **apagar route cache** (`bootstrap/cache/routes-v7.php`/`config.php`) + views compiladas (ou `optimize:clear` por SSH) antes do Ctrl+F5.
+19. **`MenuCategorias::grupos()` sem `Route::has()`:** propositadamente mantido — o mega menu confia no `routes/web.php` completo da release; a defesa em profundidade foi deferida (release testada 279/279 inalterada para não introduzir risco na véspera do deploy).
 
 ---
 
@@ -166,17 +185,24 @@ C:\xampp\php\php.exe artisan cache:clear
 ### Acesso ao servidor
 `http://127.0.0.1:8000/` (dev). Produção: `https://pigea.ao/` (alojamento cPanel).
 
-**Deploy manual FTP/cPanel:** ver `deploy.md` — pacote via `git archive` ou lista mínima; sempre apagar `storage/framework/views/*` (exceto `.gitignore`) e `bootstrap/cache/config.php`/`services.php` e hard-refresh (Ctrl+F5). **25 migrações novas desde a primeira versão** ainda por correr no servidor (`2026_11_*`).
+**Deploy manual FTP/cPanel:** ver `deploy.md` — pacote via FTP, preservando `.env`, `storage/`, `vendor/`; sempre apagar `storage/framework/views/*.php` e `bootstrap/cache/routes-v7.php`/`config.php` (route cache sombreia rotas novas!) e hard-refresh (Ctrl+F5). **Release 2026-11-16 (15/11/2026):** patch `prod-patch-2026-11-16.sql` **aplicado** no servidor (29 migrações marcadas); ver `doc/orienta_deploy.md` (lista de upload + apagar) e `doc/fix-equipa-route-2026-11-15.md`.
 
 ---
 
-## 7. O Que Faltou / Pendências (15/11/2026)
+## 7. O Que Faltou / Pendências (15/11/2026, noite)
 
 | Item | Estado | Observação |
 |------|--------|------------|
-| Migrar as 25 migrações novas na produção | ❌ Pendente | O `php artisan migrate --force` não foi corrido no servidor; as 5 categorias de mudanças de dados existem apenas no git |
-| `php artisan storage:link` na produção | ❌ Pendente | Necessário para servir uploads |
-| `php artisan pigea:criar-admin` na produção | ❌ Pendente | Substituiria o admin local; necessário após migração |
+| **Contacto falha no envio («Não foi possível enviar a mensagem»)** | 🔧 Em análise — fix local aplicado | Causa provável (classe «cache de configuração desatualizada», como o route cache desta manhã): `bootstrap/cache/config.php` antigo sem o mailer `geral`, OU `MAIL_GERAL_PASSWORD` errada no `.env`. Diagnóstico exato agora possível: `ContactForm` passou a `report($e)` (antes engolia a exceção em silêncio — **zero log**). Passos no servidor: ① apagar `bootstrap/cache/config.php`/`routes-v7.php` (ou SSH `php artisan optimize:clear`) ② testar login webmail `geral@pigea.ao` ③ reenviar e, se falhar, ler `storage/logs/laravel.log` (`[contacto] falha ao enviar`) |
+
+| Item | Estado | Observação |
+|------|--------|------------|
+| ~~Migrar migrações novas na produção~~ | ✅ Feito (15/11/2026) | `prod-patch-2026-11-16.sql` aplicado via phpMyAdmin; verificação `SELECT COUNT(*) FROM migrations WHERE migration LIKE '2026_11_%'` devolveu **29** |
+| **Incidente «Route [equipa] not defined»** | ✅ Resolvido (15/11/2026) | Causa: route cache desatualizada / `routes/web.php` antigo no servidor. Fix: FTP completo da release + remoção de `bootstrap/cache/routes-v7.php`/`config.php` + Ctrl+F5. Ver `doc/fix-equipa-route-2026-11-15.md` |
+| `php artisan storage:link` na produção | ❓ Por confirmar | Necessário para servir uploads; logs não indicam falha de symlink |
+| `.env` de produção — bloco `MAIL_GERAL_*` | ❓ Por confirmar no servidor | Acrescentar sem tocar no bloco `MAIL_*` (newsletter intocada). `MAIL_GERAL_USERNAME` **tem de ser igual** a `MAIL_GERAL_FROM_ADDRESS` (`geral@pigea.ao`) |
+| Smoke tests pós-recuperação | Em curso pelo cliente | `/` 200, `/sobre` 200 (textos novos), `/equipa` 200, `/parceiros` 200, `/contactos` 200; `/entrar-7x2` 200; `/login` 404 |
+| **«Imagens de contexto» — link no 3º upload** | ⏳ Decisão do cliente pendente | Capa e foto de autor aceitam link; contexto só ficheiro (MediaLibrary). Opções: (a) `addMediaFromUrl()` (baixa e converte; lento, falível) (b) coluna JSON de URLs + `<img>` direto (rápido, sem WebP). Nota: a coleção `contexto` não é renderizada publicamente hoje |
 | SMTP definitivamente funcional na produção | ✅ Funcional (login/autenticação 535 resolvida — password real do utilizador com caracteres especiais resolvida com **aspas simples** no `.env` do servidor) | Resta confirmar DKIM no cPanel (Email Deliverability) para evitar SPAM; SPF já OK |
 | Migração de imagens para WebP na produção | Pendente de decision | Apenas news (capa) têm conversão WebP; imagens estáticas do tema até ~4 MB |
 | Performance mobile PageSpeed 65 → alvo 80+ | Em progresso (otimização CLS medida 90/100/65 antes; pós-deploy re-medir) | §4 async-CSS revertida por FOUC (ver docs.md) |
@@ -188,19 +214,16 @@ C:\xampp\php\php.exe artisan cache:clear
 
 ## 8. Próximos Passos (se/quando autorizados)
 
-1. **No servidor de produção** (primeiro tudo o seguinte antes de anunciar o site):
-   - `cd ~/public_html/.../pigea-deploy` (ou o caminho real)
-   - `php artisan migrate --force` — as 25 migrações novas
-   - `php artisan storage:link`
-   - `php artisan role:p criar-admin <email-real>`
-   - `php artisan optimize:clear`
-   - `chmod -R 775 storage bootstrap/cache` e `chmod -R 755 public`
-   - Confirmar: `curl -I https://pigea.ao/` 200; `.../entrar-7x2` 200 (ou o caminho opaco definido no servidor); `/login` 404
+1. **Imediato (cliente, no servidor de produção):**
+   - Confirmar no `.env` do servidor as linhas `MAIL_GERAL_*` (acrescentadas sem tocar nas `MAIL_*`) — ver `doc/orienta_deploy.md` §4.
+   - Smoke tests completos (§8 do orienta_deploy): `/` 200; `/equipa` 200 (membros listados); `/parceiros` 200; `/sobre` 200; `/contactos` envia→`geral@pigea.ao`; `/registo-empresa` com email obrigatório → «Registo Recebido!» em `geral@pigea.ao`; aprovar no painel → «Registo Aprovado!» chega ao candidato.
+   - ~~Se o mega menu vier incompleto~~ ✅ **Feito (15/11/2026):** `prod-categorias-news.sql` corrigido e a árvore verificada no servidor (news=37, menu=16) — os 7 topos e os 17 filhos industriais religados via phpMyAdmin.
 2. **DKIM**: ligar em cPanel → Email Deliverability → `pigea.ao` (evitar SPAM).
-3. **Retormar password** do utilizador MySQL `qnbangolaco_pigea` e sobre a APP_KEY expostas no histórico inicial (recomendação anterior).
+3. **Retomar password** do utilizador MySQL `qnbangolaco_pigea` e sobre a APP_KEY expostas no histórico inicial (recomendação anterior).
 4. Verificar em produção que as imagens no hero continuam a funcionar pós-migração (imagens exclusivas à BD do cliente se algum artigo fora de fallback).
 5. Reavaliar **PageSpeed** pós-deploy (imagens e async do hero).
 6. (Pendente de decisão) Comprimir imagens estáticas do tema (banners, city-bg, bg/*.jpg) para WebP com redução de 60–75%.
+7. **Regra permanente de deploy FTP:** nunca subir parcialmente `app/Support/` + `routes/` sem os respectivos controllers/views; no fim de cada release, apagar `bootstrap/cache/routes-v7.php`/`config.php` + `storage/framework/views/*.php` (ou `php artisan optimize:clear`) e fazer Ctrl+F5 + smoke test da home. Foi isto que custou o incidente de 15/11/2026 às 20:59.
 
 ---
 
@@ -262,6 +285,15 @@ C:\xampp\php\php.exe artisan cache:clear
 | 4.7 | 15/11/2026 | **REGISTO DE EMPRESA/PROFISSIONAL corrigidos:** inputs `type="url"` passam a ter o estilo do formulário (antes eram browser-defaults, colados e sem padding); **áreas de atuação em chips** (`.areas-grid`/`.area-chip`) — era uma classe `.filter-tags` de um contexto externo (`.main-register`); e o `.areas-grid` colapsava para `width=0` dentro do `<fieldset>` no Chrome (quirk de `min-content`); forçado `width: 100%` explícito; form layout alinhado perfeitamente (`cdc6cf7`) |
 | 4.8 | 15/11/2026 | **PERFORMANCE:** suite completa verde (261/884); `view:cache` limpo; Chrome DevTools confirma TTFB Dashboard ≈750 ms local (a maioria do tempo é boot do Laravel — o `.htaccess` com `mod_deflate` e `mod_expires` ainda pode reduzir isso; a recomendação está na secção 8) |
 | 4.9 | 15/11/2026 | **Submission autorização do cliente:** "commit e push" `fix(forms)` → `cdc6cf7` — BOTH `updates` e `main` no GitHub atualizados |
+| 5.0 | 15/11/2026 | **RELEASE «PRODUÇÃO 2026-11-16»:** Newsletter simplificada (estados `pending`/`active`/`cancelled`, 3 templates HTML, mailables `NewsletterConfirmacao`/`NewsletterCancelamento`, rota `/newsletter/resubscrever/{token}`); Home «Últimas Notícias» server-rendered (5 recentes, abas AJAX removidas); widget publicitário sem título ("Escolha da Equipa" apagada); mega menu sobre sem «Missão, visão e valores» (migração `2026_11_19`, grupo renumerado 1–4); **módulo institucional Equipa + Parceiros** (`/equipa`, `/parceiros` públicos; CRUD Livewire admin; cargo select "Outros" + `cargo_outro`); **Sobre Nós editável** (Missão/Visão/Valores/vídeo/overlay nas Admin → Configurações via `App\Support\Institucional` com defaults); **Diretório — emails transacionais** (mailer `geral`, remetente `geral@pigea.ao`, separado da newsletter; `RegistoConfirmacao`/`Aprovado`/`Rejeitado`; campo email obrigatório; migração `2026_11_17`); emails transacionais ContactMessage mantêm replyTo = visitante; `config/mail.php` com `mailers.geral`; suite local **279/962 verde** |
+| 5.1 | 15/11/2026 | **GIT:** `updates` e `main` fast-forward para **`046930f`** (`18b9c82` feat Equipa/Parceiros + Sobre Nós editável; `046930f` merge) — pushed; sem force-push |
+| 5.2 | 15/11/2026 | **PATCH DE PRODUÇÃO APLICADO:** `prod-patch-2026-11-16.sql` colado no phpMyAdmin do hosting → **migrações marcadas como executadas = 29** (verificação `migr_execucoes` devolveu 29); `prod-categorias-news.sql` fica opcional (só se mega menu incompleto); `.env` de produção: bloco `MAIL_*` intocado, acrescentar apenas `MAIL_GERAL_*` |
+| 5.3 | 15/11/2026 (noite) | **INCIDENTE PRODUÇÃO + CORREÇÃO:** após upload FTP, o site devolveu 500 generalizado; `storage/logs/laravel.log` mostrou `Route [equipa] not defined. (View: .../components/main-menu.blade.php)` às 20:59:10. **Causa:** deploy parcial — o servidor tinha `app/Support/MenuCategorias.php` novo (que aponta `sobre→equipa ⇒ route('equipa')`) mas o `routes/web.php` ficou antigo / havia route cache (`bootstrap/cache/routes-v7.php`) a sombrear as rotas novas. **Correção:** upload FTP da release completa (foco em `routes/web.php`) + remoção de `bootstrap/cache/routes-v7.php` e `config.php` no File Manager + hard refresh; o cliente reporta **«Já funcionou»**. Cronologia completa e regras anti-repetição em `doc/fix-equipa-route-2026-11-15.md`; erro guardado em `pigea/erro.md` na raiz do workspace |
+| 5.4 | 15/11/2026 (noite) | **DEPLOY DO CLIENTE — como foi feito na prática:** o servidor **não corre `composer install`** (vendor não mudou); GitHub não é o deploy (só FTP/cPanel); testes pós-recuperação ficaram a cargo do cliente (`/`, `/equipa`, `/parceiros`, `/sobre`, `/contactos`) |
+| 5.5 | 15/11/2026 (noite) | **CATEGORIAS PRODUÇÃO REPARADAS:** cliente reporta «poucas» no select de Categoria do «Criar Notícia». Prova: `news=30` (10 topos+20 filhos; só Academia/Oportunidades corretamente ligadas) vs local `37`. **Mecanismo:** `prod-categorias-news.sql` Passo 1/2 com guard `WHERE NOT EXISTS (slug=…)` global → 7 topos silenciosamente saltados; 17 filhos industriais órfãos de pai; mega menu continuava «todas» (lê `menu_group`) enquanto o select lê `type='news'`+`parent_id`. Fix executado pelo cliente no phpMyAdmin: 7 INSERTs de topos news (`agua`,`ambiente`,`internacional`,`investigacao`,`mineracao`,`petroleo-e-gas`,`geociencias`, com `menu_group NULL` como taxonomia) + 3 UPDATEs `parent_id=<topo>` onde `parent_id IS NULL` e `menu_group ∈ {mineracao, petroleo-e-gas, geociencias}` → **news=37, menu=16 confirmados** |
+| 5.6 | 15/11/2026 (noite) | **`prod-categorias-news.sql` CORRIGIDO (repo):** os 37 guards `WHERE NOT EXISTS (SELECT 1 FROM categories WHERE slug=…)` passam a `… WHERE type='news' AND slug=…` (substituição byte-level, 37/37). Agora o ficheiro é seguro de re-executar noutros servidores e cria os topos+filhos completos (37 news) de uma vez só |
+| 5.7 | 15/11/2026 (noite) | **ANÁLISE DOS 3 UPLOADS DE IMAGEM (editor «Criar Notícia»):** documento para o cliente decidir o que fazer com o 3º campo — «Imagens de contexto» é ficheiro-only por design (`$request->file('contexto')` → MediaLibrary `contexto` + WebP `nonQueued`); capa e foto de autor convidado gravam URL diretamente nas colunas. A coleção `contexto` não tem nenhuma renderização pública hoje (potencial código morto). Pedido do cliente de aceitar link aí também: aguarda escolha (a)/(b) |
+| 5.8 | 15/11/2026 (noite) | **CSP Report-Only — relatórios img-src externos ruído:** log de produção 22:54:52 mostra dezenas de relatórios `img-src` para imagens `https://i.ibb.co/…` (admins colam URLs externos nos artigos). Report-Only nunca bloqueia; corrigido para `img-src 'self' data: https:` + `media-src 'self' https:` (sem efeito no bloqueio — só acaba com o ruído). **ContactForm silencioso:** o `catch` de envio do formulário de contacto engolia a exceção sem log nenhum → agora `report($e)`. **`RegistoEmails` já logava** (`[registo] falha ao enviar email …`). Suite 27/27 nos testes de CSP/contacto/registos |
 
 ---
 

@@ -24,11 +24,14 @@ use Symfony\Component\HttpFoundation\Response;
 class SecurityHeaders
 {
     /**
-     * Política Report-Only. Regras mantidas por uma razão concreta:
-     *  - scripts/styles inline do protótipo + Alpine/Livewire → 'unsafe-inline'
-     *    ('unsafe-eval' também: o Alpine avalia expressões x-data via Function);
-     *  - vídeos são iframes YouTube/Vimeo (os únicos recursos de rede);
-     *  - imagens/fontes são locais (+ data: URI dos plugins).
+     * Politica Report-Only. Regras mantidas por uma razao concreta:
+     *  - scripts/styles inline do prototipo + Alpine/Livewire → 'unsafe-inline'
+     *    ('unsafe-eval' tambem: o Alpine avalia expressoes x-data via Function);
+     *  - videos sao iframes YouTube/Vimeo (os unicos recursos de rede);
+     *  - imagens: o admin tambem cola URLs externos (i.ibb.co e afins) nos
+     *    artigos; no modo Report-Only nao bloqueia, mas gerava centenas de
+     *    relatorios img-src falsos no log — por isso `img-src ... https:`
+     *    (e `media-src ... https:` pelo mesmo motivo).
      */
     private const CSP_REPORT_ONLY =
         "default-src 'self'; "
@@ -39,8 +42,8 @@ class SecurityHeaders
         ."script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
         ."style-src 'self' 'unsafe-inline'; "
         ."font-src 'self' data:; "
-        ."img-src 'self' data:; "
-        ."media-src 'self'; "
+        ."img-src 'self' data: https:; "
+        ."media-src 'self' https:; "
         ."connect-src 'self'; "
         ."frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; "
         .'report-uri /csp-report; report-to csp-endpoint';
