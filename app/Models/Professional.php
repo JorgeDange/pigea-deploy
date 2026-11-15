@@ -17,7 +17,7 @@ class Professional extends Model
     protected $table = 'professionals';
 
     protected $fillable = [
-        'nome_completo', 'formacao_academica', 'contactos', 'areas_atuacao', 'status',
+        'nome_completo', 'formacao_academica', 'contactos', 'email', 'areas_atuacao', 'status',
     ];
 
     protected function casts(): array

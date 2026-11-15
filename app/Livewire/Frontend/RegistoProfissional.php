@@ -23,6 +23,9 @@ class RegistoProfissional extends Component
 
     public string $contactos = '';
 
+    /** Email do candidato (obrigatório) — para o email de confirmação/decisão. */
+    public string $email = '';
+
     /** @var list<string> áreas de atuação submetidas (checkboxes) */
     public array $areas_atuacao = [];
 
@@ -52,12 +55,14 @@ class RegistoProfissional extends Component
                 'nome_completo' => $this->nome_completo,
                 'formacao_academica' => $this->formacao_academica,
                 'contactos' => $this->contactos,
+                'email' => $this->email,
                 'areas_atuacao' => $this->areas_atuacao,
             ],
             [
                 'nome_completo' => 'required|string|max:200',
                 'formacao_academica' => 'required|string|max:300',
                 'contactos' => 'required|string|max:200',
+                'email' => 'required|email|max:190',
                 'areas_atuacao' => 'required|array|min:1',
                 'areas_atuacao.*' => 'string',
             ],
@@ -68,6 +73,9 @@ class RegistoProfissional extends Component
                 'formacao_academica.max' => 'A formação académica é demasiado longa.',
                 'contactos.required' => 'Indique os seus contactos (telefone e/ou email).',
                 'contactos.max' => 'Os contactos são demasiado longos.',
+                'email.required' => 'Indique um email para o aviso de confirmação e de decisão.',
+                'email.email' => 'Indique um email válido.',
+                'email.max' => 'O email é demasiado longo.',
                 'areas_atuacao.required' => 'Selecione pelo menos uma área de atuação.',
             ]
         );
@@ -89,16 +97,19 @@ class RegistoProfissional extends Component
             return;
         }
 
-        Professional::query()->create([
+        $profissional = Professional::query()->create([
             'nome_completo' => trim($this->nome_completo),
             'formacao_academica' => trim($this->formacao_academica),
             'contactos' => trim($this->contactos),
+            'email' => mb_strtolower(trim($this->email)),
             'areas_atuacao' => $areas,
             'status' => 'pendente',
         ]);
 
+        \App\Support\RegistoEmails::confirmacao($profissional);
+
         $this->estado = 'ok';
-        $this->reset('nome_completo', 'formacao_academica', 'contactos', 'areas_atuacao');
+        $this->reset('nome_completo', 'formacao_academica', 'contactos', 'email', 'areas_atuacao');
     }
 
     public function render()

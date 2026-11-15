@@ -505,42 +505,6 @@ function initGmag() {
     $(".fontSize input").on("input", function () {
         $('#font_chage').find("p").css("font-size", $(this).val() + "px");
     });
-    // ajax news -----------------
-    $(".ajax-nav li a").click(function () {
-        $("#ajax-content").animate({
-            opacity: "0"
-        }, 500);
-        $(".ajax-nav li a").removeClass('current_page');
-        $(this).addClass('current_page');
-        $(".ajax-loader").fadeIn(100);
-        setTimeout(function () {
-            $("#ajax-content").empty();
-        }, 500);
-        $.ajax({
-            url: this.href,
-            success: function (html) {
-                setTimeout(function () {
-                    $("#ajax-content").animate({
-                        opacity: "1"
-                    }, 500);
-                    $("#ajax-content").empty().append(html);
-                    initbg();
-                    $(".ajax-loader").fadeOut(100);
-                }, 500);
-            }
-        });
-        return false;
-    });
-    if ($("#ajax-content").length > 0) {
-		$("#ajax-content").empty();
-		$.ajax({
-			url: 'ajax/noticias-mineracao.html',
-			success: function (html) {
-				$("#ajax-content").empty().append(html);
-				initbg();
-			}
-		});
-    }
     // scrolltofixed -----------------
     $(".fix-bar").scrollToFixed({
         minWidth: 1064,

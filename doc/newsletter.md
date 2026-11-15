@@ -13,7 +13,7 @@
 | Fases de implementação (registo do cliente) | `doc/fases_e.md` |
 | Base de dados | tabela `newsletter_subscribers` |
 | Modelo | `app/Models/NewsletterSubscriber.php` |
-| Envio de email (confirmação) | `app/Mail/NewsletterConfirmation.php` + `resources/views/emails/newsletter-confirmacao.blade.php` |
+| Envio de email (confirmação) | `app/Mail/NewsletterSubscricao.php` + `resources/views/emails/newsletter/subscricao.blade.php` |
 | Controlador público | `app/Http/Controllers/Frontend/NewsletterController.php` |
 | Formulário público (página de Contactos) | `resources/views/components/newsletter-form.blade.php` |
 | **Modal** (todas as páginas públicas) | `resources/views/components/newsletter-modal.blade.php` + `public/js/newsletter-modal.js` |

@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
  * Subscritor da Newsletter do PIGEA (doc/newsletter.md §4).
  *
  * `status`:
- *  - pending:     criou a inscrição; o opt-in de confirmação está pendente;
- *  - confirmed:   confirmou por email — única lista para envio (FASE N2);
- *  - unsubscribed: cancelou pelo link único ou foi removido no painel.
+ *  - pending:   criou a inscrição; o opt-in de confirmação está pendente;
+ *  - active:    confirmou por email — única lista para envio;
+ *  - cancelled: cancelou pelo link único ou foi removido no painel.
  *
- * Três escopos úteis: confirmed(), pending(), cancelados().
+ * Três escopos úteis: active(), pending(), cancelados().
  */
 class NewsletterSubscriber extends Model
 {
@@ -32,9 +32,9 @@ class NewsletterSubscriber extends Model
         ];
     }
 
-    public function scopeConfirmed($query)
+    public function scopeActive($query)
     {
-        return $query->where('status', 'confirmed');
+        return $query->where('status', 'active');
     }
 
     public function scopePending($query)
@@ -44,7 +44,7 @@ class NewsletterSubscriber extends Model
 
     public function scopeCancelados($query)
     {
-        return $query->where('status', 'unsubscribed');
+        return $query->where('status', 'cancelled');
     }
 
     public function emailNormalizado(): string

@@ -20,7 +20,6 @@ use App\Http\Controllers\Admin\NotificacoesController;
 use App\Http\Controllers\CspReportController;
 use App\Http\Controllers\Frontend\DirectoryController;
 use App\Http\Controllers\Frontend\EventController;
-use App\Http\Controllers\Frontend\FragmentController;
 use App\Http\Controllers\Frontend\InterviewController;
 use App\Http\Controllers\Frontend\LegislationController;
 use App\Http\Controllers\Frontend\NewsController;
@@ -48,12 +47,6 @@ Route::view('/', 'home')->name('home');
 // Notícias
 Route::get('/noticias', [NewsController::class, 'index'])->name('news.index');
 Route::get('/noticias/{slug}', [NewsController::class, 'show'])->name('news.show');
-
-// Fragmentos AJAX dos separadores da home — os mesmos URLs `ajax/noticias-*.html`
-// do protótipo (o `scripts.js` original continua a pedi-los por AJAX).
-Route::get('/ajax/{arquivo}', [FragmentController::class, 'show'])
-    ->where('arquivo', 'noticias-(mineracao|agua|ambiente|investigacao)\.html')
-    ->name('fragments.show');
 
 // Projetos
 Route::get('/projetos', [ProjectController::class, 'index'])->name('projects.index');
@@ -94,6 +87,9 @@ Route::get('/newsletter/confirmar/{token}', [NewsletterController::class, 'confi
 Route::get('/newsletter/cancelar/{token}', [NewsletterController::class, 'cancelar'])
     ->where('token', '[A-Za-z0-9]{20,100}')
     ->name('newsletter.cancelar');
+Route::get('/newsletter/resubscrever/{token}', [NewsletterController::class, 'resubscrever'])
+    ->where('token', '[A-Za-z0-9]{20,100}')
+    ->name('newsletter.resubscrever');
 
 // Registo público no Diretório (restrutura.md §4 — sem login; a submissão
 // cria o registo com status `pendente` para aprovação no /admin). As vistas

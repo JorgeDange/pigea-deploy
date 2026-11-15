@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Mail\NewsletterConfirmation;
+use App\Mail\NewsletterCancelamento;
+use App\Mail\NewsletterConfirmacao;
+use App\Mail\NewsletterSubscricao;
 use App\Models\NewsletterSubscriber;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -13,13 +15,13 @@ use Illuminate\Support\Str;
 /**
  * Newsletter do PIGEA — subscrição pública com dupla opt-in.
  *
- *  POST /newsletter            cria/atualiza a inscrição (estado `pending`)
+ * POST /newsletter            cria/atualiza a inscrição (estado `pending`)
  *                             e envia o email de confirmação
- *  GET  /newsletter/confirmar/{token} marca o opt-in (confirmed)
- *  GET  /newsletter/cancelar/{token}  marca unsubscribed
+ * GET  /newsletter/confirmar/{token}   confirma a subscrição
+ * GET  /newsletter/cancelar/{token}    cancela a subscrição
+ * GET  /newsletter/resubscrever/{token}  reativa a subscrição cancelada
  *
- * Sem JavaScript e sem dados além de nome e email — ver doc/newsletter.md.
- * Nada aqui envia edições da newsletter (isso é a FASE N2).
+ * Sem JavaScript e sem dados além de email — ver doc/newsletter.md.
  */
 class NewsletterController extends Controller
 {
@@ -37,7 +39,7 @@ class NewsletterController extends Controller
 
         $existente = NewsletterSubscriber::where('email', $email)->first();
 
-        if ($existente && $existente->status === 'confirmed') {
+        if ($existente && $existente->status === 'active') {
             return $this->resposta($request, true, 'Este email já está subscrito. Obrigado!');
         }
 
@@ -46,7 +48,7 @@ class NewsletterController extends Controller
             $existente->update([
                 'token' => Str::random(64),
             ]);
-            \Mail::to($email)->send(new NewsletterConfirmation($existente->fresh()));
+            \Mail::to($email)->send(new NewsletterSubscricao($existente->fresh()));
 
             return $this->resposta($request, true, 'Enviámos-lhe um novo email de confirmação. Verifique a sua caixa de email.');
         }
@@ -60,7 +62,7 @@ class NewsletterController extends Controller
             ]
         );
 
-        \Mail::to($email)->send(new NewsletterConfirmation($subscritor));
+        \Mail::to($email)->send(new NewsletterSubscricao($subscritor));
 
         return $this->resposta($request, true, 'Verifique o seu email — enviámos-lhe o link de confirmação.');
     }
@@ -86,14 +88,16 @@ class NewsletterController extends Controller
             return view('newsletter.token-invalido');
         }
 
-        if ($subscritor->status === 'confirmed') {
+        if ($subscritor->status === 'active') {
             return view('newsletter.confirmado', ['jaConfirmado' => true]);
         }
 
         $subscritor->update([
-            'status' => 'confirmed',
+            'status' => 'active',
             'confirmed_at' => now(),
         ]);
+
+        \Mail::to($subscritor->email)->send(new NewsletterConfirmacao($subscritor->fresh()));
 
         return view('newsletter.confirmado', ['jaConfirmado' => false]);
     }
@@ -106,8 +110,38 @@ class NewsletterController extends Controller
             return view('newsletter.token-invalido');
         }
 
-        $subscritor->update(['status' => 'unsubscribed']);
+        $subscritor->update(['status' => 'cancelled']);
+
+        \Mail::to($subscritor->email)->send(new NewsletterCancelamento($subscritor->fresh()));
 
         return view('newsletter.cancelado');
+    }
+
+    public function resubscrever(string $token): View
+    {
+        $subscritor = NewsletterSubscriber::where('token', $token)->first();
+
+        if ($subscritor === null) {
+            return view('newsletter.token-invalido');
+        }
+
+        if ($subscritor->status === 'active') {
+            return view('newsletter.confirmado', ['jaConfirmado' => true]);
+        }
+
+        if ($subscritor->status === 'pending') {
+            return view('newsletter.confirmado', ['jaConfirmado' => true]);
+        }
+
+        // Cancelado — reativa o opt-in com novo token
+        $subscritor->update([
+            'status' => 'pending',
+            'token' => Str::random(64),
+            'confirmed_at' => null,
+        ]);
+
+        \Mail::to($subscritor->email)->send(new NewsletterSubscricao($subscritor->fresh()));
+
+        return view('newsletter.confirmado', ['jaConfirmado' => false]);
     }
 }

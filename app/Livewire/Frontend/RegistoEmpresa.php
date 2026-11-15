@@ -24,6 +24,9 @@ class RegistoEmpresa extends Component
 
     public string $contactos = '';
 
+    /** Email do candidato (obrigatório) — para o email de confirmação/decisão. */
+    public string $email = '';
+
     /** @var list<string> áreas de atuação submetidas (checkboxes) */
     public array $areas_atuacao = [];
 
@@ -64,6 +67,7 @@ class RegistoEmpresa extends Component
                 'nome_empresa' => $this->nome_empresa,
                 'nif' => $this->nif,
                 'contactos' => $this->contactos,
+                'email' => $this->email,
                 'areas_atuacao' => $this->areas_atuacao,
                 'facebook' => $this->facebook,
                 'linkedin' => $this->linkedin,
@@ -74,6 +78,7 @@ class RegistoEmpresa extends Component
                 'nome_empresa' => 'required|string|max:200',
                 'nif' => 'required|string|max:30|unique:companies,nif',
                 'contactos' => 'required|string|max:200',
+                'email' => 'required|email|max:190',
                 'areas_atuacao' => 'required|array|min:1',
                 'areas_atuacao.*' => 'string',
                 'facebook' => 'nullable|url:http,https|max:200',
@@ -89,6 +94,9 @@ class RegistoEmpresa extends Component
                 'nif.unique' => 'Já existe um registo com este NIF.',
                 'contactos.required' => 'Indique os contactos (telefone e/ou email).',
                 'contactos.max' => 'Os contactos são demasiado longos.',
+                'email.required' => 'Indique um email para o aviso de confirmação e de decisão.',
+                'email.email' => 'Indique um email válido.',
+                'email.max' => 'O email é demasiado longo.',
                 'areas_atuacao.required' => 'Selecione pelo menos uma área de atuação.',
                 'facebook.url' => 'O link do Facebook não é um URL válido.',
                 'linkedin.url' => 'O link do LinkedIn não é um URL válido.',
@@ -123,14 +131,17 @@ class RegistoEmpresa extends Component
         ], fn ($url) => filled($url));
 
         try {
-            Company::query()->create([
+            $empresa = Company::query()->create([
                 'nome_empresa' => trim($this->nome_empresa),
                 'nif' => trim($this->nif),
                 'contactos' => trim($this->contactos),
+                'email' => mb_strtolower(trim($this->email)),
                 'areas_atuacao' => $areas,
                 'redes_sociais' => $redes === [] ? null : $redes,
                 'status' => 'pendente',
             ]);
+
+            \App\Support\RegistoEmails::confirmacao($empresa);
         } catch (\Illuminate\Database\QueryException $e) {
             // Corrida com o mesmo NIF: a validação `unique:` passa e a chave
             // única da BD apanha — responder com a mensagem pt do formulário,
@@ -148,7 +159,7 @@ class RegistoEmpresa extends Component
 
         // Mensagem exata definida pelo cliente (restrutura.md §4.1).
         $this->estado = 'ok';
-        $this->reset('nome_empresa', 'nif', 'contactos', 'areas_atuacao', 'facebook', 'linkedin', 'instagram', 'youtube');
+        $this->reset('nome_empresa', 'nif', 'contactos', 'email', 'areas_atuacao', 'facebook', 'linkedin', 'instagram', 'youtube');
     }
 
     public function render()

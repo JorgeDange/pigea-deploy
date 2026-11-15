@@ -69,7 +69,19 @@ class CompaniesTable extends Component
 
         $empresa = Company::find($id);
 
-        $empresa?->update(['status' => $estado]);
+        if ($empresa === null) {
+            return;
+        }
+
+        $empresa->update(['status' => $estado]);
+
+        // Email transacional de decisão (restabelecer fica silencioso).
+        // Nunca rebenta a ação — o RegistoEmails tem a sua própria blindagem.
+        if ($estado === 'aprovado') {
+            \App\Support\RegistoEmails::aprovado($empresa->fresh());
+        } elseif ($estado === 'rejeitado') {
+            \App\Support\RegistoEmails::rejeitado($empresa->fresh());
+        }
     }
 
     public function render()

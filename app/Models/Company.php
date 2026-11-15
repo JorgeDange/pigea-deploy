@@ -19,7 +19,7 @@ class Company extends Model
     protected $table = 'companies';
 
     protected $fillable = [
-        'nome_empresa', 'nif', 'contactos', 'areas_atuacao', 'redes_sociais', 'status',
+        'nome_empresa', 'nif', 'contactos', 'email', 'areas_atuacao', 'redes_sociais', 'status',
     ];
 
     protected function casts(): array

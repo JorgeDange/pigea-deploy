@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Mail\NewsletterConfirmation;
+use App\Mail\NewsletterSubscricao;
 use App\Http\Controllers\Controller;
 use App\Models\NewsletterSubscriber;
 use Illuminate\Contracts\View\View;
@@ -15,11 +15,11 @@ use Illuminate\Support\Str;
  *
  * Área exclusiva de `role:admin` (dados pessoais de contacto — PII):
  *   GET /gestao-pigea/newsletter              — estatísticas + lista (+ CSV)
- *   POST /newsletter/adicionar                — adicionar manualmente (confirmed)
+ *   POST /newsletter/adicionar                — adicionar manualmente (active)
  *   POST /newsletter/reenviar/{id}            — reenviar confirmação a UM pendente
  *   POST /newsletter/reenviar-pendentes       — reenviar confirmação a TODOS os pendentes
  *   DELETE /newsletter/{id}                   — remover linha
- *   GET /newsletter/exportar.csv              — exportar por estado (?estado=confirmed|pending|unsubscribed, BOM do Excel)
+ *   GET /newsletter/exportar.csv              — exportar por estado (?estado=active|pending|cancelled, BOM do Excel)
  *
  * A subscrição pública e a dupla ótica ficam em Frontend\NewsletterController.
  */
@@ -28,7 +28,7 @@ class NewsletterAdminController extends Controller
     public function index(Request $request): View
     {
         $estado = (string) $request->query('estado', '');
-        if (! in_array($estado, ['', 'pending', 'confirmed', 'unsubscribed'], true)) {
+        if (! in_array($estado, ['', 'pending', 'active', 'cancelled'], true)) {
             $estado = '';
         }
 
@@ -47,7 +47,7 @@ class NewsletterAdminController extends Controller
         $subscritores = $consulta->paginate(15)->withQueryString();
 
         $total = NewsletterSubscriber::count();
-        $confirmados = NewsletterSubscriber::confirmed()->count();
+        $ativos = NewsletterSubscriber::active()->count();
         $pendentes = NewsletterSubscriber::pending()->count();
         $cancelados = NewsletterSubscriber::cancelados()->count();
 
@@ -56,11 +56,11 @@ class NewsletterAdminController extends Controller
             'estado' => $estado,
             'busca' => $busca,
             'total' => $total,
-            'confirmados' => $confirmados,
+            'ativos' => $ativos,
             'pendentes' => $pendentes,
             'cancelados' => $cancelados,
-            'taxaConfirmacao' => $total > 0 ? (int) round($confirmados / $total * 100) : 0,
-            'rotulos' => ['confirmed' => 'Confirmados', 'pending' => 'Pendentes', 'unsubscribed' => 'Cancelados'],
+            'taxaConfirmacao' => $total > 0 ? (int) round($ativos / $total * 100) : 0,
+            'rotulos' => ['active' => 'Confirmados', 'pending' => 'Pendentes', 'cancelled' => 'Cancelados'],
         ]);
     }
 
@@ -68,7 +68,7 @@ class NewsletterAdminController extends Controller
     public function confirmar(int $id): RedirectResponse
     {
         $subscritor = NewsletterSubscriber::pending()->findOrFail($id);
-        $subscritor->update(['status' => 'confirmed', 'confirmed_at' => now()]);
+        $subscritor->update(['status' => 'active', 'confirmed_at' => now()]);
 
         return back()->with('newsletter_msg', [
             'tipo' => 'ok',
@@ -79,8 +79,8 @@ class NewsletterAdminController extends Controller
     /** Cancelar um subscritor (ativo ou pendente) — sai da lista de envio. */
     public function cancelar(int $id): RedirectResponse
     {
-        $subscritor = NewsletterSubscriber::whereIn('status', ['confirmed', 'pending'])->findOrFail($id);
-        $subscritor->update(['status' => 'unsubscribed']);
+        $subscritor = NewsletterSubscriber::whereIn('status', ['active', 'pending'])->findOrFail($id);
+        $subscritor->update(['status' => 'cancelled']);
 
         return back()->with('newsletter_msg', [
             'tipo' => 'ok',
@@ -93,7 +93,7 @@ class NewsletterAdminController extends Controller
     {
         $subscritor = NewsletterSubscriber::cancelados()->findOrFail($id);
         $subscritor->update(['status' => 'pending', 'token' => Str::random(64), 'confirmed_at' => null]);
-        \Mail::to($subscritor->email)->send(new NewsletterConfirmation($subscritor->fresh()));
+        \Mail::to($subscritor->email)->send(new NewsletterSubscricao($subscritor->fresh()));
 
         return back()->with('newsletter_msg', [
             'tipo' => 'ok',
@@ -106,12 +106,12 @@ class NewsletterAdminController extends Controller
     {
         $pendentes = NewsletterSubscriber::pending()->get();
         foreach ($pendentes as $p) {
-            $p->update(['status' => 'confirmed', 'confirmed_at' => now()]);
+            $p->update(['status' => 'active', 'confirmed_at' => now()]);
         }
 
         return back()->with('newsletter_msg', [
             'tipo' => 'ok',
-            'texto' => $pendentes->count() . ' subscritor(es) confirmados.',
+            'texto' => $pendentes->count() . ' subscritor(es) ativos.',
         ]);
     }
 
@@ -120,7 +120,7 @@ class NewsletterAdminController extends Controller
     {
         $subscritor = NewsletterSubscriber::pending()->findOrFail($id);
         $subscritor->update(['token' => Str::random(64)]);
-        \Mail::to($subscritor->email)->send(new NewsletterConfirmation($subscritor->fresh()));
+        \Mail::to($subscritor->email)->send(new NewsletterSubscricao($subscritor->fresh()));
 
         return back()->with('newsletter_msg', [
             'tipo' => 'ok',
@@ -136,7 +136,7 @@ class NewsletterAdminController extends Controller
         foreach ($pendentes as $p) {
             try {
                 $p->update(['token' => Str::random(64)]);
-                \Mail::to($p->email)->send(new NewsletterConfirmation($p->fresh()));
+                \Mail::to($p->email)->send(new NewsletterSubscricao($p->fresh()));
                 $enviados++;
             } catch (\Throwable) {
                 // Ignora falha individual — continua com os restantes.
@@ -162,7 +162,7 @@ class NewsletterAdminController extends Controller
         NewsletterSubscriber::create([
             'email' => mb_strtolower(trim($dados['email'])),
             'token' => Str::random(64),
-            'status' => 'confirmed',
+            'status' => 'active',
             'confirmed_at' => now(),
         ]);
 
@@ -183,15 +183,15 @@ class NewsletterAdminController extends Controller
         ]);
     }
 
-    /** Exporta em CSV o estado escolhido (por omissão: confirmados). */
+    /** Exporta em CSV o estado escolhido (por omissão: ativos). */
     public function exportar(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        $estado = (string) $request->query('estado', 'confirmed');
-        if (! in_array($estado, ['confirmed', 'pending', 'unsubscribed'], true)) {
-            $estado = 'confirmed';
+        $estado = (string) $request->query('estado', 'active');
+        if (! in_array($estado, ['active', 'pending', 'cancelled'], true)) {
+            $estado = 'active';
         }
 
-        $rotulos = ['confirmed' => 'confirmados', 'pending' => 'pendentes', 'unsubscribed' => 'cancelados'];
+        $rotulos = ['active' => 'ativos', 'pending' => 'pendentes', 'cancelled' => 'cancelados'];
         $ficheiro = 'newsletter-' . $rotulos[$estado] . '.csv';
 
         $headers = [

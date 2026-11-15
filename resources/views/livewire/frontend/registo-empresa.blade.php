@@ -21,6 +21,9 @@
                 <input type="text" name="contactos" placeholder="Contactos (telefone e/ou email) *" wire:model="contactos" />
                 @error('contactos')<p class="form-error" role="alert">{{ $message }}</p>@enderror
 
+                <input type="email" name="email" placeholder="Email para avisos (confirmação e decisão) *" wire:model="email" autocomplete="email" inputmode="email" />
+                @error('email')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+
                 <label style="margin-top: 12px; display: block;"><strong>Áreas de Atuação *</strong></label>
                 <div class="areas-grid">
                     @foreach ($areasLista as $area)

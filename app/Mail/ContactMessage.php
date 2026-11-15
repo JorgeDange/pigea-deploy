@@ -14,7 +14,8 @@ use Illuminate\Queue\SerializesModels;
  * destinatário reconheça a origem e não confunda com spam genérico.
  *
  * `replyTo` = remetente: quem está no destino responde ao autor da mensagem,
- * não a `newsletter@pigea.ao`.
+ * não a `geral@pigea.ao`. O `from` é o transacional (mailer `geral`,
+ * From geral@pigea.ao) — o relay recusa remetentes não autorizados.
  */
 class ContactMessage extends Mailable
 {
@@ -31,6 +32,10 @@ class ContactMessage extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new \Illuminate\Mail\Mailables\Address(
+                config('mail.geral_from.address'),
+                config('mail.geral_from.name'),
+            ),
             subject: 'Mensagem pelo site PIGEA — '.$this->nome,
             replyTo: [$this->email],
         );

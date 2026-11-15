@@ -29,4 +29,5 @@ Thumbs.db
 /composer-setup.php
 /diag_*.php
 /storage/schedule-run.cmd
-
+public/public.zip
+/storage/run-hidden.vbs

@@ -88,19 +88,36 @@
                                         <div class="section-title">
                                             <h2>Últimas Notícias</h2>
                                             <h4>Fique a par das últimas informações</h4>
-                                            <div class="ajax-nav">
-                                                <ul>
-                                                    <li><a href="ajax/noticias-mineracao.html" class="current_page">Mineração</a></li>
-                                                    <li><a href="ajax/noticias-agua.html">Água</a></li>
-                                                    <li><a href="ajax/noticias-ambiente.html">Ambiente</a></li>
-                                                    <li><a href="ajax/noticias-investigacao.html">Investigação</a></li>
-                                                </ul>
-                                            </div>
                                         </div>
-                                        <div class="ajax-wrapper fl-wrap">
-                                            <div class="ajax-loader"><div class="al-box"><img src="{{ asset('images/logo.webp') }}" alt="PIGEA" class="al-logo" width="135" height="56"><span class="al-bar"></span></div></div>
-                                            <div id="ajax-content" class="fl-wrap">
+                                        <div class="list-post-wrap noticias-recentes">
+                                            @forelse ($listNews->take(5) as $item)
+                                            <!--list-post-->
+                                            <div class="list-post fl-wrap">
+                                                <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
+                                                <div class="list-post-media">
+                                                    <a href="{{ route('news.show', $item->slug) }}">
+                                                        <div class="bg-wrap">
+                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
+                                                        </div>
+                                                    </a>
+                                                    <span class="post-media_title">{{ $item->image_caption ?: '&copy; Foto: PIGEA' }}</span>
+                                                </div>
+                                                <div class="list-post-content">
+                                                    <h3><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h3>
+                                                    <span class="post-date"><i class="far fa-clock"></i>  {{ $item->display_date }}</span>
+                                                    @if (!empty($item->excerpt))<p>{{ $item->excerpt }}</p>@endif
+                                                    <ul class="post-opt">
+                                                        <li><i class="fal fa-eye"></i>  {{ $item->views_count }}</li>
+                                                    </ul>
+                                                    @if ($item->author)
+                                                    <div class="author-link"><a href="{{ route('news.index') }}">@if ($item->author->avatar)<img src="{{ asset($item->author->avatar) }}" alt="{{ $item->author->name }}" width="36" height="36" loading="lazy">@endif<span>{{ $item->author->name }}</span></a></div>
+                                                    @endif
+                                                </div>
                                             </div>
+                                            <!--list-post end-->
+                                            @empty
+                                            <p>Ainda não há notícias publicadas.</p>
+                                            @endforelse
                                         </div>
                                         <div class="content-banner-wrap cbw_mar">
                                             <x-banner-publicitario posicao="largo" />

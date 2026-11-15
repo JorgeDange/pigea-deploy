@@ -49,6 +49,26 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        /*
+         | Mailer transacional do Diretório (registo de empresa/profissional,
+         | confirmação e decisão) e do formulário de contacto: envia como
+         | `geral@pigea.ao`, separado da stream da newsletter (que fica no
+         | mailer por omissão, From `newsletter@pigea.ao`). O relay cPanel
+         | recusa remetentes que não sejam a conta autenticada — por isso
+         | `geral@pigea.ao` precisa das suas próprias credenciais.
+         */
+        'geral' => [
+            'transport' => env('MAIL_GERAL_TRANSPORT', 'smtp'),
+            'scheme' => env('MAIL_GERAL_SCHEME', env('MAIL_SCHEME')),
+            'url' => env('MAIL_GERAL_URL'),
+            'host' => env('MAIL_GERAL_HOST', env('MAIL_HOST', 'mail.pigea.ao')),
+            'port' => env('MAIL_GERAL_PORT', env('MAIL_PORT', 465)),
+            'username' => env('MAIL_GERAL_USERNAME', 'geral@pigea.ao'),
+            'password' => env('MAIL_GERAL_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_GERAL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],
@@ -113,6 +133,16 @@ return [
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
+    ],
+
+    /*
+     | Remetente usado pelos mailables transacionais (registo/decisão do
+     | Diretório e formulário de contacto). Ignorado se a variável não
+     | existir — fica o mesmo nome amigável do PIGEA.
+     */
+    'geral_from' => [
+        'address' => env('MAIL_GERAL_FROM_ADDRESS', 'geral@pigea.ao'),
+        'name' => env('MAIL_GERAL_FROM_NAME', 'PIGEA'),
     ],
 
 ];

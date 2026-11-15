@@ -24,7 +24,7 @@
     <div class="stat-card">
         <div class="stat-card-icon"><i class="fa fa-check-circle"></i></div>
         <div class="stat-card-body">
-            <div class="stat-card-number">{{ number_format($confirmados, 0, ',', '.') }}</div>
+            <div class="stat-card-number">{{ number_format($ativos, 0, ',', '.') }}</div>
             <div class="stat-card-label">Confirmados</div>
         </div>
     </div>
@@ -58,7 +58,7 @@
                     <button type="button" class="btn-secondary btn-sm js-confirm" data-confirm-form="reenviar-pendentes-todos" data-confirm-title="Reenviar a todos" data-confirm-message="Reenviar email de confirmação para {{ $pendentes }} subscritor(es) pendentes?" data-confirm-text="Reenviar"><i class="fa fa-paper-plane"></i> Reenviar a todos ({{ $pendentes }})</button>
                 </form>
             @endif
-            <a href="{{ route('admin.newsletter.exportar', ['estado' => $estado !== '' ? $estado : 'confirmed']) }}" class="btn-secondary btn-sm"><i class="fa fa-file-csv"></i> Exportar {{ $estado !== '' ? $rotulos[$estado] : 'confirmados' }}</a>
+            <a href="{{ route('admin.newsletter.exportar', ['estado' => $estado !== '' ? $estado : 'active']) }}" class="btn-secondary btn-sm"><i class="fa fa-file-csv"></i> Exportar {{ $estado !== '' ? $rotulos[$estado] : 'ativos' }}</a>
         </div>
     </div>
     <div class="card-body">
@@ -73,9 +73,9 @@
             <input type="text" class="newsletter-input" name="q" value="{{ $busca }}" placeholder="Pesquisar email…" aria-label="Pesquisar subscritor">
             <select class="newsletter-estado" name="estado" aria-label="Filtrar por estado" onchange="this.form.submit()">
                 <option value="" @selected($estado === '')>Todos ({{ $total }})</option>
-                <option value="confirmed" @selected($estado === 'confirmed')>Confirmados ({{ $confirmados }})</option>
+                <option value="active" @selected($estado === 'active')>Confirmados ({{ $ativos }})</option>
                 <option value="pending" @selected($estado === 'pending')>Pendentes ({{ $pendentes }})</option>
-                <option value="unsubscribed" @selected($estado === 'unsubscribed')>Cancelados ({{ $cancelados }})</option>
+                <option value="cancelled" @selected($estado === 'cancelled')>Cancelados ({{ $cancelados }})</option>
             </select>
             @if ($estado !== '' || $busca !== '')
                 <a href="{{ route('admin.newsletter') }}" class="btn-secondary btn-sm">Limpar</a>
@@ -105,7 +105,7 @@
                     <tr>
                         <td>{{ $subscritor->email }}</td>
                         <td>
-                            @if ($subscritor->status === 'confirmed')
+                            @if ($subscritor->status === 'active')
                                 <span class="status-badge active">Confirmado</span>
                             @elseif ($subscritor->status === 'pending')
                                 <span class="status-badge pending">Pendente</span>
@@ -126,13 +126,13 @@
                                         <button type="submit" class="icon-btn" title="Reenviar confirmação"><i class="fa fa-paper-plane"></i></button>
                                     </form>
                                 @endif
-                                @if ($subscritor->status !== 'unsubscribed')
+                                @if ($subscritor->status !== 'cancelled')
                                     <form method="post" action="{{ route('admin.newsletter.cancelar', $subscritor->id) }}" id="cancelar-subscritor-{{ $subscritor->id }}" style="display:inline">
                                         @csrf
                                         <button type="button" class="icon-btn danger js-confirm" data-confirm-form="cancelar-subscritor-{{ $subscritor->id }}" data-confirm-title="Cancelar subscrição" data-confirm-message="Cancelar a subscrição de {{ $subscritor->email }}?" data-confirm-text="Cancelar" title="Cancelar"><i class="fa fa-ban"></i></button>
                                     </form>
                                 @endif
-                                @if ($subscritor->status === 'unsubscribed')
+                                @if ($subscritor->status === 'cancelled')
                                     <form method="post" action="{{ route('admin.newsletter.reabilitar', $subscritor->id) }}" id="reabilitar-subscritor-{{ $subscritor->id }}" style="display:inline">
                                         @csrf
                                         <button type="button" class="icon-btn js-confirm" data-confirm-form="reabilitar-subscritor-{{ $subscritor->id }}" data-confirm-title="Reabilitar subscritor" data-confirm-message="Reabilitar {{ $subscritor->email }}? Vai ser reenviado o email de confirmação." data-confirm-text="Reabilitar" title="Reabilitar"><i class="fa fa-undo"></i></button>

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Mail\NewsletterConfirmation;
+use App\Mail\NewsletterSubscricao;
 use App\Models\NewsletterSubscriber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -49,7 +49,7 @@ class NewsletterTest extends TestCase
             'confirmed_at' => null,
         ]);
 
-        Mail::assertSent(NewsletterConfirmation::class, fn ($mail) => $mail->hasTo('joao@example.com'));
+        Mail::assertSent(NewsletterSubscricao::class, fn ($mail) => $mail->hasTo('joao@example.com'));
     }
 
     public function test_subscricao_ajax_devolve_json(): void
@@ -80,7 +80,7 @@ class NewsletterTest extends TestCase
         $resposta->assertOk();
         $this->assertDatabaseHas('newsletter_subscribers', [
             'email' => 'maria@example.com',
-            'status' => 'confirmed',
+            'status' => 'active',
         ]);
         $this->assertNotNull(NewsletterSubscriber::where('email', 'maria@example.com')->value('confirmed_at'));
     }
@@ -105,7 +105,7 @@ class NewsletterTest extends TestCase
         $resposta->assertOk();
         $this->assertDatabaseHas('newsletter_subscribers', [
             'email' => 'rui@example.com',
-            'status' => 'unsubscribed',
+            'status' => 'cancelled',
         ]);
     }
 
@@ -114,7 +114,7 @@ class NewsletterTest extends TestCase
         NewsletterSubscriber::create([
             'email' => 'ja@example.com',
             'token' => str_repeat('a', 64),
-            'status' => 'confirmed',
+            'status' => 'active',
             'confirmed_at' => now(),
         ]);
 
@@ -137,7 +137,7 @@ class NewsletterTest extends TestCase
 
         $sub = NewsletterSubscriber::where('email', 'pendente@example.com')->firstOrFail();
         $this->assertNotSame($tokenAntigo, $sub->token);
-        Mail::assertSent(NewsletterConfirmation::class, 2);
+        Mail::assertSent(NewsletterSubscricao::class, 2);
     }
 
     public function test_subscricao_valida_email(): void
@@ -158,7 +158,7 @@ class NewsletterTest extends TestCase
         NewsletterSubscriber::create([
             'email' => 've@example.com',
             'token' => str_repeat('b', 64),
-            'status' => 'confirmed',
+            'status' => 'active',
             'confirmed_at' => now(),
         ]);
 
@@ -178,7 +178,7 @@ class NewsletterTest extends TestCase
         $resposta->assertRedirect();
         $this->assertDatabaseHas('newsletter_subscribers', [
             'email' => 'adicionado@example.com',
-            'status' => 'confirmed',
+            'status' => 'active',
         ]);
     }
 
@@ -187,7 +187,7 @@ class NewsletterTest extends TestCase
         $sub = NewsletterSubscriber::create([
             'email' => 'apagar@example.com',
             'token' => str_repeat('c', 64),
-            'status' => 'confirmed',
+            'status' => 'active',
             'confirmed_at' => now(),
         ]);
 
@@ -196,12 +196,12 @@ class NewsletterTest extends TestCase
         $this->assertDatabaseMissing('newsletter_subscribers', ['email' => 'apagar@example.com']);
     }
 
-    public function test_exportar_csv_so_confirmados(): void
+    public function test_exportar_csv_so_ativos(): void
     {
         NewsletterSubscriber::create([
             'email' => 'csv-sim@example.com',
             'token' => str_repeat('d', 64),
-            'status' => 'confirmed',
+            'status' => 'active',
             'confirmed_at' => now(),
         ]);
         NewsletterSubscriber::create([

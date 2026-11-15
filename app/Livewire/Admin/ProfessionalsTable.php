@@ -64,7 +64,18 @@ class ProfessionalsTable extends Component
 
         $profissional = Professional::find($id);
 
-        $profissional?->update(['status' => $estado]);
+        if ($profissional === null) {
+            return;
+        }
+
+        $profissional->update(['status' => $estado]);
+
+        // Email transacional de decisão (restabelecer fica silencioso).
+        if ($estado === 'aprovado') {
+            \App\Support\RegistoEmails::aprovado($profissional->fresh());
+        } elseif ($estado === 'rejeitado') {
+            \App\Support\RegistoEmails::rejeitado($profissional->fresh());
+        }
     }
 
     public function render()

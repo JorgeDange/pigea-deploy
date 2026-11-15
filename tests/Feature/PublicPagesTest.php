@@ -14,8 +14,9 @@ use Tests\TestCase;
 class PublicPagesTest extends TestCase
 {
     /**
-     * Páginas públicas do protótipo (fase.md §4.7) + os 4 fragmentos AJAX
-     * das tabs da home que o `scripts.js` continua a pedir.
+     * Páginas públicas do protótipo (fase.md §4.7).
+     * As tabs AJAX da home foram removidas — "Últimas Notícias" é agora
+     * renderizada no servidor com as notícias mais recentes.
      */
     public static function paginasPublicas(): array
     {
@@ -38,10 +39,6 @@ class PublicPagesTest extends TestCase
             'password esquecida' => ['/forgot-password'],
             'reset de password' => ['/reset-password/token-de-teste'],
             'página 404 do protótipo' => ['/404'],
-            'fragmento AJAX mineração' => ['/ajax/noticias-mineracao.html'],
-            'fragmento AJAX água' => ['/ajax/noticias-agua.html'],
-            'fragmento AJAX ambiente' => ['/ajax/noticias-ambiente.html'],
-            'fragmento AJAX investigação' => ['/ajax/noticias-investigacao.html'],
         ];
     }
 

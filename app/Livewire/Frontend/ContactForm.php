@@ -64,7 +64,7 @@ class ContactForm extends Component
         }
 
         try {
-            \Mail::to($this->destinatario())->send(new \App\Mail\ContactMessage($this->name, $this->email, $this->comments ?? ''));
+            \Mail::mailer('geral')->to($this->destinatario())->send(new \App\Mail\ContactMessage($this->name, $this->email, $this->comments ?? ''));
         } catch (\Throwable $e) {
             $this->estado = 'erro';
             $this->erro = 'Não foi possível enviar a mensagem. Tente novamente mais tarde.';
