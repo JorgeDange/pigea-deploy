@@ -115,7 +115,6 @@ class MenuSeeder extends Seeder
             'tipo' => 'menu',
             'itens' => [
                 'Quem somos',
-                'Missão, visão e valores',
                 'Equipa',
                 'Parceiros',
                 'Contactos',

@@ -10,8 +10,8 @@ Guia **profissional e manual** para colocar em produção toda a implementação
 
 | Bloco | Conteúdo | Ficheiros-chave |
 |---|---|---|
-| **Pacote 15:00+** (`3248b8b`, em `b1d69a2`) | Home: «Últimas Notícias» renderizado no servidor (sem abas AJAX Mineração/Água/Ambiente/Investigação); Newsletter com templates HTML (subscrição/confirmação/cancelamento) e estados `pending/active/cancelled`; novos `Mailable`s; Diretório com emails transacionais (`registo-recebido/aprovado/não-aprovado`) via mailer `geral` + campo `email` obrigatório; `prod-patch-2026-11-16.sql` (29 migrações); `prod-categorias-news.sql` (Petróleo e Gás) | `home.blade.php`, `FragmentController` (apagado), `NewsletterController`, `RegistoEmails`, `config/mail.php`, `database/migrations/2026_11_*` |
-| **Release `18b9c82`** | Módulo institucional — páginas públicas **/equipa** e **/parceiros**, gestão admin completa; **Sobre Nós** com pilares Missão/Visão/Valores alinhados + faixa «Explorar»; textos da página Sobre editáveis nas Definições do painel (Missão, Visão, Valores, vídeo, overlay) | `equipa.blade.php`, `parceiros.blade.php`, `TeamController`, `PartnerController`, `Institucional.php`, `team_members` + `partners` (migração `2026_11_18`), `admin.configuracoes.sobre` |
+| **Pacote 15:00+** (`3248b8b`, em `b1d69a2`) | Home: «Últimas Notícias» renderizado no servidor (sem abas AJAX Mineração/Água/Ambiente/Investigação); Newsletter com templates HTML (subscrição/confirmação/cancelamento) e estados `pending/active/cancelled`; novos `Mailable`s; Diretório com emails transacionais (`registo-recebido/aprovado/não-aprovado`) via mailer `geral` + campo `email` obrigatório; `prod-patch-2026-11-16.sql` (30 migrações); `prod-categorias-news.sql` (Petróleo e Gás) | `home.blade.php`, `FragmentController` (apagado), `NewsletterController`, `RegistoEmails`, `config/mail.php`, `database/migrations/2026_11_*` |
+| **Release `18b9c82`** | Módulo institucional — páginas públicas **/equipa** e **/parceiros**, gestão admin completa; **Sobre Nós** com pilares Missão/Visão/Valores alinhados + faixa «Explorar»; textos da página Sobre editáveis nas Definições do painel (Missão, Visão, Valores, vídeo, overlay); **«Escolha da Equipa» (título do widget publicitário) eliminado**; subcategoria redundante «Missão, visão e valores» do mega menu removida (apontava para a mesma página de «Quem somos») | `equipa.blade.php`, `parceiros.blade.php`, `TeamController`, `PartnerController`, `Institucional.php`, `team_members` + `partners` + `missao-visao-e-valores` (migrações `2026_11_18` + `2026_11_19`), `admin.configuracoes.sobre`, `components/destaque.blade.php` |
 
 ### O que NÃO muda nesta versão
 - Esquema dos posts/artigos (só adições sempre); nada apaga `comments_count` em uso (verificado pelo cliente: a coluna está vazia; o patch remove-a porque o módulo nunca existiu).
@@ -34,8 +34,8 @@ Guia **profissional e manual** para colocar em produção toda a implementação
 
 1. Backup DB → `.sql`
 2. **Secção 1 do `prod-patch-2026-11-16.sql`** (verificação NIF) → espera **"OK — pode prosseguir"**
-3. **Secção 2** toda — 29 migrações (inclui remover `comments_count` — inofensivo, coluna vazia)
-4. **Verificação final** → espera **"29+"**
+3. **Secção 2** toda — 30 migrações (inclui remover `comments_count` — inofensivo, coluna vazia)
+4. **Verificação final** → espera **"30+"**
 5. **`prod-categorias-news.sql`** — só se o mega menu de produção ainda não tiver as categorias completas (incl. Petróleo e Gás + Academia/Oportunidades); confirma no phpMyAdmin com o `SELECT` da Secção 7
 6. **Upload FTP** do pacote de código (Secção 5), preservando `.env`, `storage/`, `vendor/`
 7. **Alterar `.env` de produção**: acrescentar apenas o bloco `MAIL_GERAL_*` (Secção 4)
@@ -152,7 +152,7 @@ php artisan storage:link       # aceita "already exists"; ignorar o erro
 - `storage/framework/cache/data/` → apagar apenas os ficheiros.
 - Hard refresh **Ctrl+F5** no browser.
 
-**Nunca** rodar `php artisan migrate` na produção neste deploy — as 29 migrações estão no patch. **Nunca** `migrate:rollback`. O seeder permitido (opcional, se faltar algo no mega menu) é apenas `MenuSeeder`: `php artisan db:seed --class=MenuSeeder`. **Nunca** `DatabaseSeeder`/`ContentSeeder`/`DirectorySeeder`.
+**Nunca** rodar `php artisan migrate` na produção neste deploy — as 30 migrações estão no patch. **Nunca** `migrate:rollback`. O seeder permitido (opcional, se faltar algo no mega menu) é apenas `MenuSeeder`: `php artisan db:seed --class=MenuSeeder`. **Nunca** `DatabaseSeeder`/`ContentSeeder`/`DirectorySeeder`.
 
 ---
 
@@ -162,7 +162,7 @@ php artisan storage:link       # aceita "already exists"; ignorar o erro
 2. **Sempre** com o dump fresco (Secção 2!) feito **mesmo antes**.
 3. **Secção 1** (SELECT); se `OK — pode prosseguir`, vai para a Secção 2. Se `PARAR` (NIF duplicado), **pára tudo** e reporta.
 4. **Secção 2 completa** (colar/importar a totalidade de `prod-patch-2026-11-16.sql`).
-5. Script de **verificação final**: `migracoes_marcadas_como_executadas` tem de devolver **≥ 29**.
+5. Script de **verificação final**: `migracoes_marcadas_como_executadas` tem de devolver **≥ 30**.
 6. **`prod-categorias-news.sql`** — só se o mega menu de produção ainda não tiver as categorias completas (incl. Petróleo e Gás e os grupos Academia/Oportunidades). Isto confirma-se correndo, no phpMyAdmin:
 
 ```sql

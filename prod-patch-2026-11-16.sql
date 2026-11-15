@@ -1,6 +1,6 @@
 -- ============================================================
 -- PIGEA — patch de esquema e dados para a produção
--- Aplica as 29 migrações que nunca correram na produção.
+-- Aplica as 30 migrações que nunca correram na produção.
 --
 -- ANTES DE EXECUTAR (obrigatório):
 --   1) Backup completo da BD (phpMyAdmin → Exportar → SQL)
@@ -298,6 +298,22 @@ CREATE TABLE IF NOT EXISTS `partners` (
   KEY `partners_tipo_ordem_index` (`tipo`, `ordem`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 2026_11_19_000000_remove_missao_menu_item
+-- Redundância: o item «Missão, visão e valores» apontava para a mesma página que
+-- «Quem somos» (/sobre) — o cliente pediu a remoção. Verificado: 0 artigos associados.
+DELETE FROM `categories` WHERE `menu_group` = 'sobre' AND `slug` = 'missao-visao-e-valores';
+
+-- Renumerar o grupo `sobre` para 1..N (subquery correlacionada — compatível com
+-- todas as variantes de MariaDB/MySQL; equivalente à migração equivalente).
+UPDATE `categories` c1
+SET c1.`order` = (
+  SELECT COUNT(*) + 1
+  FROM `categories` c2
+  WHERE c2.`menu_group` = 'sobre'
+    AND (c2.`order` < c1.`order` OR (c2.`order` = c1.`order` AND c2.`id` < c1.`id`))
+)
+WHERE c1.`menu_group` = 'sobre';
+
 -- ============================================
 -- Marca as migrações como "executadas"
 -- ============================================
@@ -331,6 +347,7 @@ SELECT * FROM (
   UNION ALL SELECT '2026_11_16_000000_newsletter_simplificar_statuses', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
   UNION ALL SELECT '2026_11_17_000000_add_email_to_companies_professionals', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
   UNION ALL SELECT '2026_11_18_000000_create_team_members_and_partners_tables', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
+  UNION ALL SELECT '2026_11_19_000000_remove_missao_menu_item', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
 ) t
 WHERE NOT EXISTS (SELECT 1 FROM `migrations` WHERE `migrations`.`migration` = t.migration);
 

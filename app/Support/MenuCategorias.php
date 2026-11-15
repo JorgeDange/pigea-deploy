@@ -88,7 +88,6 @@ final class MenuCategorias
         ],
         'sobre' => [
             'quem-somos' => ['about'],
-            'missao-visao-e-valores' => ['about'],
             'equipa' => ['equipa'],
             'parceiros' => ['parceiros'],
             'contactos' => ['contacts'],

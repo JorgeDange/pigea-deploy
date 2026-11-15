@@ -19,7 +19,7 @@ class MegaMenuTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** Contagens por grupo — listas exatas dadas pelo cliente (44 itens). */
+    /** Contagens por grupo — listas exatas dadas pelo cliente (43 itens). */
     private const CONTAGENS = [
         'inicio' => 4,
         'noticias' => 4,
@@ -29,7 +29,7 @@ class MegaMenuTest extends TestCase
         'academia' => 5,
         'oportunidades' => 5,
         'directorio' => 4,
-        'sobre' => 5,
+        'sobre' => 4,
     ];
 
     // ------------------------------------------------------------------
@@ -40,7 +40,7 @@ class MegaMenuTest extends TestCase
     {
         $total = Category::whereNotNull('menu_group')->count();
 
-        $this->assertSame(44, $total, 'O menu deve ter as 44 subcategorias do cliente.');
+        $this->assertSame(43, $total, 'O menu deve ter as 43 subcategorias do cliente.');
 
         foreach (self::CONTAGENS as $grupo => $esperado) {
             $this->assertSame(
@@ -59,7 +59,6 @@ class MegaMenuTest extends TestCase
             'Geodesia e GNSS',
             'SIG e geoprocessamento',
             'Actualidade nacional e internacional',
-            'Missão, visão e valores',
             'Equipamentos e serviços',
         ] as $nome) {
             $this->assertTrue(
@@ -139,7 +138,7 @@ class MegaMenuTest extends TestCase
     {
         $this->artisan('db:seed', ['--class' => \Database\Seeders\MenuSeeder::class, '--force' => true]);
 
-        $this->assertSame(44, Category::whereNotNull('menu_group')->count());
+        $this->assertSame(43, Category::whereNotNull('menu_group')->count());
     }
 
     // ------------------------------------------------------------------
@@ -235,8 +234,8 @@ class MegaMenuTest extends TestCase
         $this->assertSame(0, substr_count($html, 'mm-panel-cab'));
         $this->assertStringNotContainsString('Portal de Geociências', $html);
 
-        // Grelha com os 44 links de subcategorias.
-        $this->assertSame(44, substr_count($html, 'class="mm-link"'));
+        // Grelha com os 43 links de subcategorias.
+        $this->assertSame(43, substr_count($html, 'class="mm-link"'));
 
         // Início ativo na home.
         $this->assertStringContainsString('mm-grupo-inicio mm-item-ativo', $html);
