@@ -10,7 +10,7 @@ Guia **profissional e manual** para colocar em produção toda a implementação
 
 | Bloco | Conteúdo | Ficheiros-chave |
 |---|---|---|
-| **Pacote 15:00+** (`3248b8b`, em `b1d69a2`) | Home: «Últimas Notícias» renderizado no servidor (sem abas AJAX Mineração/Água/Ambiente/Investigação); Newsletter com templates HTML (subscrição/confirmação/cancelamento) e estados `pending/active/cancelled`; novos `Mailable`s; Diretório com emails transacionais (`registo-recebido/aprovado/não-aprovado`) via mailer `geral` + campo `email` obrigatório; `prod-patch-2026-11-16.sql` (30 migrações); `prod-categorias-news.sql` (Petróleo e Gás) | `home.blade.php`, `FragmentController` (apagado), `NewsletterController`, `RegistoEmails`, `config/mail.php`, `database/migrations/2026_11_*` |
+| **Pacote 15:00+** (`3248b8b`, em `b1d69a2`) | Home: «Últimas Notícias» renderizado no servidor (sem abas AJAX Mineração/Água/Ambiente/Investigação); Newsletter com templates HTML (subscrição/confirmação/cancelamento) e estados `pending/active/cancelled`; novos `Mailable`s; Diretório com emails transacionais (`registo-recebido/aprovado/não-aprovado`) via mailer `geral` + campo `email` obrigatório; `prod-patch-2026-11-16.sql` (29 migrações); `prod-categorias-news.sql` (Petróleo e Gás) | `home.blade.php`, `FragmentController` (apagado), `NewsletterController`, `RegistoEmails`, `config/mail.php`, `database/migrations/2026_11_*` |
 | **Release `18b9c82`** | Módulo institucional — páginas públicas **/equipa** e **/parceiros**, gestão admin completa; **Sobre Nós** com pilares Missão/Visão/Valores alinhados + faixa «Explorar»; textos da página Sobre editáveis nas Definições do painel (Missão, Visão, Valores, vídeo, overlay); **«Escolha da Equipa» (título do widget publicitário) eliminado**; subcategoria redundante «Missão, visão e valores» do mega menu removida (apontava para a mesma página de «Quem somos») | `equipa.blade.php`, `parceiros.blade.php`, `TeamController`, `PartnerController`, `Institucional.php`, `team_members` + `partners` + `missao-visao-e-valores` (migrações `2026_11_18` + `2026_11_19`), `admin.configuracoes.sobre`, `components/destaque.blade.php` |
 
 ### O que NÃO muda nesta versão
@@ -33,9 +33,9 @@ Guia **profissional e manual** para colocar em produção toda a implementação
 ## 3. Ordem completa (num relance)
 
 1. Backup DB → `.sql`
-2. **Secção 1 do `prod-patch-2026-11-16.sql`** (verificação NIF) → espera **"OK — pode prosseguir"**
-3. **Secção 2** toda — 30 migrações (inclui remover `comments_count` — inofensivo, coluna vazia)
-4. **Verificação final** → espera **"30+"**
+2. **Backup completo da BD** (phpMyAdmin → Exportar → SQL) — única garantia de reversão do patch
+3. **Secção 2** toda — 29 migrações (inclui remover `comments_count` — inofensivo, coluna vazia)
+4. **Verificação final** → espera **"29+"**
 5. **`prod-categorias-news.sql`** — só se o mega menu de produção ainda não tiver as categorias completas (incl. Petróleo e Gás + Academia/Oportunidades); confirma no phpMyAdmin com o `SELECT` da Secção 7
 6. **Upload FTP** do pacote de código (Secção 5), preservando `.env`, `storage/`, `vendor/`
 7. **Alterar `.env` de produção**: acrescentar apenas o bloco `MAIL_GERAL_*` (Secção 4)
@@ -152,17 +152,21 @@ php artisan storage:link       # aceita "already exists"; ignorar o erro
 - `storage/framework/cache/data/` → apagar apenas os ficheiros.
 - Hard refresh **Ctrl+F5** no browser.
 
-**Nunca** rodar `php artisan migrate` na produção neste deploy — as 30 migrações estão no patch. **Nunca** `migrate:rollback`. O seeder permitido (opcional, se faltar algo no mega menu) é apenas `MenuSeeder`: `php artisan db:seed --class=MenuSeeder`. **Nunca** `DatabaseSeeder`/`ContentSeeder`/`DirectorySeeder`.
+**Nunca** rodar `php artisan migrate` na produção neste deploy — as 29 migrações estão no patch. **Nunca** `migrate:rollback`. O seeder permitido (opcional, se faltar algo no mega menu) é apenas `MenuSeeder`: `php artisan db:seed --class=MenuSeeder`. **Nunca** `DatabaseSeeder`/`ContentSeeder`/`DirectorySeeder`.
 
 ---
 
 ## 7. Como aplicar o patch no phpMyAdmin — ordem
 
 1. **CPanel → phpMyAdmin → `pigea` → Importar** ou **SQL** (colar).
-2. **Sempre** com o dump fresco (Secção 2!) feito **mesmo antes**.
-3. **Secção 1** (SELECT); se `OK — pode prosseguir`, vai para a Secção 2. Se `PARAR` (NIF duplicado), **pára tudo** e reporta.
+2. **Sempre** com o dump fresco feito **mesmo antes** (export completo no phpMyAdmin ou mysqldump).
+3. **Nota — Secção 1** é agora apenas diagnóstica (o ficheiro imprime um aviso informativo). A Secção 2 está protegida: a criação do índice `companies_nif_unique` é salada via information_schema — não rebenta se ele já existir. Opcionalmente, para veres NIFs duplicados existentes:
+   ```sql
+   SELECT COUNT(*) AS tabela_existe FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'companies';
+   SELECT nif, COUNT(*) c FROM companies GROUP BY nif HAVING c > 1;
+   ```
 4. **Secção 2 completa** (colar/importar a totalidade de `prod-patch-2026-11-16.sql`).
-5. Script de **verificação final**: `migracoes_marcadas_como_executadas` tem de devolver **≥ 30**.
+5. Script de **verificação final**: `migracoes_marcadas_como_executadas` tem de devolver **≥ 29**.
 6. **`prod-categorias-news.sql`** — só se o mega menu de produção ainda não tiver as categorias completas (incl. Petróleo e Gás e os grupos Academia/Oportunidades). Isto confirma-se correndo, no phpMyAdmin:
 
 ```sql
@@ -189,17 +193,17 @@ Se a resposta listar as 9 secções (`noticias, mineracao, petroleo-e-gas, geoci
 9. `https://pigea.ao/contactos` → submeter mensagem → chega a `geral@pigea.ao`, reply-to = visitante.
 10. Newsletter: confirmar que o email «Falta só um passo!» ainda sai com `MAIL_FROM_ADDRESS=newsletter@pigea.ao` **intocada** desde 14/11.
 11. Dashboard: `https://pigea.ao/gestao-pigea/` → avisos/painel (sininho) sem erros; **/gestao-pigea/equipa/parceiros** ok.
-12. Se alguma página mostrar 500: `storage/logs/laravel.log` para a linha exacta; **não tocar em nada antes de ler o erro**; o rollback seguro é restaurar o dump SQL pré-Secção 1.
+12. Se alguma página mostrar 500: `storage/logs/laravel.log` para a linha exacta; **não tocar em nada antes de ler o erro**; o rollback seguro é restaurar o dump SQL pré-deploy.
 13. Se o browser ainda mostrar o site antigo: **Ctrl+F5** (ou abrir com `?cache=1`).
 
 ---
 
 ## 9. Plano B (rollback) — se o deploy partir o site
 
-**Opção A — DB (preferida):** phpMyAdmin → importar `.sql` girado na Secção 1 (completo). Isto devolve esquema + dados completos.
+**Opção A — DB (preferida):** phpMyAdmin → importar o `.sql` do backup feito antes de aplicar o patch. Isto repõe o estado anterior completo (esquema + dados).
 **Opção B — Ficheiros:** extrair `backup-pigea-2026-11-15.tar.gz` no servidor (Secção 2), depois `.env` actual e `storage/app/public` são recuperados a partir do backup.
 
-**Regra mínima:** se não tens o `.sql` da Secção 1, **não toques em nada** antes de contratar alguém que o tenha — que o site é o activo da plataforma (postagens, assinantes, registos e log de produção), não pode ser perdido.
+**Regra mínima:** se não tens o `.sql` do dump pré-deploy, **não toques em nada** antes de contratar alguém que o tenha — que o site é o activo da plataforma (postagens, assinantes, registos e log de produção), não pode ser perdido.
 
 ---
 
@@ -210,7 +214,7 @@ Se a resposta listar as 9 secções (`noticias, mineracao, petroleo-e-gas, geoci
 **«Pedro submeteu uma empresa antes do deploy — onde está a submissão dele?»** — Está na tabela `companies` como `pendente` (nada se perde no deploy; a tabela continua intacta).
 **«Os emails param de chegar?»** — Se `MAIL_GERAL_*` for omitida, o envio transacional/contact falha silencioso (fica `storage/logs/laravel.log`). A newsletter não depende dela.
 **«O mega-menu dos sublinks apareceu vazio»** — Rode `SELECT slug, menu_group FROM categories WHERE menu_group IS NOT NULL ORDER BY menu_group, order;` no phpMyAdmin; se faltar, `php artisan db:seed --class=MenuSeeder` (único seeder permitido).
-**«Já apliquei o patch duas vezes — deu erro»** — O script é idempotente; o erro esperado é «DUPLICATE KEY …» ignorável. Se cair num ponto inesperado, restaura a Secção 1 dump e reporta.
+**«Já apliquei o patch duas vezes — deu erro»** — O script é idempotente; o erro esperado é «DUPLICATE KEY …» ignorável. Se cair num ponto inesperado, restaura o dump pré-deploy e reporta.
 **«Overwriting/FTP tímido… posso confiar?»** — Mantém os 6-8 ficheiros em `storage/app/public` que o site serve (imagens, PDFs). Nada mais merece proteção especial.
 **«Mesmo com o browser limpo, ainda vejo a home antiga»** — Hard refresh: **Ctrl+F5**; os ficheiros compilados em `storage/framework/views/*.php` têm de ser apagados (Secção 6).
 

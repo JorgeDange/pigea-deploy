@@ -1,19 +1,24 @@
 -- ============================================================
 -- PIGEA — patch de esquema e dados para a produção
--- Aplica as 30 migrações que nunca correram na produção.
+-- Aplica as 29 migrações que nunca correram na produção.
 --
 -- ANTES DE EXECUTAR (obrigatório):
 --   1) Backup completo da BD (phpMyAdmin → Exportar → SQL)
---   2) Correr Secção 1 (verificação) primeiro
---   3) Só depois a Secção 2 (patch)
+--   2) Ler a nota da Secção 1 (diagnóstico opcional)
+--   3) Aplicar a Secção 2 inteira (patch)
 -- ============================================================
 
--- ===== SECÇÃO 1 — PRÉ-VERIFICAÇÃO (correr obrigatoriamente primeiro) =====
-
-SELECT IF(COUNT(*) > 0,
-          CONCAT('PARAR: ', COUNT(*), ' NIFs DUPLICADOS'),
-          'OK — pode prosseguir') AS verificacao_nif
-FROM (SELECT nif FROM companies GROUP BY nif HAVING COUNT(*) > 1) t;
+-- ===== SECÇÃO 1 — PRÉ-VERIFICAÇÃO (NOTA / DIAGNÓSTICO OPCIONAL) =====
+-- Nota: Esta secção é meramente diagnóstica. A Secção 2 já protege a
+-- própria integridade (companies_nif_unique só é adicionado se ainda não existir,
+-- via information_schema) — não rebenta o import por duplicação escrota de chave.
+-- Diagnóstico manual (se quiseres ter a certeza visual ANTES de aplicar):
+--   SELECT COUNT(*) AS tabela_existe
+--   FROM information_schema.tables
+--   WHERE table_schema = DATABASE() AND table_name = 'companies';
+--   SELECT nif, COUNT(*) c FROM companies GROUP BY nif HAVING c > 1;
+--   Se devolver linhas com c > 1, limpa os NIFs duplicados ANTES da Secção 2.
+SELECT 'Secção 1 — diagnóstico informativo (ver comentário acima)' AS seccao_1_nota;
 
 -- ===== SECÇÃO 2 — PATCH =====
 
@@ -103,8 +108,25 @@ ALTER TABLE `news` ADD COLUMN IF NOT EXISTS `documento_link` VARCHAR(255) NULL A
 ALTER TABLE `directory_documents` ADD COLUMN IF NOT EXISTS `deleted_at` TIMESTAMP NULL AFTER `areas_atuacao`;
 ALTER TABLE `banners` ADD COLUMN IF NOT EXISTS `deleted_at` TIMESTAMP NULL AFTER `ativo`;
 
--- 2026_11_11_000000_add_unique_index_to_companies_nif
-ALTER TABLE `companies` ADD UNIQUE INDEX `companies_nif_unique` (`nif`);
+-- 2026_11_11_000000_add_unique_index_to_companies_nif (idempotente)
+-- Se a BD já tiver o índice (ex.: a migração correu via artisan noutro momento),
+-- não rebenta o patch inteiro — apenas salta esta linha.
+SET @nif_idx_existe = (
+    SELECT COUNT(*)
+    FROM information_schema.statistics
+    WHERE table_schema = DATABASE()
+      AND table_name = 'companies'
+      AND index_name = 'companies_nif_unique'
+);
+
+SET @add_nif_unique = IF(
+    @nif_idx_existe = 0,
+    'ALTER TABLE `companies` ADD UNIQUE INDEX `companies_nif_unique` (`nif`)',
+    'DO 0'
+);
+PREPARE stmt_nif FROM @add_nif_unique;
+EXECUTE stmt_nif;
+DEALLOCATE PREPARE stmt_nif;
 
 -- 2026_11_11_000001_drop_comments_count_from_content_tables
 ALTER TABLE `news` DROP COLUMN IF EXISTS `comments_count`;
@@ -320,6 +342,7 @@ WHERE c1.`menu_group` = 'sobre';
 INSERT INTO `migrations` (`migration`, `batch`)
 SELECT * FROM (
   SELECT '2026_11_10_104620_create_media_table' AS migration, (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`) AS batch
+  UNION ALL SELECT '2026_11_10_104620_create_media_table', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
   UNION ALL SELECT '2026_11_10_120000_create_companies_table', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
   UNION ALL SELECT '2026_11_10_120001_create_professionals_table', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
   UNION ALL SELECT '2026_11_10_120002_create_directory_documents_table', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
