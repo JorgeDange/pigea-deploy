@@ -38,7 +38,7 @@
                     $handle = trim((string) ($definicoes[$chave . '_nome'] ?? ''));
                 @endphp
                 @if ($url !== '')
-                    <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" class="{{ $rede['classe'] }}">
+                    <a href="{{ urlAbsoluta($url) }}" target="_blank" rel="noopener noreferrer" class="{{ $rede['classe'] }}">
                         <i class="{{ $rede['icone'] }}"></i>
                         <span class="soc-widget-title">{{ $rede['nome'] }}</span>
                         <span class="soc-widget_counter soc-widget-handle">{{ $handle !== '' ? $handle : $rede['nome'] }}</span>

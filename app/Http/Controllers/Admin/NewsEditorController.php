@@ -181,7 +181,10 @@ class NewsEditorController extends Controller
         }
 
         if (array_key_exists('conteudo', $dados)) {
-            $noticia->content = ArticleSanitizer::clean($dados['conteudo'] ?? null);
+            // Opção B (decisão do cliente, 2026-11-15): o rascunho guarda o
+            // conteúdo tal como está; o purificador só corre no caminho de
+            // publicar/pré-visualizar — nada renderiza um draft nunca.
+            $noticia->content = $dados['conteudo'] ?? null;
         }
 
         if (array_key_exists('subtitulo', $dados)) {

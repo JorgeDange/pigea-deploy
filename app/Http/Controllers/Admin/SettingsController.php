@@ -102,6 +102,23 @@ class SettingsController extends Controller
     {
         $dados = $request->validate(self::REGRAS[$seccao]);
 
+        // Normalizar links das redes sociais: se faltar o esquema, o browser
+        // resolve como caminho relativo do site (www.youtube.com/... -> site.com/www.youtube.com/...).
+        if ($seccao === 'redes') {
+            foreach (['facebook', 'instagram', 'linkedin', 'youtube', 'twitter'] as $chave) {
+                $valor = trim((string) ($dados[$chave] ?? ''));
+                if ($valor === '') {
+                    continue;
+                }
+                if (preg_match('#^[a-z0-9-]+(\.[a-z0-9-]+)+(/.*)?$#i', $valor) && ! str_starts_with($valor, '/')) {
+                    $valor = 'https://' . $valor; // dominio.com/caminho -> https://...
+                } elseif (str_starts_with($valor, '//')) {
+                    $valor = 'https:' . $valor;
+                }
+                $dados[$chave] = $valor;
+            }
+        }
+
         foreach ($dados as $chave => $valor) {
             if ($request->hasFile($chave)) {
                 $valor = $request->file($chave)->store('settings', 'public');

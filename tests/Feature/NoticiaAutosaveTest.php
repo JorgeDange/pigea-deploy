@@ -7,10 +7,16 @@ use App\Models\User;
 use Tests\TestCase;
 
 /**
- * Fase 8.1 (cms_v.md) — autosave do editor.
+ * Fase 8.1 (cms_v.md) - autosave do editor.
  *
- * POST /gestao-pigea/noticias/autosave — sanitiza o corpo, NUNCA publica
- * (status fica como estava), só funciona em registos existentes.
+ * POST /gestao-pigea/noticias/autosave - grava o corpo tal como está (Opção B,
+ * 2026-11-15): a sanitização acontece APENAS no caminho de publicar/pré-visualizar
+ * (ver NewsEditorController::update() e o endpoint de pré-visualização — ambos
+ * passam por ArticleSanitizer::clean()). O rascunho nunca é renderizado fora do
+ * editor do autor. NUNCA publica (status fica como estava).
+ *
+ * A cobertura XSS do lado do servidor vive em ArticleSanitizerTest (unit) e nas
+ * chamadas a clean() nos caminhos de publicar/pré-visualizar.
  */
 class NoticiaAutosaveTest extends TestCase
 {
@@ -37,9 +43,9 @@ class NoticiaAutosaveTest extends TestCase
             'status' => 'published', // continua publicado (autosave NUNCA publica)
         ]);
 
-        // Sanitizado no guardar
+        // Opção B: o rascunho é gravado tal como está (rápido, sem purificador);
+        // quem filtra é o caminho de publicar/pré-visualizar + ArticleSanitizerTest.
         $atualizada = News::findOrFail($noticia->id);
-        $this->assertStringNotContainsString('<script', $atualizada->content ?? '');
         $this->assertStringContainsString('Update autosave.', $atualizada->content ?? '');
     }
 
@@ -92,6 +98,6 @@ class NoticiaAutosaveTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $this->assertStringNotContainsString('<script', News::findOrFail($id)->content ?? '');
+        $this->assertStringContainsString('Corpo atualizado.', News::findOrFail($id)->content ?? '');
     }
 }

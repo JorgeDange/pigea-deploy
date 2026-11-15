@@ -28,7 +28,7 @@
     @if ($url !== '' || $handle !== '')
         <li>
             @if ($url !== '')
-                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $rede['nome'] }}"><i class="{{ $rede['icone'] }}" aria-hidden="true"></i></a>
+                <a href="{{ urlAbsoluta($url) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $rede['nome'] }}"><i class="{{ $rede['icone'] }}" aria-hidden="true"></i></a>
             @else
                 <span role="img" aria-label="{{ $rede['nome'] }} — {{ $handle }}" title="{{ $handle }}"><i class="{{ $rede['icone'] }}" aria-hidden="true"></i></span>
             @endif

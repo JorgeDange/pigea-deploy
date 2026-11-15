@@ -45,7 +45,7 @@
                                                     $chaveRede = mb_strtolower((string) $rede);
                                                     [$iconeRede, $nomeRede] = $redesMap[$chaveRede] ?? ['fa-link', ucfirst($chaveRede)];
                                                 @endphp
-                                                <li><a href="{{ $url }}" target="_blank" rel="noopener" title="{{ $nomeRede }}" aria-label="{{ $nomeRede }} de {{ $empresa->nome_empresa }}"><i class="fab {{ $iconeRede }}" aria-hidden="true"></i></a></li>
+                                                <li><a href="{{ urlAbsoluta($url) }}" target="_blank" rel="noopener noreferrer" title="{{ $nomeRede }}" aria-label="{{ $nomeRede }} de {{ $empresa->nome_empresa }}"><i class="fab {{ $iconeRede }}" aria-hidden="true"></i></a></li>
                                             @endforeach
                                         </ul>
                                     </div>

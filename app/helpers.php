@@ -27,3 +27,39 @@ if (! function_exists('image_url')) {
             : asset($path);
     }
 }
+
+/**
+ * urlAbsoluta($url):
+ *  - URLs com esquema http:// ou https:// ficam como estao;
+ *  - URLs // (protocol-relative) recebem https:;
+ *  - dominio.com/caminho (sem esquema) recebe https://;
+ *  - caminhos /internos viram URL absoluta a partir do APP_URL;
+ *  - youtube/pigea (sem dominio) e sempre erros de conteudo do admin -
+ *    devolvemos https:// + o valor para nao quebrarmos silenciosamente.
+ *
+ * NORMALIZA URLs DE REDES SOCIAIS (settings) tanto na gravacao como no render.
+ */
+
+if (! function_exists('urlAbsoluta')) {
+    function urlAbsoluta(?string $url): string
+    {
+        $url = trim((string) $url);
+        if ($url === '') {
+            return '';
+        }
+        if (preg_match('#^https?://#i', $url)) {
+            return $url;
+        }
+        if (str_starts_with($url, '//')) {
+            return 'https:' . $url;
+        }
+        if (str_starts_with($url, '/')) {
+            return url($url);
+        }
+        if (preg_match('#^[a-z0-9-]+(\.[a-z0-9-]+)+(/.*)?$#i', $url)) {
+            return 'https://' . $url;
+        }
+        return 'https://' . $url;
+    }
+}
+

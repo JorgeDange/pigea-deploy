@@ -309,19 +309,26 @@ tinymce.init({
     });
 })();
 
-/* ===== cms_v.md FASE 8.1 - Autosave (debounce 15s, sem Livewire) ===== */
+/* ===== Autosave (Opção B + guardas do cliente, 2026-11-15) =====
+   - Debounce 15s; sem Livewire (best practices do editor).
+   - O rascunho guarda o conteúdo bruto (purifier corre só ao publicar/pré-visualizar).
+   - Regras:
+     · nenhum autosave dispara enquanto a anterior está em voo (`emVoo`);
+     · `fetch` com timeout de 45s → "A guardar…" nunca fica eterno;
+     · Enter em inputs de uma linha NÃO submete o formulário;
+     · sair da página NUNCA lança aviso nativo: o beforeunload envia o rascunho
+       por sendBeacon (autosave fire-and-forget);
+     · navegação DENTRO do admin com alterações por guardar → abre o modal do
+       site (#confirm-modal via window.PIGEAConfirm), nunca um alert() só.
+   =========================================================== */
 
 (function () {
     var form = document.getElementById('news-editor-form');
     var indicador = document.getElementById('autosave-indicador');
     if (!form || !indicador) return;
 
-    var form = document.getElementById('news-editor-form');
-    var indicador = document.getElementById('autosave-indicador');
-    if (!form || !indicador) return;
-
-    // Fase 11B/fase 12: o autosave tambem funciona para novos artigos —
-    // na primeira gravacao cria o rascunho e passa a fazer PUT (update).
+    // Fase 11B/fase 12: o autosave também funciona para novos artigos —
+    // na primeira gravação cria o rascunho e passa a fazer PUT (update).
     var id = form.getAttribute('data-id') || '';
 
     var autosaveUrl = form.getAttribute('data-autosave-url');
@@ -330,10 +337,20 @@ tinymce.init({
     var emVoo = false;
     var timers = { pendente: null };
     var ultimoPayload = null;
+    var sujo = false;
+    var ultimoSincronizado = JSON.stringify({ m: 0 }); // assinatura diferente por omissao
 
     function setIndicador(estado, texto) {
         indicador.textContent = texto;
         indicador.className = 'autosave' + (estado ? ' ' + estado : '');
+    }
+
+    function assinaturaAtual() {
+        var ed = window.tinymce && tinymce.get('conteudo-editor');
+        return [
+            document.getElementById('titulo').value,
+            ed && ed.getContent ? ed.getContent() : ''
+        ].join('|');
     }
 
     function guardar() {
@@ -346,6 +363,12 @@ tinymce.init({
             return;
         }
 
+        if (emVoo) {
+            // Antes: disparava pedido por cima de pedido. Agora: ignora — o
+            // atendente reenfileira quando o pedido actual termina.
+            return;
+        }
+
         var payload = {
             id: id ? Number(id) : null,
             titulo: titulo,
@@ -355,7 +378,7 @@ tinymce.init({
         };
 
         var chave = JSON.stringify(payload);
-        if (chave === ultimoPayload) return;
+        if (chave === ultimoPayload) { sujo = false; return; }
         ultimoPayload = chave;
 
         var token = form.querySelector('input[name="_token"]').value;
@@ -363,14 +386,17 @@ tinymce.init({
         setIndicador('saving', 'A guardar…');
         emVoo = true;
 
+        var abort = new AbortController();
+        var timeout = setTimeout(function () { abort.abort(); }, 45000);
+
         fetch(autosaveUrl, {
             method: 'POST',
             credentials: 'same-origin',
+            signal: abort.signal,
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
             body: JSON.stringify(payload)
         })
             .then(function (res) {
-                emVoo = false;
                 if (res.status === 419 || res.status === 401) {
                     setIndicador('error', 'Sessão expirada — guarda manualmente.');
                     throw new Error('Sessão expirada');
@@ -379,16 +405,16 @@ tinymce.init({
                 return res.json();
             })
             .then(function (data) {
+                emVoo = false;
+                clearTimeout(timeout);
                 if (data && data.ok) {
-                    // Se o rascunho foi criado agora, passar o form a update por PUT.
+                    sujo = false;
                     if (data.id && !id) {
                         id = String(data.id);
                         form.setAttribute('data-id', id);
-
                         if (updateUrl) {
                             form.action = updateUrl.replace('/ID', '/' + id);
                         }
-                        // Inserir o hidden _method=PUT se ainda não existir.
                         if (!form.querySelector('input[name="_method"]')) {
                             var hm = document.createElement('input');
                             hm.type = 'hidden';
@@ -397,20 +423,25 @@ tinymce.init({
                             form.appendChild(hm);
                         }
                     }
-
                     var hora = ((data.saved_at || '').split('T')[1] || '').substring(0, 5);
                     setIndicador('saved', 'Guardado às ' + hora);
                 } else {
                     setIndicador('error', 'Não foi possível guardar.');
                 }
             })
-            .catch(function () {
+            .catch(function (erro) {
                 emVoo = false;
-                setIndicador('error', 'Não foi possível guardar. Tenta manualmente.');
+                clearTimeout(timeout);
+                if (erro && erro.name === 'AbortError') {
+                    setIndicador('error', 'Demorou demasiado — guarda manualmente.');
+                } else {
+                    setIndicador('error', 'Não foi possível guardar. Tenta manualmente.');
+                }
             });
     }
 
     function atender() {
+        sujo = true;
         clearTimeout(timers.pendente);
         setIndicador('pending', 'A guardar em 15s…');
         timers.pendente = setTimeout(guardar, 15000);
@@ -418,8 +449,22 @@ tinymce.init({
 
     form.addEventListener('input', atender);
 
-    // O TinyMCE emite os seus próprios eventos — liga-os diretamente ao handler
-    // (o editor já está inicializado quando este ficheiro corre).
+    // Enter em inputs de uma linha NÃO submete o formulário (avança para o campo seguinte).
+    form.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        var t = e.target;
+        var eTexto = t && t.matches && t.matches('input[type=text], input[type=email], input[type=url], input[type=number], input[type=search]');
+        if (!eTexto) return;
+        e.preventDefault();
+        var focaveis = Array.prototype.slice.call(
+            form.querySelectorAll('input, select, textarea, button, [tabindex]')
+        ).filter(function (el) { return !el.disabled && el.offsetParent !== null; });
+        var i = focaveis.indexOf(t);
+        var seguinte = i >= 0 ? focaveis[i + 1] : null;
+        if (seguinte) seguinte.focus();
+    });
+
+    // O TinyMCE emite os seus próprios eventos — liga-os diretamente.
     function ligarTinyMCE() {
         if (!window.tinymce) return;
         var ed = tinymce.get('conteudo-editor');
@@ -429,19 +474,47 @@ tinymce.init({
     }
     ligarTinyMCE();
 
-    // Aviso ao sair com alterações por guardar
-    window.addEventListener('beforeunload', function (e) {
-        if (ultimoPayload === null) return; // nada foi guardado ainda; o form normal trata disso
+    // Sair da página: nunca mostra aviso nativo. O rascunho vai pelo beacon
+    // (envio fire-and-forget garantido pelo browser mesmo a fechar a aba).
+    window.addEventListener('beforeunload', function () {
+        if (!sujo) return;
         var ed = window.tinymce && tinymce.get('conteudo-editor');
-        var assinatura = [
-            document.getElementById('titulo').value,
-            ed && ed.getContent ? ed.getContent() : ''
-        ].join('|');
-
-        if (assinatura === ultimoPayload) return;
-        e.preventDefault();
-        e.returnValue = 'Tens alterações por guardar nesta notícia.';
+        var assinatura = assinaturaAtual();
+        if (assinatura === ultimoPayload) { sujo = false; return; }
+        try {
+            var fd = new FormData();
+            fd.append('id', id || '');
+            fd.append('titulo', document.getElementById('titulo').value);
+            fd.append('conteudo', ed && ed.getContent ? ed.getContent() : document.getElementById('conteudo-editor').value);
+            fd.append('subtitulo', document.getElementById('subtitulo').value.trim());
+            fd.append('categoria', document.getElementById('categoria').value || '');
+            fd.append('_token', form.querySelector('input[name="_token"]').value);
+            if (navigator.sendBeacon) { navigator.sendBeacon(autosaveUrl, fd); }
+        } catch (e) { /* um draft grande pode exceder o limite do beacon — nada a fazer aqui */ }
     });
+
+    // Ligações dentro do próprio admin: se há alterações por guardar, abre o
+    // modal do site em vez de navegar abruptamente (nunca alert() nativo).
+    document.addEventListener('click', function (e) {
+        if (!sujo) return;
+        var a = e.target.closest ? e.target.closest('a[href]') : null;
+        if (!a) return;
+        var href = a.getAttribute('href');
+        if (!href || href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return;
+        if (a.target && a.target !== '_self') return;
+
+        var atual = window.location.pathname;
+        var destino = href.split('?')[0].split('#')[0];
+        if (destino === atual) return; // mesma página, nada a fazer
+
+        e.preventDefault();
+        window.PIGEAConfirm(
+            'Alterações por guardar',
+            'Tens alterações nesta notícia que ainda não foram guardadas.',
+            'Sair sem guardar',
+            function () { window.location.href = href; }
+        );
+    }, true);
 })();
 
 /* ===== Fase 11 / cms_v.md - switch «Ficheiro vs Link» na capa ======= */
