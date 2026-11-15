@@ -22,12 +22,12 @@
                 @error('contactos')<p class="form-error" role="alert">{{ $message }}</p>@enderror
 
                 <label style="margin-top: 12px; display: block;"><strong>Áreas de Atuação *</strong></label>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; margin: 8px 0 16px;">
+                <div class="areas-grid">
                     @foreach ($areasLista as $area)
-                        <div class="filter-tags">
+                        <label class="area-chip">
                             <input type="checkbox" id="area-prof-{{ $loop->index }}" value="{{ $area }}" wire:model="areas_atuacao" />
-                            <label for="area-prof-{{ $loop->index }}">{{ $area }}</label>
-                        </div>
+                            <span>{{ $area }}</span>
+                        </label>
                     @endforeach
                 </div>
                 @error('areas_atuacao')<p class="form-error" role="alert">{{ $message }}</p>@enderror
