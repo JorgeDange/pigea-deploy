@@ -56,6 +56,13 @@ class SettingsController extends Controller
             'meta_title' => 'nullable|string|max:60',
             'meta_description' => 'nullable|string|max:160',
         ],
+        'sobre' => [
+            'sobre_missao' => 'nullable|string|max:1200',
+            'sobre_visao' => 'nullable|string|max:500',
+            'sobre_valores' => 'nullable|string|max:500',
+            'video_institucional' => 'nullable|url:http,https|max:500',
+            'sobre_overlay' => 'nullable|string|max:160',
+        ],
     ];
 
     /** Página com os valores já guardados (vazios = placeholder do protótipo). */
@@ -88,6 +95,12 @@ class SettingsController extends Controller
     public function seo(Request $request): RedirectResponse
     {
         return $this->guardar($request, 'seo');
+    }
+
+    /** Cartão "Sobre Nós" (missão, visão, valores, vídeo institucional e legenda do overlay). */
+    public function sobre(Request $request): RedirectResponse
+    {
+        return $this->guardar($request, 'sobre');
     }
 
     /**

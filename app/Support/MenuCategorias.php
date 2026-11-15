@@ -89,8 +89,8 @@ final class MenuCategorias
         'sobre' => [
             'quem-somos' => ['about'],
             'missao-visao-e-valores' => ['about'],
-            'equipa' => ['about'],
-            'parceiros' => ['about'],
+            'equipa' => ['equipa'],
+            'parceiros' => ['parceiros'],
             'contactos' => ['contacts'],
         ],
     ];
@@ -155,6 +155,8 @@ final class MenuCategorias
             str_starts_with($rota, 'directory.') => 'directorio',
             str_starts_with($rota, 'suppliers.') => 'directorio',
             $rota === 'about' => 'sobre',
+            $rota === 'equipa' => 'sobre',
+            $rota === 'parceiros' => 'sobre',
             $rota === 'contacts' => 'sobre',
             default => '',
         };

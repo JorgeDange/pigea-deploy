@@ -73,6 +73,50 @@
         </div>
         <div class="card">
           <div class="card-head">
+            <h3 class="card-title">Sobre Nós</h3>
+          </div>
+          <div class="card-body">
+<form class="dashboard-form" action="{{ route('admin.configuracoes.sobre') }}" method="post">
+              @csrf
+              <div class="dashboard-form-row">
+                <div class="dashboard-form-col">
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="sobre_missao">Missão (página Sobre)</label>
+                <textarea class="dashboard-form-textarea" id="sobre_missao" name="sobre_missao" rows="3" placeholder="Reunir, validar e disponibilizar informação qualificada sobre as geociências em Angola…">{{ old('sobre_missao', $definicoes['sobre_missao'] ?? '') }}</textarea>
+                @error('sobre_missao')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="sobre_visao">Visão</label>
+                <textarea class="dashboard-form-textarea" id="sobre_visao" name="sobre_visao" rows="2" placeholder="Ser a plataforma de referência das geociências em Angola.">{{ old('sobre_visao', $definicoes['sobre_visao'] ?? '') }}</textarea>
+                @error('sobre_visao')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+                </div>
+                <div class="dashboard-form-col">
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="sobre_valores">Valores</label>
+                <textarea class="dashboard-form-textarea" id="sobre_valores" name="sobre_valores" rows="2" placeholder="Rigor científico, transparência, inclusão e sustentabilidade…">{{ old('sobre_valores', $definicoes['sobre_valores'] ?? '') }}</textarea>
+                @error('sobre_valores')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="video_institucional">URL do vídeo institucional</label>
+                <input class="dashboard-form-input" type="url" id="video_institucional" name="video_institucional" placeholder="https://vimeo.com/…" value="{{ old('video_institucional', $definicoes['video_institucional'] ?? '') }}">
+                @error('video_institucional')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+              <div class="dashboard-form-group">
+                <label class="dashboard-form-label" for="sobre_overlay">Legenda da imagem (overlay)</label>
+                <input class="dashboard-form-input" type="text" id="sobre_overlay" name="sobre_overlay" placeholder="Missão · Visão · Valores — informação fiável, acessível e atualizada." value="{{ old('sobre_overlay', $definicoes['sobre_overlay'] ?? '') }}">
+                @error('sobre_overlay')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+              </div>
+                </div>
+              </div>
+              <div class="dashboard-form-actions">
+                <button type="submit" class="btn-primary"><i class="fa fa-save"></i> Guardar</button>
+              </div>
+          </form>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">
             <h3 class="card-title">Contactos</h3>
             
           </div>

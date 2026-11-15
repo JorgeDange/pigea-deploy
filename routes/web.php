@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\VideoFormController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserFormController;
 use App\Http\Controllers\Admin\NotificacoesController;
+use App\Http\Controllers\Admin\PartnerFormController;
+use App\Http\Controllers\Admin\TeamFormController;
 use App\Http\Controllers\CspReportController;
 use App\Http\Controllers\Frontend\DirectoryController;
 use App\Http\Controllers\Frontend\EventController;
@@ -30,6 +32,8 @@ use App\Http\Controllers\Frontend\SearchController;
 use App\Http\Controllers\Frontend\SupplierController;
 use App\Http\Controllers\Frontend\TechnologyController;
 use App\Http\Controllers\Frontend\TrainingController;
+use App\Http\Controllers\Frontend\TeamController;
+use App\Http\Controllers\Frontend\PartnerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -74,6 +78,8 @@ Route::get('/pesquisa', [SearchController::class, 'index'])->name('search.index'
 
 // Institucional
 Route::view('/sobre', 'about')->name('about');
+Route::get('/equipa', [TeamController::class, 'index'])->name('equipa');
+Route::get('/parceiros', [PartnerController::class, 'index'])->name('parceiros');
 Route::view('/contactos', 'contacts')->name('contacts');
 
 // Newsletter — inscrição pública com dupla opt-in (doc/newsletter.md FASE N1).
@@ -227,6 +233,7 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
     Route::post('/configuracoes/contactos', [SettingsController::class, 'contactos'])->middleware('can:settings.manage')->name('configuracoes.contactos');
     Route::post('/configuracoes/redes', [SettingsController::class, 'redes'])->middleware('can:settings.manage')->name('configuracoes.redes');
     Route::post('/configuracoes/seo', [SettingsController::class, 'seo'])->middleware('can:settings.manage')->name('configuracoes.seo');
+    Route::post('/configuracoes/sobre', [SettingsController::class, 'sobre'])->middleware('can:settings.manage')->name('configuracoes.sobre');
 
     /*
     |----------------------------------------------------------------------
@@ -256,6 +263,21 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
     Route::post('/banners/novo', [BannerFormController::class, 'store'])->middleware('can:banner.manage')->name('banners.novo.store');
     Route::get('/banners/{id}/editar', [BannerFormController::class, 'edit'])->middleware('can:banner.manage')->whereNumber('id')->name('banners.editar');
     Route::put('/banners/{id}', [BannerFormController::class, 'update'])->middleware('can:banner.manage')->whereNumber('id')->name('banners.atualizar');
+
+    // Institucional (Sobre Nós): Equipa e Parceiros — gestão pelo admin+editor da
+    // equipa interna (sem permissão granular: conteúdo público mantido aqui).
+    Route::view('/equipa', 'admin.equipa')->name('equipa');
+    Route::get('/equipa/novo', [TeamFormController::class, 'create'])->name('equipa.novo');
+    Route::post('/equipa/novo', [TeamFormController::class, 'store'])->name('equipa.novo.store');
+    Route::get('/equipa/{id}/editar', [TeamFormController::class, 'edit'])->whereNumber('id')->name('equipa.editar');
+    Route::put('/equipa/{id}', [TeamFormController::class, 'update'])->whereNumber('id')->name('equipa.atualizar');
+    Route::delete('/equipa/{id}', [TeamFormController::class, 'destroy'])->whereNumber('id')->name('equipa.remover');
+    Route::view('/parceiros', 'admin.parceiros')->name('parceiros');
+    Route::get('/parceiros/novo', [PartnerFormController::class, 'create'])->name('parceiros.novo');
+    Route::post('/parceiros/novo', [PartnerFormController::class, 'store'])->name('parceiros.novo.store');
+    Route::get('/parceiros/{id}/editar', [PartnerFormController::class, 'edit'])->whereNumber('id')->name('parceiros.editar');
+    Route::put('/parceiros/{id}', [PartnerFormController::class, 'update'])->whereNumber('id')->name('parceiros.atualizar');
+    Route::delete('/parceiros/{id}', [PartnerFormController::class, 'destroy'])->whereNumber('id')->name('parceiros.remover');
 
     /*
     | FASE 15 — Destaques publicitários rotativos (destaque.js, autoplay 4s):

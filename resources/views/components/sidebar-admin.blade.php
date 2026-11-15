@@ -13,6 +13,10 @@
         'banners.editar'   => 'banners',
         'destaques.novo'   => 'destaques',
         'destaques.editar' => 'destaques',
+        'equipa.editar'    => 'equipa',
+        'equipa.novo'      => 'equipa',
+        'parceiros.editar' => 'parceiros',
+        'parceiros.novo'   => 'parceiros',
         'conteudo.editar'  => $rotaAtual === 'admin.conteudo.editar' && request('tipo') === 'noticias' ? 'noticias' : '',
     ][$ativa] ?? $ativa;
 
@@ -45,6 +49,10 @@
     $grupos[] = ['rotulo' => 'Comercial', 'itens' => [
         ['chave' => 'banners', 'nome' => 'Publicidade', 'icone' => 'fa-bullhorn', 'rota' => 'admin.banners', 'can' => 'banner.manage'],
         ['chave' => 'destaques', 'nome' => 'Destaques', 'icone' => 'fa-star', 'rota' => 'admin.destaques', 'can' => 'banner.manage'],
+    ]];
+    $grupos[] = ['rotulo' => 'Institucional', 'itens' => [
+        ['chave' => 'equipa', 'nome' => 'Equipa', 'icone' => 'fa-users', 'rota' => 'admin.equipa', 'can' => null],
+        ['chave' => 'parceiros', 'nome' => 'Parceiros', 'icone' => 'fa-share-alt', 'rota' => 'admin.parceiros', 'can' => null],
     ]];
 
     if ($ehAdmin) {

@@ -1,6 +1,6 @@
 -- ============================================================
 -- PIGEA — patch de esquema e dados para a produção
--- Aplica as 27 migrações que nunca correram na produção.
+-- Aplica as 29 migrações que nunca correram na produção.
 --
 -- ANTES DE EXECUTAR (obrigatório):
 --   1) Backup completo da BD (phpMyAdmin → Exportar → SQL)
@@ -266,6 +266,38 @@ ALTER TABLE `newsletter_subscribers` MODIFY COLUMN `status` ENUM('pending','acti
 ALTER TABLE `companies` ADD COLUMN IF NOT EXISTS `email` VARCHAR(190) NULL AFTER `contactos`;
 ALTER TABLE `professionals` ADD COLUMN IF NOT EXISTS `email` VARCHAR(190) NULL AFTER `contactos`;
 
+-- 2026_11_18_000000_create_team_members_and_partners_tables
+CREATE TABLE IF NOT EXISTS `team_members` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `nome` VARCHAR(190) NOT NULL,
+  `cargo_select` VARCHAR(50) NOT NULL,
+  `cargo_outro` VARCHAR(190) NULL,
+  `foto_url` VARCHAR(2048) NULL,
+  `facebook` VARCHAR(2048) NULL,
+  `instagram` VARCHAR(2048) NULL,
+  `linkedin` VARCHAR(2048) NULL,
+  `ordem` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  `ativo` TINYINT(1) NOT NULL DEFAULT 1,
+  `deleted_at` TIMESTAMP NULL,
+  `created_at` TIMESTAMP NULL,
+  `updated_at` TIMESTAMP NULL,
+  KEY `team_members_cargo_select_ordem_index` (`cargo_select`, `ordem`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `partners` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `nome` VARCHAR(190) NOT NULL,
+  `tipo` ENUM('empresa','profissional') NOT NULL,
+  `imagem_url` VARCHAR(2048) NULL,
+  `detalhes` TEXT NULL,
+  `ordem` SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  `ativo` TINYINT(1) NOT NULL DEFAULT 1,
+  `deleted_at` TIMESTAMP NULL,
+  `created_at` TIMESTAMP NULL,
+  `updated_at` TIMESTAMP NULL,
+  KEY `partners_tipo_ordem_index` (`tipo`, `ordem`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ============================================
 -- Marca as migrações como "executadas"
 -- ============================================
@@ -298,6 +330,7 @@ SELECT * FROM (
   UNION ALL SELECT '2026_11_13_000500_create_notifications_table', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
   UNION ALL SELECT '2026_11_16_000000_newsletter_simplificar_statuses', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
   UNION ALL SELECT '2026_11_17_000000_add_email_to_companies_professionals', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
+  UNION ALL SELECT '2026_11_18_000000_create_team_members_and_partners_tables', (SELECT COALESCE(MAX(`batch`), 0) + 1 FROM `migrations`)
 ) t
 WHERE NOT EXISTS (SELECT 1 FROM `migrations` WHERE `migrations`.`migration` = t.migration);
 
