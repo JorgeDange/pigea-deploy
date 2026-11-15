@@ -14,7 +14,7 @@
 | **Fuso** | `Africa/Luanda` (UTC+1, sem horário de verão) |
 | **Testes** | 261 testes / 884 assertions — todos verdes |
 | **Ambiente** | GitHub: `JorgeDange/pigea-deploy` · branches `main` (produção) e `updates` (trabalho) |
-| **Deploy** | Manual (FTP/cPanel) — ver `deploy.md` e `## 12. Deploy em produção` |
+| **Deploy** | Manual (FTP/cPanel) — ver `doc/deploy.md` e `## 12. Deploy em produção` |
 
 ---
 
@@ -26,7 +26,7 @@ O PIGEA é o portal de referência das geociências em Angola. A plataforma comb
 2. **Directório** — empresas, profissionais e documentos (sem login; aprovação interna da equipa).
 3. **Painel administrativo** — gestão completa pela equipa (papéis `admin` e `editor`) via `ADMIN_PATH` com `APP_DEBUG=false`, nunca público.
 
-**Não é um CMS genérico.** Cada módulo foi pensado para o fluxo editorial da equipa. Decisões de produto foram documentadas e confirmadas com o cliente — ver `docs.md` e `doc/memoria.md`.
+**Não é um CMS genérico.** Cada módulo foi pensado para o fluxo editorial da equipa. Decisões de produto foram documentadas e confirmadas com o cliente — ver `doc/docs.md` e `doc/memoria.md`.
 
 ---
 
@@ -85,13 +85,13 @@ pigea-deploy/
 
 | Arquivo | Função |
 |---|---|
-| `deploy.md` | Guia manual FTP/cPanel |
+| `doc/deploy.md` | Guia manual FTP/cPanel |
 | `prod-patch-2026-11-15.sql` | Patch de esquema para BD de produção onde as migrações nunca correram |
-| `docs.md` | Arquitectura e decisões técnicas (anti-bot, pin editorial, banners, etc.) |
-| `dimensao.md` | Especificação de imagens e Banners para o designer |
-| `email.md` | Historial do problema SMTP de produção e correção |
-| `evolution_news.md` | Visão do módulo Newsletter Pro (N2) — **pendente decisão do cliente** |
-| `otimizacao.md` | Otimizações técnicas aplicadas (CLS, LCP, async CSS) |
+| `doc/docs.md` | Arquitectura e decisões técnicas (anti-bot, pin editorial, banners, etc.) |
+| `doc/dimensao.md` | Especificação de imagens e Banners para o designer |
+| `doc/email.md` | Historial do problema SMTP de produção e correção |
+| `doc/evolution_news.md` | Visão do módulo Newsletter Pro (N2) — **pendente decisão do cliente** |
+| `doc/otimizacao.md` | Otimizações técnicas aplicadas (CLS, LCP, async CSS) |
 | `doc/*.md` | Cada módulo e cada fase guiadas por MD |
 
 ---
@@ -420,7 +420,7 @@ Os passos padrão para qualquer artefacto novo:
 4. Adicionar rota em `routes/web.php`
 5. Criar/ativar a view em `resources/views/.../x.blade.php`
 6. Acompanhar por um teste em `tests/Feature/XTest.php`
-7. Documentar o artefacto em `docs.md` (decisão) **e** `doc/x.md` (especificação completa)
+7. Documentar o artefacto em `doc/docs.md` (decisão) **e** `doc/x.md` (especificação completa)
 
 ### Contribuições
 
@@ -440,7 +440,7 @@ Este é um projeto proprietário. Contribuições externas requerem acordo escri
 | Banners laterais/largos/topo/rodapé | **No código actual**; na produção o build pode estar antigo |
 | Notificações internas (sino) | **No código actual**; `notifications` table precisa de migração a executar |
 | Configuração completa no admin | **No código actual**; alterações a *Social Links* e contacto têm de ser revistas |
-| **Newsletter Pro** (envio orquestrado por painel com lotes de 100 e prazos) | **Pendente decisão do cliente** — ver `evolution_news.md` |
+| **Newsletter Pro** (envio orquestrado por painel com lotes de 100 e prazos) | **Pendente decisão do cliente** — ver `doc/evolution_news.md` |
 | Painel `/gestao-pigea/acompanhamento` | **No código actual** |
 | Secção de destaque/emissão de Notícias com destaque editorial | **No código actual** |
 | Storage link em produção (uploads visíveis) | **Pendente passo manual** (`php artisan storage:link`) |
@@ -450,13 +450,13 @@ Este é um projeto proprietário. Contribuições externas requerem acordo escri
 
 ## 15. Documentos internos
 
-- `docs.md` — decisões estruturais (escolha de MySQL, anti-bot, pin editorial, banner Largo…)
-- `deploy.md` — guia de deploy manual FTP/cPanel
+- `doc/docs.md` — decisões estruturais (escolha de MySQL, anti-bot, pin editorial, banner Largo…)
+- `doc/deploy.md` — guia de deploy manual FTP/cPanel
 - `doc/memoria.md` — memória acumulada do projeto desde 28/10/2026
-- `otimizacao.md` — otimizações técnicas, análise PageSpeed
-- `dimensao.md` — especificações de imagem para o designer
-- `email.md` — historial do problema SMTP de produção e correção definitiva
-- `evolution_news.md` — módulo Newsletter Pro — pendente decisão do cliente
+- `doc/otimizacao.md` — otimizações técnicas, análise PageSpeed
+- `doc/dimensao.md` — especificações de imagem para o designer
+- `doc/email.md` — historial do problema SMTP de produção e correção definitiva
+- `doc/evolution_news.md` — módulo Newsletter Pro — pendente decisão do cliente
 - `doc/*.md` — documentação detalhada de cada módulo e cada fase
 
 ---
