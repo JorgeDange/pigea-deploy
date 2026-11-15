@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * FASE 15 — widget «Escolha da Equipa» com banners rotativos (pub.md).
+ * FASE 15 — widget de publicidade com banners rotativos (pub.md). Sem título de secção — «Publicidade» é a etiqueta visível.
  *
  * Garante: fallback editorial (sem publicidade), destaque ativo substitui
  * o editorial no widget (home e /projetos/{slug}), escopo de colocação
@@ -42,7 +42,7 @@ class DestaqueTest extends TestCase
     }
 
     // ------------------------------------------------------------------
-    // Frontend público — widget «Escolha da Equipa»
+    // Frontend público — widget de publicidade rotativa
     // ------------------------------------------------------------------
 
     public function test_home_sem_destaque_mostra_editorial(): void
@@ -50,7 +50,7 @@ class DestaqueTest extends TestCase
         $html = $this->get('/')->getContent();
 
         $this->assertStringNotContainsString('destaque-equipa-slide', $html);
-        $this->assertStringContainsString('Escolha da Equipa', $html);
+        $this->assertStringNotContainsString('Escolha da Equipa', $html);
         // editorial: marcador de categoria de notícia
         $this->assertStringContainsString('post-category-marker', $html);
     }

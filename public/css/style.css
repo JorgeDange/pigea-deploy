@@ -5584,7 +5584,7 @@ h4.cart-title span {
     color: inherit;
 }
 
-/* ===== Fase 15 â€” widget Â«Escolha da EquipaÂ»: banner publicitÃ¡rio rotativo (pub.md) ===== */
+/* ===== Fase 15 -- widget de publicidade: banner rotativo (pub.md) ===== */
 /* O widget mantÃ©m a estrutura/tamanho do protÃ³tipo (.single-grid-slider slider_widget,
    .grid-post-media gpm_sing, .sgs-pagination). SÃ³ o slide Ã© diferente quando
    hÃ¡ destaque ativo â€” ver o componente destaque.blade.php. */

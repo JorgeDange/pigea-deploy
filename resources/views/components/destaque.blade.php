@@ -1,4 +1,4 @@
-{{-- FASE 15 — Destaque publicitário rotativo NO WIDGET «Escolha da Equipa»
+{{-- FASE 15 — Destaque publicitário rotativo no widget de publicidade
      (home e /projetos/{slug} — mesmo componente). Rotaciona a cada 4s
      (destaque.js), largura/altura exatamente as do widget atual.
 
@@ -9,7 +9,7 @@
       - sem destaque ativo e válido → o widget segue a mostrar as notícias
         (comportamento original, sem autoplay).
       - altura/estrutura (`.single-grid-slider slider_widget`, `.grid-post-media
-        gpm_sing`, `.slider_widget_title`, `.sgs-pagination`) — tudo como era.
+        gpm_sing`, `.sgs-pagination`) — tudo como era.
       - o Swiper do tema não pega no modo banner (classe `destaque-slider`
         fora do seletor dele) — o autoplay 4s é aplicado pelo destaque.js
         DEPOIS do initGmag.
@@ -39,7 +39,6 @@
         : asset($destaque->imagem_url);
 @endphp
 <div class="single-grid-slider slider_widget">
-    <div class="slider_widget_title">Escolha da Equipa</div>
     <div class="{{ $modoBanner ? 'swiper-container destaque-slider' : 'swiper-container' }}" @if ($modoBanner) data-autoplay="4000" @endif>
         <div class="swiper-wrapper">
             @if ($modoBanner)

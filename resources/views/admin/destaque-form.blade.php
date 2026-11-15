@@ -99,7 +99,7 @@
                                 <option value="{{ $valor }}" @selected((string) old('escopo', $destaque?->escopo) === (string) $valor)>{{ $rotulo }}</option>
                                 @endforeach
                             </select>
-                            <small class="help-text">"Todo o site" → home e páginas interiores. "Só página inicial" → caixa «Escolha da Equipa» da home. "Só páginas interiores" → caixa da página de projeto.</small>
+                            <small class="help-text">"Todo o site" → home e páginas interiores. "Só página inicial" → bloco Destaques da home. "Só páginas interiores" → bloco Destaques das sidebars.</small>
                             @error('escopo')<p class="form-error" id="erro-escopo" role="alert">{{ $message }}</p>@enderror
                         </div>
                     </div>

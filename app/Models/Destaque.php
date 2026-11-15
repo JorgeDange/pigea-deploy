@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * (Fase 15 — pub.md). Mesmas regras de exposição do Banner:
  * ativo + dentro de data_inicio..data_fim (nulos = sem limite).
  *
- * Escopo por colocação do widget «Escolha da Equipa»:
+ * Escopo por colocação do widget publicitário:
  *  - site    → home e páginas interiores (ex.: página de projeto)
  *  - inicio  → só a página inicial
  *  - sidebar → só páginas interiores (ex.: página de projeto)

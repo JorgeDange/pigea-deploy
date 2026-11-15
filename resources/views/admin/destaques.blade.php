@@ -16,7 +16,7 @@
     <h3 class="card-title">Destaques publicitários</h3>
     <a href="{{ route('admin.destaques.novo') }}" class="btn-primary"><i class="fa fa-plus"></i> Novo destaque</a>
   </div>
-  <p class="helper-text">Exibidos na caixa <strong>«Escolha da Equipa»</strong> (home e página de projeto). Só os ativos dentro do período; recomendado até 3 em simultâneo (<strong>Ordem</strong>).</p>
+  <p class="helper-text">Exibidos na caixa <strong>Destaques</strong> (home e página de projeto). Só os ativos dentro do período; recomendado até 3 em simultâneo (<strong>Ordem</strong>).</p>
   <div class="card-body">
   <div class="table-wrap">
     <table class="dashboard-table">
