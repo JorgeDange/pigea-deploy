@@ -351,7 +351,7 @@ php artisan optimize:clear
 
 ```bash
 curl -sI https://pigea.ao/              # 200
-curl -sI https://pigea.ao/entrar-7x2    # 200 (login team)
+curl -sI https://pigea.ao/(login .env)    # 200 (login team)
 curl -sI https://pigea.ao/login         # 404 (esperado)
 curl -sI https://pigea.ao/<ADMIN_PATH>  # 302 → login
 ```
