@@ -484,7 +484,7 @@
                                             <div class="list-post-content">
                                                 <h3><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h3>
                                                 <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
-                                                <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola: mineração, água, ambiente e investigação científica. Leia a notícia completa no PIGEA.  </p>
+                                                <p>{{ $item->excerpt ?: Str::limit(strip_tags($item->content ?? ""), 160) }}</p>
                                                 <ul class="post-opt">
                                                     <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                 </ul>
@@ -522,7 +522,7 @@
                                                         <a class="post-category-marker" href="{{ $item->category ? route('news.index', ['cat' => $item->category->slug]) : route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                                         <h3><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h3>
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
-                                                        <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
+                                                        <p>{{ $item->excerpt ?: Str::limit(strip_tags($item->content ?? ""), 160) }}</p>
                                                         <ul class="post-opt">
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
@@ -546,7 +546,7 @@
                                                         <a class="post-category-marker" href="{{ $item->category ? route('news.index', ['cat' => $item->category->slug]) : route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                                         <h3><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h3>
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
-                                                        <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
+                                                        <p>{{ $item->excerpt ?: Str::limit(strip_tags($item->content ?? ""), 160) }}</p>
                                                         <ul class="post-opt">
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
@@ -570,7 +570,7 @@
                                                         <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                                         <h3><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h3>
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
-                                                        <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
+                                                        <p>{{ $item->excerpt ?: Str::limit(strip_tags($item->content ?? ""), 160) }}</p>
                                                         <ul class="post-opt">
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
@@ -594,7 +594,7 @@
                                                         <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                                         <h3><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h3>
                                                         <span class="post-date"><i class="far fa-clock"></i> {{ $item->display_date }}</span>
-                                                        <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
+                                                        <p>{{ $item->excerpt ?: Str::limit(strip_tags($item->content ?? ""), 160) }}</p>
                                                         <ul class="post-opt">
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
