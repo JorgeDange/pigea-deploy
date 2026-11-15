@@ -167,7 +167,7 @@
                                             </div>
                                             <div class="author-content fl-wrap">
                                                 <h5>Escrito por <a href="{{ route('news.index') }}">{{ $assinatura['name'] }}</a></h5>
-                                                <p>Conteúdo de demonstração do PIGEA sobre geociências em Angola.</p>
+                                                <p>{{ $post->excerpt ?: Str::limit(strip_tags($post->content ?? ""), 160) }}</p>
                                             </div>
                                         </div>
                                         <!--post-author end-->
