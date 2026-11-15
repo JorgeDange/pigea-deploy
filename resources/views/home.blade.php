@@ -15,7 +15,7 @@
                                     <!-- swiper-slide -->
                                     <div class="swiper-slide">
                                         <div class="bg-wrap">
-                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}" data-swiper-parallax="40%"></div>
+                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}" data-swiper-parallax="40%"></div>
                                             <div class="overlay"></div>
                                         </div>
                                         <div class="hero-item fl-wrap">
@@ -25,7 +25,7 @@
                                                 <h2><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h2>
                                                 <h4>{{ $item->excerpt }}</h4>
                                                 <div class="clearfix"></div>
-                                                <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name ?? 'PIGEA' }}</span></a></div>
+                                                <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="Avatar" width="36" height="36" loading="lazy">  <span>{{ optional($item->author)->name ?? 'PIGEA' }}</span></a></div>
                                                 <span class="post-date"><i class="far fa-clock"></i>  {{ $item->display_date }}</span>
                                             </div>
                                         </div>
@@ -50,7 +50,7 @@
                                                 <div class="hsc-list_item fl-wrap">
                                                     <div class="hsc-list_item-media">
                                                         <div class="bg-wrap">
-                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                         </div>
                                                     </div>
                                                     <div class="hsc-list_item-content fl-wrap">
@@ -98,7 +98,7 @@
                                             </div>
                                         </div>
                                         <div class="ajax-wrapper fl-wrap">
-                                            <div class="ajax-loader"><div class="al-box"><img src="{{ asset('images/logo.png') }}" alt="PIGEA" class="al-logo"><span class="al-bar"></span></div></div>
+                                            <div class="ajax-loader"><div class="al-box"><img src="{{ asset('images/logo.webp') }}" alt="PIGEA" class="al-logo" width="135" height="56"><span class="al-bar"></span></div></div>
                                             <div id="ajax-content" class="fl-wrap">
                                             </div>
                                         </div>
@@ -122,7 +122,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -143,7 +143,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -169,8 +169,8 @@
                                                             <div class="swiper-slide">
                                                                 <div class="grid-post-item  bold_gpi  fl-wrap">
                                                                     <div class="grid-post-media gpm_sing">
-                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
-                                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
+                                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="Avatar" width="36" height="36" loading="lazy">  <span>{{ optional($item->author)->name }}</span></a></div>
                                                                         <div class="grid-post-media_title">
                                                                             <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -201,7 +201,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -222,7 +222,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -243,7 +243,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -264,7 +264,7 @@
                                                                 <div class="list-post-media">
                                                                     <a href="{{ route('news.show', $item->slug) }}">
                                                                         <div class="bg-wrap">
-                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                            <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                                         </div>
                                                                     </a>
                                                                     <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -310,7 +310,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.webp') }}" alt="{{ $item->title }}" width="1200" height="675" loading="lazy"></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -334,7 +334,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.webp') }}" alt="{{ $item->title }}" width="1200" height="675" loading="lazy"></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -402,13 +402,13 @@
                                         <p style="color:#D8D8D8;font-size:12px;margin-top:10px;max-width:340px;">{{ mb_strlen($videoPrincipal->resumo) > 160 ? mb_substr($videoPrincipal->resumo, 0, 160) . '…' : $videoPrincipal->resumo }}</p>
                                         @endif
                                     </div>
-                                    <div class="vh-preloader"><div class="vh-pl-box"><img src="{{ asset('images/logo.png') }}" alt="PIGEA" class="vh-pl-logo"><span class="vh-pl-bar"></span></div></div>
+                                    <div class="vh-preloader"><div class="vh-pl-box"><img src="{{ asset('images/logo.webp') }}" alt="PIGEA" class="vh-pl-logo" width="173" height="72"><span class="vh-pl-bar"></span></div></div>
                                 </div>
                                 <div class="video-links-wrap">
                                     @foreach ($videosHome->skip(1)->take(4) as $video)
                                     <div class="video-item fl-wrap{{ $loop->first ? ' video-item_active' : '' }}" data-url="{{ $video->url }}" data-video-link="{{ $video->url }}">
                                         <div class="video-item-img fl-wrap">
-                                            <img src="{{ $video->thumb() ?? asset('images/video-placeholder.jpg') }}" class="respimg" alt="{{ $video->titulo }}">
+                                            <img src="{{ $video->thumb() ?? asset('images/video-placeholder.jpg') }}" class="respimg" alt="{{ $video->titulo }}" width="1280" height="720" loading="lazy">
                                             <div class="play-icon"><i class="fas fa-play"></i></div>
                                         </div>
                                         <div class="video-item-title">
@@ -435,7 +435,7 @@
                                                 <div class="swiper-slide">
                                                     <div class="video-item fl-wrap">
                                                         <div class="video-item-img fl-wrap">
-                                                            <img src="{{ $video->thumb() ?? asset('images/video-placeholder.jpg') }}" class="respimg" alt="{{ $video->titulo }}">
+                                                            <img src="{{ $video->thumb() ?? asset('images/video-placeholder.jpg') }}" class="respimg" alt="{{ $video->titulo }}" width="1280" height="720" loading="lazy">
                                                             <a class="play-icon image-popup" href="{{ $video->url }}"><i class="fas fa-play"></i></a>
                                                         </div>
                                                         <div class="video-item-title">
@@ -476,7 +476,7 @@
                                             <div class="list-post-media">
                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                     <div class="bg-wrap">
-                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                     </div>
                                                 </a>
                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -488,7 +488,7 @@
                                                 <ul class="post-opt">
                                                     <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                 </ul>
-                                                <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
+                                                <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="Avatar" width="36" height="36" loading="lazy">  <span>{{ optional($item->author)->name }}</span></a></div>
                                             </div>
                                         </div>
                                         <!--list-post end-->
@@ -513,7 +513,7 @@
                                                     <div class="list-post-media">
                                                         <a href="{{ route('news.show', $item->slug) }}">
                                                             <div class="bg-wrap">
-                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                             </div>
                                                         </a>
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -526,7 +526,7 @@
                                                         <ul class="post-opt">
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
-                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
+                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="Avatar" width="36" height="36" loading="lazy">  <span>{{ optional($item->author)->name }}</span></a></div>
                                                     </div>
                                                 </div>
                                                 <!--list-post end-->
@@ -537,7 +537,7 @@
                                                     <div class="list-post-media">
                                                         <a href="{{ route('news.show', $item->slug) }}">
                                                             <div class="bg-wrap">
-                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                             </div>
                                                         </a>
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -550,7 +550,7 @@
                                                         <ul class="post-opt">
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
-                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
+                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="Avatar" width="36" height="36" loading="lazy">  <span>{{ optional($item->author)->name }}</span></a></div>
                                                     </div>
                                                 </div>
                                                 <!--list-post end-->
@@ -561,7 +561,7 @@
                                                     <div class="list-post-media">
                                                         <a href="{{ route('news.show', $item->slug) }}">
                                                             <div class="bg-wrap">
-                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                             </div>
                                                         </a>
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -574,7 +574,7 @@
                                                         <ul class="post-opt">
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
-                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
+                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="Avatar" width="36" height="36" loading="lazy">  <span>{{ optional($item->author)->name }}</span></a></div>
                                                     </div>
                                                 </div>
                                                 <!--list-post end-->
@@ -585,7 +585,7 @@
                                                     <div class="list-post-media">
                                                         <a href="{{ route('news.show', $item->slug) }}">
                                                             <div class="bg-wrap">
-                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                             </div>
                                                         </a>
                                                         <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -598,7 +598,7 @@
                                                         <ul class="post-opt">
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
-                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
+                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="Avatar" width="36" height="36" loading="lazy">  <span>{{ optional($item->author)->name }}</span></a></div>
                                                     </div>
                                                 </div>
                                                 <!--list-post end-->
@@ -635,8 +635,8 @@
                                         <div class="swiper-slide">
                                             <div class="grid-post-item  bold_gpi  fl-wrap">
                                                 <div class="grid-post-media gpm_sing">
-                                                    <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
-                                                    <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
+                                                    <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
+                                                    <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar ?? 'images/avatar/1.jpg') }}" alt="Avatar" width="36" height="36" loading="lazy">  <span>{{ optional($item->author)->name }}</span></a></div>
                                                     <div class="grid-post-media_title">
                                                         <a class="post-category-marker" href="{{ route('news.index') }}">{{ optional($item->category)->name ?? 'Geral' }}</a>
                                                         <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>

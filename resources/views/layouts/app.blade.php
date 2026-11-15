@@ -38,7 +38,7 @@
             <!-- header end  -->
             @unless(request()->routeIs('home'))
                 <!-- vh-preloader (todas as páginas do protótipo, excepto a home) -->
-                <div class="vh-preloader"><div class="vh-pl-box"><img src="{{ asset('images/logo.png') }}" alt="PIGEA" class="vh-pl-logo"><span class="vh-pl-bar"></span></div></div>
+                <div class="vh-preloader"><div class="vh-pl-box"><img src="{{ asset('images/logo.webp') }}" alt="PIGEA" class="vh-pl-logo" width="173" height="72"><span class="vh-pl-bar"></span></div></div>
             @endunless
             <!-- wrapper -->
             <div id="wrapper">

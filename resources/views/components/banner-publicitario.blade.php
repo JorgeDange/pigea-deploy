@@ -33,6 +33,8 @@
     //  - upload no admin  → "storage/banners/…" (via public/storage)
     //  - link externo     → "https://…" (usa-se diretamente)
     //  - assets do tema   → "images/…" (público)
+    $dimsBanner = ['topo' => [970, 90], 'largo' => [970, 250], 'rodape' => [970, 250], 'lateral' => [600, 600]];
+    $dimsAgora = $dimsBanner[$posicao] ?? [970, 250];
     $urlImagem = fn ($bannerPublicitario) => str_starts_with($bannerPublicitario->imagem_url, 'http')
         ? $bannerPublicitario->imagem_url
         : asset($bannerPublicitario->imagem_url);
@@ -54,11 +56,11 @@
                             <div class="swiper-slide">
                                 @if ($bannerPublicitario->link_destino)
                                 <a href="{{ $bannerPublicitario->link_destino }}" target="_blank" rel="noopener sponsored" title="{{ $bannerPublicitario->titulo }}">
-                                    <img src="{{ $urlImagem($bannerPublicitario) }}" alt="{{ $bannerPublicitario->titulo }}" loading="eager" style="max-width: 100%; height: auto; display: block;">
+                                    <img src="{{ $urlImagem($bannerPublicitario) }}" alt="{{ $bannerPublicitario->titulo }}" loading="eager" width="{{ $dimsAgora[0] }}" height="{{ $dimsAgora[1] }}" style="max-width: 100%; height: auto; display: block;">
                                 </a>
                                 @else
                                 {{-- pub.md §5.5: sem link de destino o banner é só imagem (não clicável) --}}
-                                <img src="{{ $urlImagem($bannerPublicitario) }}" alt="{{ $bannerPublicitario->titulo }}" loading="eager" style="max-width: 100%; height: auto; display: block;">
+                                <img src="{{ $urlImagem($bannerPublicitario) }}" alt="{{ $bannerPublicitario->titulo }}" loading="eager" width="{{ $dimsAgora[0] }}" height="{{ $dimsAgora[1] }}" style="max-width: 100%; height: auto; display: block;">
                                 @endif
                             </div>
                             @endforeach
@@ -68,11 +70,11 @@
                     @php $bannerPublicitario = $bannersPublicitarios->first(); @endphp
                     @if ($bannerPublicitario->link_destino)
                         <a href="{{ $bannerPublicitario->link_destino }}" target="_blank" rel="noopener sponsored" title="{{ $bannerPublicitario->titulo }}">
-                            <img src="{{ $urlImagem($bannerPublicitario) }}" alt="{{ $bannerPublicitario->titulo }}" loading="{{ $posicao === 'topo' ? 'eager' : 'lazy' }}" style="max-width: 100%; height: auto; display: block;">
+                            <img src="{{ $urlImagem($bannerPublicitario) }}" alt="{{ $bannerPublicitario->titulo }}" loading="{{ $posicao === 'topo' ? 'eager' : 'lazy' }}" width="{{ $dimsAgora[0] }}" height="{{ $dimsAgora[1] }}" style="max-width: 100%; height: auto; display: block;">
                         </a>
                     @else
                         {{-- pub.md §5.5: sem link de destino o banner é só imagem (não clicável) --}}
-                        <img src="{{ $urlImagem($bannerPublicitario) }}" alt="{{ $bannerPublicitario->titulo }}" loading="{{ $posicao === 'topo' ? 'eager' : 'lazy' }}" style="max-width: 100%; height: auto; display: block;">
+                        <img src="{{ $urlImagem($bannerPublicitario) }}" alt="{{ $bannerPublicitario->titulo }}" loading="{{ $posicao === 'topo' ? 'eager' : 'lazy' }}" width="{{ $dimsAgora[0] }}" height="{{ $dimsAgora[1] }}" style="max-width: 100%; height: auto; display: block;">
                     @endif
     @endif
                 </div>

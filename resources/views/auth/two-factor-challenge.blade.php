@@ -6,7 +6,7 @@
 @section('content')
 <div class="auth-wrap">
   <div class="auth-card">
-    <div class="auth-logo"><img src="{{ asset('images/logo.png') }}" alt="PIGEA"></div>
+    <div class="auth-logo"><img src="{{ asset('images/logo.webp') }}" alt="PIGEA" width="240" height="100"></div>
     <h1>Código de segurança</h1>
     <p class="auth-subtitle">Introduza o código gerado pela sua aplicação de autenticação</p>
     <form class="auth-form" method="POST" action="{{ route('two-factor.login.store') }}">

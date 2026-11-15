@@ -35,7 +35,7 @@
                                     <div class="left_fix-bar fl-wrap">
                                         <div class="profile-card-wrap fl-wrap">
                                             <div class="profile-card_media fl-wrap">
-                                                <img src="{{ asset('images/avatar/2.jpg') }}" alt="">
+                                                <img src="{{ asset('images/avatar/2.jpg') }}" alt="Avatar" width="100" height="100" loading="lazy">
                                                 <div class="profile-card_media_content">
                                                     <h4>Helena José</h4>
                                                     <h5>Geóloga · Entrevistada</h5>

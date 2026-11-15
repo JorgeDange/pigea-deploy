@@ -46,7 +46,7 @@
                                                     <div class="list-post-media">
                                                         <a href="{{ route('news.show', $item->slug) }}">
                                                             <div class="bg-wrap">
-                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                             </div>
                                                         </a>
                                                         <span class="post-media_title">{{ $item->image_caption }}</span>
@@ -59,7 +59,7 @@
                                                         <ul class="post-opt">
                                                             <li><i class="fal fa-eye"></i>  {{ $item->views_count }} </li>
                                                         </ul>
-                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar) }}" alt="">  <span>{{ optional($item->author)->name }}</span></a></div>
+                                                        <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ asset(optional($item->author)->avatar) }}" alt="Avatar" width="36" height="36" loading="lazy">  <span>{{ optional($item->author)->name }}</span></a></div>
                                                     </div>
                                                 </div>
                                                 <!--list-post end-->
@@ -152,7 +152,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.webp') }}" alt="{{ $item->title }}" width="1200" height="675" loading="lazy"></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -176,7 +176,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.webp') }}" alt="{{ $item->title }}" width="1200" height="675" loading="lazy"></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>

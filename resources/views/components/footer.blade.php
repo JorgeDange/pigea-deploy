@@ -7,7 +7,7 @@
                 <div class="col-md-3">
                     <div class="footer-widget">
                         <div class="footer-widget-content">
-                            <a href="{{ route('home') }}" class="footer-logo"><img src="{{ asset('images/logo2.png') }}" alt="PIGEA"></a>
+                            <a href="{{ route('home') }}" class="footer-logo"><img src="{{ asset('images/logo2.webp') }}" alt="PIGEA" width="104" height="44" loading="lazy"></a>
                             <p>PIGEA — Plataforma de Impulsionamento das Geociências em Angola. Centralizamos informação, promovemos a transparência e ligamos profissionais, empresas e investigadores.</p>
                             <div class="footer-social fl-wrap">
                                 <ul>

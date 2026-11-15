@@ -56,7 +56,7 @@
 @endphp
 <aside class="dashboard-sidebar">
     <div class="sidebar-logo">
-        <a href="{{ route('home') }}"><img src="{{ asset('images/logo2.png') }}" alt="PIGEA"></a>
+        <a href="{{ route('home') }}"><img src="{{ asset('images/logo2.webp') }}" alt="PIGEA" width="150" height="63"></a>
     </div>
     <nav class="sidebar-nav">
         <ul>

@@ -39,7 +39,7 @@
                                 <div class="col-md-1"></div>
                                 <div class="col-md-6">
                                     <div class="about-img fl-wrap">
-                                        <img src="{{ asset('images/all/6.jpg') }}" class="respimg" alt="">
+                                        <img src="{{ asset('images/all/6.jpg') }}" class="respimg" alt="Sobre a PIGEA" width="2752" height="1536" loading="lazy">
                                         <div class="about-img-hotifer color-bg">
                                             <p>Missão · Visão · Valores — informação fiável, acessível e atualizada.</p>
                                             <h4>Equipa PIGEA</h4>

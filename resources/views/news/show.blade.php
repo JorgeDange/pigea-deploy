@@ -35,7 +35,7 @@
                                             <h1>{{ $post->title }}</h1>
                                             <h4>Informação actualizada e verificada pela equipa PIGEA.</h4>
                                             <div class="clearfix"></div>
-                                            <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ \App\Support\Autor::avatarUrl(\App\Support\Autor::assinatura($post)['avatar']) }}" alt="">  <span>{{ \App\Support\Autor::assinatura($post)['name'] }}</span></a></div>
+                                            <div class="author-link"><a href="{{ route('news.index') }}"><img src="{{ \App\Support\Autor::avatarUrl(\App\Support\Autor::assinatura($post)['avatar']) }}" alt="{{ \App\Support\Autor::assinatura($post)['name'] }}" width="36" height="36" loading="lazy">  <span>{{ \App\Support\Autor::assinatura($post)['name'] }}</span></a></div>
                                             <span class="post-date"><i class="far fa-clock"></i> {{ $post->display_date }}</span>
                                             <ul class="post-opt">
                                                 <li><i class="fal fa-eye"></i>  {{ $post->views_count }} </li>
@@ -43,7 +43,14 @@
                                         </div>
                                         <!-- single-post-header end   -->
                                         <!-- single-post-media   -->
-                                        @php $imagemPost = image_url($post->image, 'images/logo.png'); @endphp
+                                        @php
+    // otimizacao.md 3): usa a conversão WebP do Media Library quando foi gerada;
+    // caso contrário cai na coluna legada `image`.
+    $capaMedia = $post->getFirstMedia('capa');
+    $imagemPost = $capaMedia && $capaMedia->hasGeneratedConversion('webp')
+        ? $capaMedia->getUrl('webp')
+        : image_url($post->image, 'images/logo.webp');
+@endphp
                                         <div class="single-post-media fl-wrap">
                                             <div class="single-slider-wrap fl-wrap">
                                                 <div class="single-slider fl-wrap">
@@ -51,7 +58,7 @@
                                                         <div class="swiper-wrapper lightgallery">
                                                             <!-- swiper-slide   -->
                                                             <div class="swiper-slide hov_zoom">
-                                                                <img src="{{ $imagemPost }}" alt="{{ $post->image_alt }}">
+                                                                <img src="{{ $imagemPost }}" alt="{{ $post->image_alt }}" width="1200" height="675">
                                                                 <a href="{{ $imagemPost }}" class="box-media-zoom   popup-image" aria-label="Ver imagem ampliada"><i class="fas fa-eye"></i></a>
                                                                 @if ($post->image_caption)
                                                                     <span class="post-media_title pmd_vis">{{ $post->image_caption }}</span>
@@ -101,7 +108,7 @@
     
 <div class="spn_box_img">
     
-    <img src="{{ image_url($prev->image, 'images/logo.png') }}" class="respimg" alt="">
+    <img src="{{ image_url($prev->image, 'images/logo.webp') }}" class="respimg" alt="{{ $prev->title }}" width="1200" height="675" loading="lazy">
     
 </div>
     
@@ -121,7 +128,7 @@
     
 <div class="spn_box_img">
     
-    <img src="{{ image_url($next->image, 'images/logo.png') }}" class="respimg" alt="">
+    <img src="{{ image_url($next->image, 'images/logo.webp') }}" class="respimg" alt="{{ $next->title }}" width="1200" height="675" loading="lazy">
     
 </div>
     
@@ -147,7 +154,7 @@
                                         @endphp
                                         <div class="post-author fl-wrap">
                                             <div class="author-img">
-                                                <img src="{{ $avatarSrc }}" alt="{{ $assinatura['name'] }}">
+                                                <img src="{{ $avatarSrc }}" alt="{{ $assinatura['name'] }}" width="100" height="100" loading="lazy">
                                             </div>
                                             <div class="author-content fl-wrap">
                                                 <h5>Escrito por <a href="{{ route('news.index') }}">{{ $assinatura['name'] }}</a></h5>
@@ -167,7 +174,7 @@
                                                             <div class="list-post-media">
                                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                                     <div class="bg-wrap">
-                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                                     </div>
                                                                 </a>
                                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -188,7 +195,7 @@
                                                             <div class="list-post-media">
                                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                                     <div class="bg-wrap">
-                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                                     </div>
                                                                 </a>
                                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -280,7 +287,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.webp') }}" alt="{{ $item->title }}" width="1200" height="675" loading="lazy"></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -304,7 +311,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.webp') }}" alt="{{ $item->title }}" width="1200" height="675" loading="lazy"></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>

@@ -17,7 +17,7 @@
             <div class="list-post-media">
                 <a href="{{ route('news.show', $item->slug) }}">
                     <div class="bg-wrap">
-                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                     </div>
                 </a>
                 @if ($item->image_caption)
@@ -34,7 +34,7 @@
                 </ul>
                 @if ($item->author)
                 <div class="author-link">
-                    <a href="{{ route('news.index') }}"><img src="{{ $item->author->avatar ? asset($item->author->avatar) : asset('images/avatar/1.jpg') }}" alt="">  <span>{{ $item->author->name }}</span></a>
+                    <a href="{{ route('news.index') }}"><img src="{{ $item->author->avatar ? asset($item->author->avatar) : asset('images/avatar/1.jpg') }}" alt="{{ $item->author->name }}" width="36" height="36" loading="lazy">  <span>{{ $item->author->name }}</span></a>
                 </div>
                 @endif
             </div>

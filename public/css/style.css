@@ -6129,3 +6129,12 @@ html.newsletter-modal-aberta {
 }
 
 
+
+/* otimizacao.md §2.3: reserva espaco antes de a imagem chegar (CLS) */
+.post-media img, .single-slider-wrap img, .single-slider img { aspect-ratio: 16/9; object-fit: cover; }
+.video-item-img img, .video_carousel .swiper-slide img { aspect-ratio: 16/9; object-fit: cover; }
+.author-link img { aspect-ratio: 1/1; object-fit: cover; }
+.footer-logo img { aspect-ratio: 1047 / 441; }
+.logo-holder img, .auth-logo img, .al-logo, .vh-pl-logo { aspect-ratio: 1120 / 467; }
+.news-card-img, .respimg { aspect-ratio: 16/9; object-fit: cover; }
+

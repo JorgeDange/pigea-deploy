@@ -128,7 +128,7 @@
                                         <!-- post-author-->                                   
                                         <div class="post-author fl-wrap">
                                             <div class="author-img">
-                                                <img  src="{{ asset('images/avatar/2.jpg') }}" alt="">	
+                                                <img src="{{ asset('images/avatar/2.jpg') }}" alt="Avatar" width="100" height="100" loading="lazy">	
                                             </div>
                                             <div class="author-content fl-wrap">
                                                 <h5>Escrito por <a href="{{ route('news.index') }}">{{ optional($post->author)->name }}</a></h5>
@@ -159,7 +159,7 @@
                                                             <div class="list-post-media">
                                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                                     <div class="bg-wrap">
-                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                                     </div>
                                                                 </a>
                                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -180,7 +180,7 @@
                                                             <div class="list-post-media">
                                                                 <a href="{{ route('news.show', $item->slug) }}">
                                                                     <div class="bg-wrap">
-                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.png') }}"></div>
+                                                                        <div class="bg" data-bg="{{ image_url($item->image, 'images/logo.webp') }}"></div>
                                                                     </div>
                                                                 </a>
                                                                 <span class="post-media_title">&copy; Foto: PIGEA</span>
@@ -316,7 +316,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.webp') }}" alt="{{ $item->title }}" width="1200" height="675" loading="lazy"></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>
@@ -340,7 +340,7 @@
 <!-- post-widget-item -->
                                                                     <div class="post-widget-item fl-wrap">
                                                                         <div class="post-widget-item-media">
-                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.png') }}"  alt=""></a>
+                                                                            <a href="{{ route('news.show', $item->slug) }}"><img src="{{ image_url($item->image, 'images/logo.webp') }}" alt="{{ $item->title }}" width="1200" height="675" loading="lazy"></a>
                                                                         </div>
                                                                         <div class="post-widget-item-content">
                                                                             <h4><a href="{{ route('news.show', $item->slug) }}">{{ $item->title }}</a></h4>

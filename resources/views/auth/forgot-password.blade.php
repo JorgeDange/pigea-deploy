@@ -6,7 +6,7 @@
 @section('content')
 <div class="auth-wrap">
   <div class="auth-card">
-    <div class="auth-logo"><img src="{{ asset('images/logo.png') }}" alt="PIGEA"></div>
+    <div class="auth-logo"><img src="{{ asset('images/logo.webp') }}" alt="PIGEA" width="240" height="100"></div>
     <h1>Recuperar password</h1>
     <p class="auth-subtitle">Receba um link de recuperação no seu email</p>
     <form class="auth-form" method="POST" action="{{ route('password.email') }}">

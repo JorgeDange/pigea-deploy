@@ -6,7 +6,7 @@
 @section('content')
 <div class="auth-wrap">
   <div class="auth-card">
-    <div class="auth-logo"><img src="{{ asset('images/logo.png') }}" alt="PIGEA"></div>
+    <div class="auth-logo"><img src="{{ asset('images/logo.webp') }}" alt="PIGEA" width="240" height="100"></div>
     <h1>Nova password</h1>
     <p class="auth-subtitle">Escolha uma password nova para a sua conta</p>
     <form class="auth-form" method="POST" action="{{ route('password.update') }}">
