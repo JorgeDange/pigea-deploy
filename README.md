@@ -12,7 +12,7 @@
 | **Packaging** | Composer (sem build obrigatório) |
 | **Internacionais** | `lang/pt/` (fallback `pt_PT`) |
 | **Fuso** | `Africa/Luanda` (UTC+1, sem horário de verão) |
-| **Testes** | 261 testes / 884 assertions — todos verdes |
+| **Testes** | 295 testes / 1015 assertions — todos verdes |
 | **Ambiente** | GitHub: `JorgeDange/pigea-deploy` · branches `main` (produção) e `updates` (trabalho) |
 | **Deploy** | Manual (FTP/cPanel) — ver `doc/deploy.md` e `## 12. Deploy em produção` |
 
@@ -78,7 +78,7 @@ pigea-deploy/
 ├── public/                        document root: css/, js/, images/, build/
 ├── resources/views/               Blade: público, painel admin, painel do utilizador
 ├── routes/web.php                 1 ficheiro, totalmente legível, sem grupos escondidos
-└── tests/                         Feature tests — 261 testes / 884 assertions
+└── tests/                         Feature tests — 295 testes / 1015 assertions
 ```
 
 ### Documentos e ficheiros principais
@@ -86,7 +86,12 @@ pigea-deploy/
 | Arquivo | Função |
 |---|---|
 | `doc/deploy.md` | Guia manual FTP/cPanel |
-| `prod-patch-2026-11-15.sql` | Patch de esquema para BD de produção onde as migrações nunca correram |
+| `prod-patch-2026-11-16-b.sql` | Patch Fase B (coluna `must_change_password` + permissões `institucional.manage`/`newsletter.manage`) — no `README`/`memoria.md` |
+| `prod-patch-2026-11-16.sql` | Patch principal da release (29 migrações, esquema completo Fase 11–16) |
+| `prod-categorias-news.sql` | Repõe a árvore `news`/`menu` em produção (37 categorias garantidas) |
+| `doc/orienta_deploy.md` | Manual de deploy (FTP/cPanel, .env, patch, GS) |
+| `doc/fix-equipa-route-2026-11-15.md` | Post-mortem do «Route [equipa] not defined» em produção |
+| `doc/prop.md` | Proposta do painel de Gestão/Perfil de utilizadores (3 fases) — A ✔ / B ✔ / C pendente |
 | `doc/docs.md` | Arquitectura e decisões técnicas (anti-bot, pin editorial, banners, etc.) |
 | `doc/dimensao.md` | Especificação de imagens e Banners para o designer |
 | `doc/email.md` | Historial do problema SMTP de produção e correção |
@@ -212,10 +217,10 @@ Alterações a `.env` em cache requerem sempre `optimize`.
 
 ### Estado actual
 
-- **Total de migrações**: 41 em `database/migrations/` (intervalo 28/09 a 13/11).
-- **25 migrações do período 10–13/11/2026** não foram aplicadas no servidor no último deploy (medido pelo pacote actual em produção).
-- Disponibilização **idempotente** via `prod-patch-2026-11-15.sql` (executável várias vezes na BD do servidor; detecta NIFs duplicados antes de aplicar o índice único).
-- Alternativamente, `php artisan migrate --force` aplica apenas as migrações pendentes na tabela `migrations`.
+- **Total de migrações**: 46 em `database/migrations/` (intervalo 28/09 a 16/11/2026).
+- **Migrações de produção aplicadas** via `prod-patch-2026-11-16.sql` (29 execuções) — confirmado 16/11.
+- **Coluna `must_change_password` (Fase B)**: criar via `prod-patch-2026-11-16-b.sql` ou o trecho SQL reproduzido na memoria.md (ainda por confirmar no servidor — `SELECT COUNT(*) ...` esperado: 1).
+- Disponibilização **idempotente** via `prod-patch-2026-11-15.sql` / `prod-patch-2026-11-16.sql` (executável várias vezes na BD do servidor).
 
 ### Como aplicar na produção
 
@@ -298,7 +303,7 @@ Características intrínsecas:
 php artisan test
 ```
 
-**Estado**: `261` testes, `884` assertions, todos verdes (`.env.testing` → BD `pigea_test` separada; `projects_publico=true` forçado via `phpunit.xml`).
+**Estado**: `295` testes, `1015` assertions, todos verdes (`.env.testing` → BD `pigea_test` separada; `projects_publico=true` forçado via `phpunit.xml`).
 
 Para verificar tudo depois de alterações:
 
@@ -321,30 +326,42 @@ tests/Feature/AlvoSeAfirmaComportamentoTest.php   um ficheiro por área
 
 O cliente usa deploy **manual** via FTP/cPanel: o utilizador sobe o conteúdo do repositório para a pasta pública (`public/`) e aponta a raiz para `public/`.
 
-### Pré-requisitos no alojamento
+> **Disciplina de deploy (aprendas de 15–16/11/2026):**
+> 1. **Nunca** fazer upload ficheiro-a-ficheiro (subconjuntos) — qualquer descuido derruba o site inteiro. Use o **pacote completo**: `pigea-deploy-production-<AAAA-MM-DD>.zip` (sem `vendor`, `storage`, `.git`, `.env`, `bootstrap/cache`, imagens de conteúdo, `tests`, docs; **o `public/storage` (symlink do servidor) nunca entra no pacote**).
+> 2. **md5sum de tudo** que entrou no servidor **depois de subir**, comparando com os valores locais — se algo não bate, voltar a subir esse ficheiro.
+> 3. **Nunca tocar em `bootstrap/cache/`**: o `packages.php`/`services.php` local contém deps de desenvolvimento que **não** existem em produção → `PailServiceProvider not found` → site cai em 100%. Só sobem `app.php` e `providers.php`.
+> 4. **Não correr `composer install`** no servidor. Vendor fica como está.
+> 5. Depois: `php artisan optimize:clear` e **Ctrl+F5**.
+> 6. **Backup** fresco da BD antes de qualquer patch. Os patches SQL manuais (`prod-patch-*.sql`) correm **sempre na base certa** — confirmar com `USE `nome\` e `SELECT DATABASE()` antes de colar.
 
-| Item | Requisito |
-|---|---|
-| PHP | 8.2+ |
-| MySQL/MariaDB | 10.4+ com FULLTEXT |
-| cPanel/SSH | "Terminal" no cPanel (opcional mas recomendado) |
-| Composer | 2+ |
-
-### Sequência recomendada
+### Sequência recomendada (pacote completo)
 
 ```bash
-git archive --format=zip --prefix=pigea/ -o pigea-producao.zip main
-# Faça o upload do zip extraído (FTP / Gestor de ficheiros cPanel).
+# 1. Local — gerar o pacote (validar com md5sum):
+#    ver doc/orienta_deploy.md (Secção 6) ou regenerar:
+#    robocopy pigea-deploy staging-prod /E /XD ... ; zip
+cd pigea-deploy
+git status                      # working tree limpa exigida?
+php artisan view:clear
+C:\xampp\php\php.exe artisan test   # suite tem de estar verde
 
-# Já no servidor:
-rm -rf storage/framework/views/*
-rm -f bootstrap/cache/config.php bootstrap/cache/services.php
-composer install --no-dev --optimize-autoloader
-php artisan storage:link
-php artisan migrate --force            # ou aplicar prod-patch-2026-11-15.sql pela primeira vez
-php artisan db:seed --class=RoleSeeder --force
-php artisan db:seed --class=MenuSeeder --force     # obrigatório p/ mega menu
+# 2. Cliente — phpMyAdmin:
+#    a) Use `<bd>` primeiro!  SELECT DATABASE(); -> tem de ser a base do site
+#    b) Exportar (backup-fresco.sql)
+#    c) Importar o patch SQL correcto (prod-patch-2026-11-16.sql / -b.sql)
+#       e o verificador no final (1/2/3)
+
+# 3. Cliente — FTP/cPanel:
+#    a) Enviar o zip para /home/geopacas/public_html/
+#    b) File Manager -> Extract (substituir)
+#    c) Se ainda houver erros: rm -f public_html/bootstrap/cache/packages.php services.php
+
+# 4. Servidor (Terminal cPanel):
+cd /home/geopacas/public_html
 php artisan optimize:clear
+php artisan route:list --name=utilizador
+php artisan tinker --execute='echo "ok";'   # não deve crashar
+curl -I https://pigea.ao/
 ```
 
 ### Verificação pós-deploy
@@ -354,6 +371,13 @@ curl -sI https://pigea.ao/              # 200
 curl -sI https://pigea.ao/(login .env)    # 200 (login team)
 curl -sI https://pigea.ao/login         # 404 (esperado)
 curl -sI https://pigea.ao/<ADMIN_PATH>  # 302 → login
+```
+- Home 200 com mega menu completo (9 grupos + subcategorias visíveis ao hover)
+- `/gestao-pigea` login → editor/admin vêem dashboard sem 500
+- Página Utilizadores: tabela + edição + desativar/reactivar + «Criado»
+- `/entrar-7x2` 200 (ou PC do `PIGEA_LOGIN_PATH`)
+- `/contactos` → envia → chega a `geral@pigea.ao` (from `PIGEA <geral@pigea.ao>`)
+- Newsletter: subscrever/confirmar/cancelar/resubscrever — emails chegam
 ```
 
 ### Lista de verificação final
@@ -373,9 +397,33 @@ curl -sI https://pigea.ao/<ADMIN_PATH>  # 302 → login
 | Uploads não aparecem | `storage:link` não foi feito | `php artisan storage:link` |
 | Painel "desconfigurado" / inputs desajeitados | `bootstrap/cache/config.php` e/ou `storage/framework/views/*` desactualizados | Apagar cache + `Ctrl+F5` |
 | Emails não saem | `MAIL_MAILER=log` ou credenciais erradas (535 Authentication failed) | `.env` correto → `php artisan optimize:clear` |
+| `Class "Laravel\Pail\PailServiceProvider" not found` | Ficheiros `bootstrap/cache/{packages,services}.php` (cache local) acabaram no servidor | Apagar esses 2 ficheiros por File Manager (o Laravel reconstrói do `vendor/composer/installed.json`) |
 | 500 interno | Permissão errada em `storage/` e/ou `bootstrap/cache/` | `chmod -R 775 storage bootstrap/cache` |
+| `Route [admin.utilizador.editar] not defined` | `routes/web.php` do servidor está desatualizado | Reenviar `routes/web.php` (ver pacote dinâmico mais abaixo) |
+| `Route [equipa] not defined` | `MenuCategorias.php` novo sem `routes/web.php` novo | Reenviar `routes/web.php` (corrida completa em 2026-11-15) |
 | Submissões de notícias voltam a "Rascunho" | Botões submit desativados excluídos do form | (Fix aplicado no commit actual; confirmar pacote actualizado) |
 | 404 num ficheiro CSS/JS (vídeo, JS distinto) | `public/build/` não foi incluído no pacote de upload | Reempacotar com `main` mais recente |
+| Site inteiro 500 após upload parcial | Deploy fora de sincronia (ficheiros novos a mais/a menos) | **Usar o pacote completo** (`pigea-deploy-production-*.zip`) em vez de upload ficheiro-a-ficheiro |
+
+### Release 2026-11-16 — o que mudou em produção
+
+| Área | Estado em produção (16/11/2026) |
+|---|---|
+| Newsletter simplificada (`pending`/`active`/`cancelled`, 3 emails: subscrição/confirmação/cancelamento, rota `/newsletter/resubscrever/{token}`) | ✅ Confirmado pelo cliente («ok») |
+| Home «Últimas Notícias» (sem abas, 5 recentes server-rendered) | ✅ Em produção |
+| Equipa `/equipa` + Parceiros `/parceiros` institucionais + CRUD admin | ✅ Em produção |
+| Sobre Nós editável (Admin → Configurações) | ✅ Em produção |
+| Diretório — email transacional via mailer `geral` (toquesüstüplos; `newsletter@pigea.ao` INTOCADA) | ✅ Confirmado pelo cliente |
+| Mega menu completo (9 grupos + 44 itens; removida «Missão, visão e valores») | ✅ Em produção |
+| DB categorias news = 37 (10 topos + 27 filhos), menu = 16 | ✅ Verificado |
+| Emails (logo i.ibb.co + glifos Unicode no lugar de SVG) | ✅ Cliente confirma recebimento |
+| Formulário contacto funciona (`report()` no catch → log) | ✅ Confirmado (cidades) |
+| **Fase A — Perfil: «A minha senha» (troca com sessão atual mantida, outras sessões terminadas) + «Informação da conta»** | ✅ Em produção |
+| **Fase B — Gestão de utilizadores a sério**: editar dados, repor senha (troca obrigatória), desativar/reativar real, eliminar em 2 passos, paginação 10/25/50/100, guard último admin | ✅ Em produção (código + SQL) |
+| **Permissões novas**: `institucional.manage` (só admin) e `newsletter.manage` (admin+editor) — sidebar/rotas | ✅ SQL verificado (2 rows, 3 links) |
+| Coluna `users.must_change_password` | ⚠️ Coluna criada manualmente no servidor (16/11); verificação 1→ ok? — **pendente de confirmação por `SELECT COUNT(*)…`** |
+| DKIM (`pigea.ao`) | ✅ Atualizado (cliente 16/11) |
+| `Route [equipa] not defined` (15/11 20:59) | ✅ Resolvido (routes/web.php em produção agora correto; pacote completo definido) |
 
 ### Patch de base de dados na produção (sem `migrate`)
 
@@ -408,7 +456,7 @@ php artisan db:seed --class=RoleSeeder --force
 php artisan db:seed --class=ContentSeeder --force
 ```
 
-Qualquer modificação no repositório exige que a suite complete **continue verde** — 261 testes / 884 assertions.
+Qualquer modificação no repositório exige que a suite complete **continue verde** — 295 testes / 1015 assertions.
 
 ### Estrutura de diretório para novos recursos
 
@@ -432,19 +480,22 @@ Este é um projeto proprietário. Contribuições externas requerem acordo escri
 
 | Item | Estado |
 |---|---|
-| Portal de notícias + directório público | **Em produção** (construção cliente); alterações novas a subir |
+| Portal de notícias + directório público | **Em produção** (15/11/2026 — release ponta; ver §12) |
 | Área de utilizador para empresas/profissionais com login | **Removido** (decisão do cliente 2026-11) |
 | Sistema de comentários | **Removido** (2026-11-11) |
-| Mega menu com 9 grupos + 44 subcategorias | **No código**; **na produção, passa hover sem submenu** — `MenuSeeder` não foi semeado no servidor |
-| Newsletter com dupla opt-in | **No código actual**; na produção o SMTP está configurado mas pendente de testes finais com o cliente |
-| Banners laterais/largos/topo/rodapé | **No código actual**; na produção o build pode estar antigo |
-| Notificações internas (sino) | **No código actual**; `notifications` table precisa de migração a executar |
-| Configuração completa no admin | **No código actual**; alterações a *Social Links* e contacto têm de ser revistas |
+| Mega menu com 9 grupos + 44 subcategorias | **Em produção** — resolvido 16/11 (menu por `menu_group`; árvore news corrigida: `news=37`, `menu=16`) |
+| Newsletter com dupla opt-in | **Em produção** — emails funcionando (confirmar/cancelar/resubscrever/recibos transaccionais) |
+| Banners laterais/largos/topo/rodapé | **Em produção** |
+| Notificações internas (sino) | **Em produção** |
+| Configuração completa no admin | **Em produção** (Social Links, contacto, Geral/SEO/emails) |
+| Equipa/Parceiros institucionais (`/equipa`, `/parceiros`) | **Em produção — release 2026-11-16** |
+| Perfil do colaborador (`/gestao-pigea/perfil` — troca de senha) | **Em produção — release 2026-11-16 (Fase A)** |
+| Gestão de utilizadores (editar/repor/desativar, paginação) | **Em produção — release 2026-11-16 (Fase B)** (ver nota abaixo sobre verificação) |
 | **Newsletter Pro** (envio orquestrado por painel com lotes de 100 e prazos) | **Pendente decisão do cliente** — ver `doc/evolution_news.md` |
-| Painel `/gestao-pigea/acompanhamento` | **No código actual** |
-| Secção de destaque/emissão de Notícias com destaque editorial | **No código actual** |
-| Storage link em produção (uploads visíveis) | **Pendente passo manual** (`php artisan storage:link`) |
-| Migrações `2026_11_*` corridas em produção | **Pendente** — patch disponível ou `php artisan migrate --force` |
+| Painel `/gestao-pigea/acompanhamento` | **Em produção** |
+| Secção de destaque/emissão de Notícias com destaque editorial | **Em produção** |
+| Storage link em produção (uploads visíveis) | **Em produção** |
+| Migrações `2026_11_*` corridas em produção | **Aplicadas** (patch `2026-11-16`: 29 migrações marcadas; categorias 37/16 verificadas) |
 
 ---
 
