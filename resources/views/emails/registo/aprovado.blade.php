@@ -7,8 +7,8 @@
             <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px; width:100%;">
                 <tr><td align="center" style="padding:0 0 30px 0;"><img src="https://i.ibb.co/jvhNs1zv/logo.png" alt="PIGEA" width="150" style="display:block; width:150px; max-width:150px; height:auto; border:0;"></td></tr>
                 <tr><td align="center" style="padding:0 0 20px 0;">
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr><td align="center" style="width:80px; height:80px; background-color:#2E7D32; border-radius:50%;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr><td align="center" style="width:80px; height:80px; background-color:#2E7D32; border-radius:50%; font-size:34px; line-height:80px; color:#FFFFFF; font-weight:700; font-family:'Segoe UI Symbol','Apple Symbols',Georgia,serif;">
+                        ✓
                     </td></tr></table>
                 </td></tr>
                 <tr><td align="center" style="padding:0 20px 15px 20px;"><h1 style="margin:0; font-size:24px; color:#1A1A1A; font-family: Georgia, serif;">Registo Aprovado!</h1></td></tr>

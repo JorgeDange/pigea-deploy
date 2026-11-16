@@ -7,6 +7,9 @@ use App\Support\Autor;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -66,5 +69,38 @@ class ProfileController extends Controller
         $utilizador->save();
 
         return redirect()->route('admin.perfil')->with('estado', 'Perfil atualizado.');
+    }
+
+    /**
+     * Troca a senha do próprio utilizador (auto-serviço — admin e editor).
+     *
+     * Valida a senha atual, aplica a régua `Password::default()` e termina
+     * TODAS as outras sessões da conta (tabela `sessions`) na gravação —
+     * a sessão corrente mantém-se, mas um leak noutro dispositivo morre aqui.
+     */
+    public function senha(Request $request): RedirectResponse
+    {
+        $utilizador = auth()->user();
+
+        $dados = $request->validate([
+            'current_password' => ['required', 'string', 'current_password:web'],
+            'password' => ['required', 'string', 'confirmed', Password::default()],
+        ], [
+            'current_password.current_password' => 'A senha atual está incorreta.',
+            'password.confirmed' => 'A confirmação não coincide com a nova senha.',
+        ]);
+
+        // `password` não é mass-assignable por design (User::$fillable) —
+        // atribuição direta intencional, como no UserFormController.
+        $utilizador->forceFill(['password' => Hash::make($dados['password'])])->save();
+
+        // Encerra todas as OUTRAS sessões desta conta (mantém a atual).
+        DB::table('sessions')
+            ->where('user_id', $utilizador->id)
+            ->where('id', '!=', $request->session()->getId())
+            ->delete();
+
+        return redirect()->route('admin.perfil')
+            ->with('estado', 'Senha alterada com sucesso. As suas outras sessões foram terminadas.');
     }
 }

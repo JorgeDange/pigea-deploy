@@ -85,11 +85,72 @@
   </div>
 </div>
 
+<div class="card">
+  <div class="card-head">
+    <h2 class="card-title">Informação da conta</h2>
+  </div>
+  <div class="card-body">
+    <dl class="conta-info">
+      <div class="conta-info-item">
+        <dt>Último acesso</dt>
+        <dd>{{ $utilizador->last_login_at?->format('d/m/Y H:i') ?? '—' }}</dd>
+      </div>
+      <div class="conta-info-item">
+        <dt>Conta criada em</dt>
+        <dd>{{ $utilizador->created_at?->format('d/m/Y') }}</dd>
+      </div>
+      <div class="conta-info-item">
+        <dt>Verificação em dois passos (2FA)</dt>
+        <dd>{{ $utilizador->two_factor_confirmed_at ? 'Ativada' : 'Desativada' }}</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <h2 class="card-title">A minha senha</h2>
+  </div>
+  <div class="card-body">
+    <form class="dashboard-form" action="{{ route('admin.perfil.senha') }}" method="post" autocomplete="off">
+      @csrf
+
+      @if (session('estado'))
+        <div class="flash-toast" data-flash-toast="success" hidden>{{ session('estado') }}</div>
+      @endif
+
+      <div class="dashboard-form-group">
+        <label class="dashboard-form-label" for="current_password">Senha atual</label>
+        <input class="dashboard-form-input" type="password" id="current_password" name="current_password" autocomplete="current-password" required>
+        @error('current_password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+      </div>
+      <div class="dashboard-form-group">
+        <label class="dashboard-form-label" for="password">Nova senha</label>
+        <input class="dashboard-form-input" type="password" id="password" name="password" autocomplete="new-password" required>
+        <small class="help-text">Mínimo de 8 caracteres, com letras e números (regra do painel).</small>
+        @error('password')<p class="form-error" role="alert">{{ $message }}</p>@enderror
+      </div>
+      <div class="dashboard-form-group">
+        <label class="dashboard-form-label" for="password_confirmation">Repetir a nova senha</label>
+        <input class="dashboard-form-input" type="password" id="password_confirmation" name="password_confirmation" autocomplete="new-password" required>
+      </div>
+      <div class="dashboard-form-actions">
+        <button type="submit" class="btn-primary"><i class="fa fa-lock" aria-hidden="true"></i> Alterar senha</button>
+      </div>
+      <p class="help-text">Ao alterar a senha, todas as suas <strong>outras sessões</strong> serão terminadas (esta mantém-se).</p>
+    </form>
+  </div>
+</div>
+
 @push('styles')
 <style>
   .perfil-atual { display: flex; align-items: center; gap: 14px; padding: 12px; border: 1px dashed #D8D8D8; border-radius: 8px; background: #FCFCFC; margin-bottom: 12px; }
   .perfil-atual-img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1px solid #E0E0E0; }
   .perfil-atual-meta small { display: block; }
+  .conta-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 0; }
+  .conta-info-item { border: 1px solid #ECECEC; border-radius: 8px; padding: 12px 14px; background: #FAFAFA; }
+  .conta-info-item dt { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
+  .conta-info-item dd { margin: 0; font-size: 15px; color: #1A1A1A; font-weight: 600; }
 </style>
 @endpush
 

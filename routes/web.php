@@ -153,6 +153,11 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
     Route::get('/newsletter/exportar.csv', [NewsletterAdminController::class, 'exportar'])->middleware('role:admin')->name('newsletter.exportar');
     Route::get('/perfil', [ProfileController::class, 'index'])->name('perfil');
     Route::post('/perfil', [ProfileController::class, 'update'])->name('perfil.update');
+    // Auto-serviço: trocar a própria senha (qualquer utilizador interno).
+    // throttle 6/min por IP — anti brute-force à troca de senha.
+    Route::post('/perfil/senha', [ProfileController::class, 'senha'])
+        ->middleware('throttle:6,1')
+        ->name('perfil.senha');
     Route::view('/noticias', 'admin.noticias')->middleware('can:news.manage')->name('noticias');
     Route::view('/videos', 'admin.videos')->middleware('can:video.manage')->name('videos');
     Route::get('/videos/novo', [VideoFormController::class, 'create'])->middleware('can:video.manage')->name('videos.novo');
