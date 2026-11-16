@@ -421,7 +421,7 @@ curl -sI https://pigea.ao/<ADMIN_PATH>  # 302 → login
 | **Fase A — Perfil: «A minha senha» (troca com sessão atual mantida, outras sessões terminadas) + «Informação da conta»** | ✅ Em produção |
 | **Fase B — Gestão de utilizadores a sério**: editar dados, repor senha (troca obrigatória), desativar/reativar real, eliminar em 2 passos, paginação 10/25/50/100, guard último admin | ✅ Em produção (código + SQL) |
 | **Permissões novas**: `institucional.manage` (só admin) e `newsletter.manage` (admin+editor) — sidebar/rotas | ✅ SQL verificado (2 rows, 3 links) |
-| Coluna `users.must_change_password` | ⚠️ Coluna criada manualmente no servidor (16/11); verificação 1→ ok? — **pendente de confirmação por `SELECT COUNT(*)…`** |
+| Coluna `users.must_change_password` | ✅ Criada e verificada no servidor (16/11, `col=1`) — o «Repor senha» funciona, obrigando troca no próximo login |
 | DKIM (`pigea.ao`) | ✅ Atualizado (cliente 16/11) |
 | `Route [equipa] not defined` (15/11 20:59) | ✅ Resolvido (routes/web.php em produção agora correto; pacote completo definido) |
 
