@@ -26,11 +26,16 @@ class RoleSeeder extends Seeder
         // Reestruturação (restrutura.md): apenas a equipa interna tem login.
         // `*` mantém o admin compatível com qualquer permissão futura; as
         // concretas dão cobertura às rotas admin sem permissão correspondente.
-        'admin' => ['*', 'company.moderate', 'user.manage', 'settings.manage'],
+        // `institucional.manage` — só admin (decisão do cliente 2026-11-16, prop.md
+        // §2.6-1): equipa/parceiros deixam de ser visíveis/editáveis pelo editor.
+        'admin' => ['*', 'company.moderate', 'user.manage', 'settings.manage', 'institucional.manage', 'newsletter.manage'],
+        // `newsletter.manage` — admin E editor (decisão do cliente 2026-11-16,
+        // prop.md §2.6-2): a gestão da newsletter abre para ambos.
         'editor' => [
             'news.manage', 'project.manage', 'event.manage',
             'legislation.manage', 'research.manage', 'interview.manage',
             'document.manage', 'banner.manage', 'video.manage',
+            'newsletter.manage',
         ],
     ];
 

@@ -35,11 +35,9 @@
         ]],
     ];
 
-    if ($ehAdmin) {
-        $grupos[] = ['rotulo' => 'Subscrições', 'itens' => [
-            ['chave' => 'newsletter', 'nome' => 'Newsletter', 'icone' => 'fa-envelope', 'rota' => 'admin.newsletter', 'can' => null],
-        ]];
-    }
+    $grupos[] = ['rotulo' => 'Subscrições', 'itens' => [
+        ['chave' => 'newsletter', 'nome' => 'Newsletter', 'icone' => 'fa-envelope', 'rota' => 'admin.newsletter', 'can' => 'newsletter.manage'],
+    ]];
 
     $grupos[] = ['rotulo' => 'Diretório', 'itens' => [
         ['chave' => 'empresas', 'nome' => 'Empresas', 'icone' => 'fa-building', 'rota' => 'admin.empresas', 'can' => 'company.moderate'],
@@ -51,8 +49,9 @@
         ['chave' => 'destaques', 'nome' => 'Destaques', 'icone' => 'fa-star', 'rota' => 'admin.destaques', 'can' => 'banner.manage'],
     ]];
     $grupos[] = ['rotulo' => 'Institucional', 'itens' => [
-        ['chave' => 'equipa', 'nome' => 'Equipa', 'icone' => 'fa-users', 'rota' => 'admin.equipa', 'can' => null],
-        ['chave' => 'parceiros', 'nome' => 'Parceiros', 'icone' => 'fa-share-alt', 'rota' => 'admin.parceiros', 'can' => null],
+        // Institucional — SÓ admin (decisão do cliente 2026-11-16, prop.md §2.6-1).
+        ['chave' => 'equipa', 'nome' => 'Equipa', 'icone' => 'fa-users', 'rota' => 'admin.equipa', 'can' => 'institucional.manage'],
+        ['chave' => 'parceiros', 'nome' => 'Parceiros', 'icone' => 'fa-share-alt', 'rota' => 'admin.parceiros', 'can' => 'institucional.manage'],
     ]];
 
     if ($ehAdmin) {

@@ -22,6 +22,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // contado no `terminate`, depois da resposta — zero latência percebida.
         $middleware->appendToGroup('web', \App\Http\Middleware\CountPublicVisits::class);
 
+        // Desativação real de contas (prop.md Fase B / §2.3): corre no grupo
+        // web, DEPOIS do auth — utilizador autenticado com status != active é
+        // deslogado na hora e reencaminhado para o login.
+        $middleware->appendToGroup('web', \App\Http\Middleware\EnsureUserIsActive::class);
+
+        // Troca obrigatória de senha a seguir a reset pelo admin (Fase B2):
+        // tranca o painel até a senha ser trocada no /admin/perfil.
+        $middleware->appendToGroup('web', \App\Http\Middleware\EnsureMustChangePassword::class);
+
         // Proxy de confiança (nginx/Apache a terminar TLS à frente da app).
         //
         // O `TrustProxies` já vem na pilha global por omissão e lê

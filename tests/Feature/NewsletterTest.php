@@ -220,9 +220,11 @@ class NewsletterTest extends TestCase
         $this->assertStringNotContainsString('csv-nao@example.com', $conteudo);
     }
 
-    public function test_anonimo_e_editor_nao_acedem_ao_painel(): void
+    public function test_anonimo_nao_acede_e_editor_acede_ao_painel(): void
     {
+        // 2026-11-16 (prop.md §2.6-2): o cliente decidiu que o editor
+        // TAMBÉM gere a newsletter (can:newsletter.manage).
         $this->get(route('admin.newsletter'))->assertRedirect();
-        $this->actingAs($this->editor())->get(route('admin.newsletter'))->assertForbidden();
+        $this->actingAs($this->editor())->get(route('admin.newsletter'))->assertOk();
     }
 }

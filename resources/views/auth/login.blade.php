@@ -9,6 +9,9 @@
       <div class="auth-logo"><img src="{{ asset('images/logo.webp') }}" alt="PIGEA" width="240" height="100"></div>
       <h1>Entrar no PIGEA</h1>
       <p class="auth-subtitle">Acesse a sua conta para continuar</p>
+      @if (session('estado'))
+        <p class="auth-alerta" role="status" style="background:#FFF4E5; border:1px solid #F2A900; color:#7A4A00; padding:10px 14px; border-radius:8px; font-size:14px; margin:0 0 14px;">{{ session('estado') }}</p>
+      @endif
       <form class="auth-form" method="POST" action="{{ route('login.store') }}">
         @csrf
         <div class="form-group">

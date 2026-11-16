@@ -90,9 +90,11 @@ class ProfileController extends Controller
             'password.confirmed' => 'A confirmação não coincide com a nova senha.',
         ]);
 
-        // `password` não é mass-assignable por design (User::$fillable) —
-        // atribuição direta intencional, como no UserFormController.
-        $utilizador->forceFill(['password' => Hash::make($dados['password'])])->save();
+        // Auto-serviço: troca a própria senha (apaga a flag do reset pelo admin).
+        $utilizador->forceFill([
+            'password' => Hash::make($dados['password']),
+            'must_change_password' => false,
+        ])->save();
 
         // Encerra todas as OUTRAS sessões desta conta (mantém a atual).
         DB::table('sessions')

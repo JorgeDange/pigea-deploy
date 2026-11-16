@@ -140,17 +140,18 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
     Route::get('/acompanhamento', [AcompanhamentoController::class, 'index'])->name('acompanhamento');
     // Notificações — marcagem em massa de todas como lidas (módulo real)
     Route::post('/notificacoes/ler', [NotificacoesController::class, 'lerTodas'])->name('notificacoes.ler');
-    // Newsletter (doc/newsletter.md FASE N1) — dados pessoais: só role:admin
-    Route::get('/newsletter', [NewsletterAdminController::class, 'index'])->middleware('role:admin')->name('newsletter');
-    Route::post('/newsletter/adicionar', [NewsletterAdminController::class, 'adicionar'])->middleware('role:admin')->name('newsletter.adicionar');
-    Route::post('/newsletter/confirmar/{id}', [NewsletterAdminController::class, 'confirmar'])->middleware('role:admin')->whereNumber('id')->name('newsletter.confirmar');
-    Route::post('/newsletter/cancelar/{id}', [NewsletterAdminController::class, 'cancelar'])->middleware('role:admin')->whereNumber('id')->name('newsletter.cancelar');
-    Route::post('/newsletter/reabilitar/{id}', [NewsletterAdminController::class, 'reabilitar'])->middleware('role:admin')->whereNumber('id')->name('newsletter.reabilitar');
-    Route::post('/newsletter/confirmar-pendentes', [NewsletterAdminController::class, 'confirmarPendentes'])->middleware('role:admin')->name('newsletter.confirmar-pendentes');
-    Route::post('/newsletter/reenviar/{id}', [NewsletterAdminController::class, 'reenviarConfirmacao'])->middleware('role:admin')->whereNumber('id')->name('newsletter.reenviar');
-    Route::post('/newsletter/reenviar-pendentes', [NewsletterAdminController::class, 'reenviarPendentes'])->middleware('role:admin')->name('newsletter.reenviar-pendentes');
-    Route::delete('/newsletter/{id}', [NewsletterAdminController::class, 'remover'])->middleware('role:admin')->whereNumber('id')->name('newsletter.remover');
-    Route::get('/newsletter/exportar.csv', [NewsletterAdminController::class, 'exportar'])->middleware('role:admin')->name('newsletter.exportar');
+    // Newsletter (doc/newsletter.md FASE N1) — can:newsletter.manage (admin e editor;
+    // decisão do cliente 2026-11-16, prop.md §2.6-2).
+    Route::get('/newsletter', [NewsletterAdminController::class, 'index'])->middleware('can:newsletter.manage')->name('newsletter');
+    Route::post('/newsletter/adicionar', [NewsletterAdminController::class, 'adicionar'])->middleware('can:newsletter.manage')->name('newsletter.adicionar');
+    Route::post('/newsletter/confirmar/{id}', [NewsletterAdminController::class, 'confirmar'])->middleware('can:newsletter.manage')->whereNumber('id')->name('newsletter.confirmar');
+    Route::post('/newsletter/cancelar/{id}', [NewsletterAdminController::class, 'cancelar'])->middleware('can:newsletter.manage')->whereNumber('id')->name('newsletter.cancelar');
+    Route::post('/newsletter/reabilitar/{id}', [NewsletterAdminController::class, 'reabilitar'])->middleware('can:newsletter.manage')->whereNumber('id')->name('newsletter.reabilitar');
+    Route::post('/newsletter/confirmar-pendentes', [NewsletterAdminController::class, 'confirmarPendentes'])->middleware('can:newsletter.manage')->name('newsletter.confirmar-pendentes');
+    Route::post('/newsletter/reenviar/{id}', [NewsletterAdminController::class, 'reenviarConfirmacao'])->middleware('can:newsletter.manage')->whereNumber('id')->name('newsletter.reenviar');
+    Route::post('/newsletter/reenviar-pendentes', [NewsletterAdminController::class, 'reenviarPendentes'])->middleware('can:newsletter.manage')->name('newsletter.reenviar-pendentes');
+    Route::delete('/newsletter/{id}', [NewsletterAdminController::class, 'remover'])->middleware('can:newsletter.manage')->whereNumber('id')->name('newsletter.remover');
+    Route::get('/newsletter/exportar.csv', [NewsletterAdminController::class, 'exportar'])->middleware('can:newsletter.manage')->name('newsletter.exportar');
     Route::get('/perfil', [ProfileController::class, 'index'])->name('perfil');
     Route::post('/perfil', [ProfileController::class, 'update'])->name('perfil.update');
     // Auto-serviço: trocar a própria senha (qualquer utilizador interno).
@@ -178,6 +179,20 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
     Route::post('/utilizadores/novo', [UserFormController::class, 'store'])
         ->middleware('can:user.manage')
         ->name('utilizador.novo');
+    // Gerir utilizador (Fase B): editar dados + repor senha. Mesma permissão
+    // da lista — quem pode ver, pode gerir.
+    Route::get('/utilizadores/{user}/editar', [UserFormController::class, 'edit'])
+        ->middleware('can:user.manage')
+        ->whereNumber('user')
+        ->name('utilizador.editar');
+    Route::put('/utilizadores/{user}/atualizar', [UserFormController::class, 'update'])
+        ->middleware('can:user.manage')
+        ->whereNumber('user')
+        ->name('utilizador.atualizar');
+    Route::post('/utilizadores/{user}/senha', [UserFormController::class, 'senha'])
+        ->middleware(['can:user.manage', 'throttle:6,1'])
+        ->whereNumber('user')
+        ->name('utilizador.senha');
 
     /**
      * Editor de notícias (cms_pro.md §4.2 — "o ecrã mais importante").
@@ -269,20 +284,23 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
     Route::get('/banners/{id}/editar', [BannerFormController::class, 'edit'])->middleware('can:banner.manage')->whereNumber('id')->name('banners.editar');
     Route::put('/banners/{id}', [BannerFormController::class, 'update'])->middleware('can:banner.manage')->whereNumber('id')->name('banners.atualizar');
 
-    // Institucional (Sobre Nós): Equipa e Parceiros — gestão pelo admin+editor da
-    // equipa interna (sem permissão granular: conteúdo público mantido aqui).
-    Route::view('/equipa', 'admin.equipa')->name('equipa');
-    Route::get('/equipa/novo', [TeamFormController::class, 'create'])->name('equipa.novo');
-    Route::post('/equipa/novo', [TeamFormController::class, 'store'])->name('equipa.novo.store');
-    Route::get('/equipa/{id}/editar', [TeamFormController::class, 'edit'])->whereNumber('id')->name('equipa.editar');
-    Route::put('/equipa/{id}', [TeamFormController::class, 'update'])->whereNumber('id')->name('equipa.atualizar');
-    Route::delete('/equipa/{id}', [TeamFormController::class, 'destroy'])->whereNumber('id')->name('equipa.remover');
-    Route::view('/parceiros', 'admin.parceiros')->name('parceiros');
-    Route::get('/parceiros/novo', [PartnerFormController::class, 'create'])->name('parceiros.novo');
-    Route::post('/parceiros/novo', [PartnerFormController::class, 'store'])->name('parceiros.novo.store');
-    Route::get('/parceiros/{id}/editar', [PartnerFormController::class, 'edit'])->whereNumber('id')->name('parceiros.editar');
-    Route::put('/parceiros/{id}', [PartnerFormController::class, 'update'])->whereNumber('id')->name('parceiros.atualizar');
-    Route::delete('/parceiros/{id}', [PartnerFormController::class, 'destroy'])->whereNumber('id')->name('parceiros.remover');
+    // Institucional (Sobre Nós): Equipa e Parceiros — gestão SÓ do admin
+    // (decisão do cliente 2026-11-16, prop.md §2.6-1). O editor deixa de ver
+    // e tocar: sidebar escondida + rotas com can:institucional.manage (403).
+    Route::middleware('can:institucional.manage')->group(function () {
+        Route::view('/equipa', 'admin.equipa')->name('equipa');
+        Route::get('/equipa/novo', [TeamFormController::class, 'create'])->name('equipa.novo');
+        Route::post('/equipa/novo', [TeamFormController::class, 'store'])->name('equipa.novo.store');
+        Route::get('/equipa/{id}/editar', [TeamFormController::class, 'edit'])->whereNumber('id')->name('equipa.editar');
+        Route::put('/equipa/{id}', [TeamFormController::class, 'update'])->whereNumber('id')->name('equipa.atualizar');
+        Route::delete('/equipa/{id}', [TeamFormController::class, 'destroy'])->whereNumber('id')->name('equipa.remover');
+        Route::view('/parceiros', 'admin.parceiros')->name('parceiros');
+        Route::get('/parceiros/novo', [PartnerFormController::class, 'create'])->name('parceiros.novo');
+        Route::post('/parceiros/novo', [PartnerFormController::class, 'store'])->name('parceiros.novo.store');
+        Route::get('/parceiros/{id}/editar', [PartnerFormController::class, 'edit'])->whereNumber('id')->name('parceiros.editar');
+        Route::put('/parceiros/{id}', [PartnerFormController::class, 'update'])->whereNumber('id')->name('parceiros.atualizar');
+        Route::delete('/parceiros/{id}', [PartnerFormController::class, 'destroy'])->whereNumber('id')->name('parceiros.remover');
+    });
 
     /*
     | FASE 15 — Destaques publicitários rotativos (destaque.js, autoplay 4s):
