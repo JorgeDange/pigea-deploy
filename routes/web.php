@@ -172,6 +172,8 @@ Route::middleware(['auth', 'role:admin,editor'])->prefix(config('app.admin_path'
     Route::view('/legislacao', 'admin.legislacao')->middleware('can:legislation.manage')->name('legislacao');
     Route::view('/projetos', 'admin.projetos')->middleware('can:project.manage')->name('projetos');
     Route::view('/empresas', 'admin.empresas')->middleware('can:company.moderate')->name('empresas');
+    Route::get('/newsletter/enviar', [NewsletterAdminController::class, 'enviar'])->middleware('can:newsletter.manage')->name('newsletter.enviar');
+    Route::post('/newsletter/enviar', [NewsletterAdminController::class, 'enviarArtigo'])->middleware('can:newsletter.manage')->name('newsletter.enviar.store');
     Route::view('/utilizadores', 'admin.utilizadores')->middleware('can:user.manage')->name('utilizadores');
     // Modal "Adicionar utilizador": no protótipo o `<form>` não tinha `action`
     // (o botão era `type="button"` morto no rodapé do modal). Mesma permissão

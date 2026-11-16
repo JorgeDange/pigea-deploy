@@ -12,7 +12,7 @@
 | **Packaging** | Composer (sem build obrigatório) |
 | **Internacionais** | `lang/pt/` (fallback `pt_PT`) |
 | **Fuso** | `Africa/Luanda` (UTC+1, sem horário de verão) |
-| **Testes** | 295 testes / 1015 assertions — todos verdes |
+| **Testes** | 299 testes / 1032 assertions — todos verdes |
 | **Ambiente** | GitHub: `JorgeDange/pigea-deploy` · branches `main` (produção) e `updates` (trabalho) |
 | **Deploy** | Manual (FTP/cPanel) — ver `doc/deploy.md` e `## 12. Deploy em produção` |
 
@@ -78,7 +78,7 @@ pigea-deploy/
 ├── public/                        document root: css/, js/, images/, build/
 ├── resources/views/               Blade: público, painel admin, painel do utilizador
 ├── routes/web.php                 1 ficheiro, totalmente legível, sem grupos escondidos
-└── tests/                         Feature tests — 295 testes / 1015 assertions
+└── tests/                         Feature tests — 299 testes / 1032 assertions
 ```
 
 ### Documentos e ficheiros principais
@@ -485,6 +485,7 @@ Este é um projeto proprietário. Contribuições externas requerem acordo escri
 | Sistema de comentários | **Removido** (2026-11-11) |
 | Mega menu com 9 grupos + 44 subcategorias | **Em produção** — resolvido 16/11 (menu por `menu_group`; árvore news corrigida: `news=37`, `menu=16`) |
 | Newsletter com dupla opt-in | **Em produção** — emails funcionando (confirmar/cancelar/resubscrever/recibos transaccionais) |
+| **Aviso de novo artigo** — envio manual no painel | **Implementado 17/11/2026** (299/1032 verde) — opt-in pelo painel; ≤100 activos por clique; modo «teste» só para a caixa do admin; histórico de edições; produção: criar `newsletter_editions*` via SQL inline + upload (10 ficheiros) |
 | Banners laterais/largos/topo/rodapé | **Em produção** |
 | Notificações internas (sino) | **Em produção** |
 | Configuração completa no admin | **Em produção** (Social Links, contacto, Geral/SEO/emails) |

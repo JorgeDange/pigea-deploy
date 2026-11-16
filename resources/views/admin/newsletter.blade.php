@@ -58,6 +58,7 @@
                     <button type="button" class="btn-secondary btn-sm js-confirm" data-confirm-form="reenviar-pendentes-todos" data-confirm-title="Reenviar a todos" data-confirm-message="Reenviar email de confirmação para {{ $pendentes }} subscritor(es) pendentes?" data-confirm-text="Reenviar"><i class="fa fa-paper-plane"></i> Reenviar a todos ({{ $pendentes }})</button>
                 </form>
             @endif
+            <a href="{{ route('admin.newsletter.enviar') }}" class="btn-primary btn-sm"><i class="fa fa-paper-plane"></i> Enviar artigo</a>
             <a href="{{ route('admin.newsletter.exportar', ['estado' => $estado !== '' ? $estado : 'active']) }}" class="btn-secondary btn-sm"><i class="fa fa-file-csv"></i> Exportar {{ $estado !== '' ? $rotulos[$estado] : 'ativos' }}</a>
         </div>
     </div>

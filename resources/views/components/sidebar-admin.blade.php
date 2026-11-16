@@ -17,6 +17,8 @@
         'equipa.novo'      => 'equipa',
         'parceiros.editar' => 'parceiros',
         'parceiros.novo'   => 'parceiros',
+        'newsletter-art'   => 'newsletter-art',
+        'newsletter.enviar'=> 'newsletter-art',
         'conteudo.editar'  => $rotaAtual === 'admin.conteudo.editar' && request('tipo') === 'noticias' ? 'noticias' : '',
     ][$ativa] ?? $ativa;
 
@@ -37,6 +39,7 @@
 
     $grupos[] = ['rotulo' => 'Subscrições', 'itens' => [
         ['chave' => 'newsletter', 'nome' => 'Newsletter', 'icone' => 'fa-envelope', 'rota' => 'admin.newsletter', 'can' => 'newsletter.manage'],
+        ['chave' => 'newsletter-art', 'nome' => 'Aviso de artigo', 'icone' => 'fa-paper-plane', 'rota' => 'admin.newsletter.enviar', 'can' => 'newsletter.manage'],
     ]];
 
     $grupos[] = ['rotulo' => 'Diretório', 'itens' => [

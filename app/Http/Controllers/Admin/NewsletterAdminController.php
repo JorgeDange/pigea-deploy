@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Mail\NewsletterSubscricao;
+use App\Mail\NewsletterArtigo;
 use App\Http\Controllers\Controller;
+use App\Models\News;
+use App\Models\NewsletterEdition;
 use App\Models\NewsletterSubscriber;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -180,6 +183,120 @@ class NewsletterAdminController extends Controller
         return back()->with('newsletter_msg', [
             'tipo' => 'ok',
             'texto' => 'Subscritor removido.',
+        ]);
+    }
+
+    /**
+     * Ecrã «Aviso de novo artigo» (Fase N2 / aprovado 2026-11-17):
+     * o admin escolhe um artigo recente publicado e o sistema gera o email
+     * a partir dele; o CLIQUE EMVIA NO MÁXIMO 100 SUBSCRITORES ACTIVOS —
+     * o utilizador clica novamente para enviar os restantes.
+     */
+    public function enviar(): View
+    {
+        $artigos = News::published()
+            ->latest('published_at')
+            ->take(10)
+            ->get(['id', 'title', 'slug', 'image', 'image_alt', 'excerpt', 'published_at']);
+
+        $ativos = NewsletterSubscriber::active()->count();
+        $edicoes = NewsletterEdition::with('article', 'creator')->latest()->take(5)->get();
+
+        return view('admin.newsletter-enviar', compact('artigos', 'ativos', 'edicoes'));
+    }
+
+    /**
+     * Aciona o envio de um LOTE (≤100) do artigo escolhido:
+     *  - só subscritores `status = active`;
+     *  - cada clique emvia para os que ainda NÃO receberam nesta edição;
+     *  - falhas são registadas e voltam a tentar no clique seguinte.
+     *
+     * `teste=1`: manda apenas um email para a caixa de correio do utilizador.
+     */
+    public function enviarArtigo(Request $request): RedirectResponse
+    {
+        $dados = $request->validate([
+            'artigo_id' => ['required', 'integer', 'exists:news,id'],
+            'teste' => ['nullable', 'boolean'],
+        ], [
+            'artigo_id.required' => 'Escolha o artigo a enviar.',
+        ]);
+
+        $artigo = News::published()->findOrFail($dados['artigo_id']);
+
+        if ($request->boolean('teste')) {
+            $eu = auth()->user();
+            $sub = new NewsletterSubscriber(['email' => $eu->email, 'token' => Str::random(64)]);
+            \Mail::to($eu->email)->send(new NewsletterArtigo($artigo, $sub));
+
+            return back()->with('newsletter_msg', [
+                'tipo' => 'ok',
+                'texto' => 'Email de teste enviado para ' . $eu->email,
+            ]);
+        }
+
+        $ativos = NewsletterSubscriber::active()->count();
+
+        if ($ativos === 0) {
+            return back()->with('newsletter_msg', [
+                'tipo' => 'erro',
+                'texto' => 'Não há subscritores activos para enviar.',
+            ]);
+        }
+
+        // Retoma a edição aberta do mesmo artigo (se houver) ou abre uma nova.
+        $edicao = NewsletterEdition::where('article_id', $artigo->id)
+            ->where('estado', '!=', 'done')
+            ->latest('id')
+            ->first();
+
+        if (! $edicao) {
+            $edicao = NewsletterEdition::create([
+                'article_id' => $artigo->id,
+                'total' => $ativos,
+                'estado' => 'pending',
+                'criado_por' => auth()->id(),
+            ]);
+        } elseif ($edicao->total < $ativos) {
+            $edicao->update(['total' => $ativos]);
+        }
+
+        // Quem já foi marcado como enviado nesta edição é saltado.
+        $jaEnviados = $edicao->items()->where('estado', 'sent')->pluck('email')->all();
+
+        $lotes = NewsletterSubscriber::active()
+            ->when($jaEnviados !== [], fn ($q) => $q->whereNotIn('email', $jaEnviados))
+            ->orderBy('id')
+            ->take(100)
+            ->get();
+
+        $ok = 0;
+        $falha = 0;
+
+        foreach ($lotes as $sub) {
+            try {
+                \Mail::to($sub->email)->send(new NewsletterArtigo($artigo, $sub));
+                $edicao->items()->updateOrCreate(['email' => $sub->email], ['estado' => 'sent']);
+                $ok++;
+            } catch (\Throwable $e) {
+                report($e);
+                $edicao->items()->updateOrCreate(['email' => $sub->email], ['estado' => 'failed']);
+                $falha++;
+            }
+        }
+
+        $edicao->increment('enviados', $ok);
+        $edicao->increment('falhados', $falha);
+
+        if ($edicao->fresh()->estaCompleta()) {
+            $edicao->update(['estado' => 'done', 'finished_at' => now()]);
+        }
+
+        $restante = $edicao->fresh()->pendentes();
+
+        return back()->with('newsletter_msg', [
+            'tipo' => $falha === 0 ? 'ok' : 'erro',
+            'texto' => "Lote processado: {$ok} enviados, {$falha} falhados — faltam {$restante} subscritor(es).",
         ]);
     }
 
