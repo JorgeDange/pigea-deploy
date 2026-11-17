@@ -87,7 +87,7 @@ class MegaMenuTest extends TestCase
 
     public function test_grupos_de_navegacao_sao_type_menu_sem_pai(): void
     {
-        foreach (['inicio', 'noticias', 'directorio', 'sobre'] as $grupo) {
+        foreach (['inicio', 'directorio', 'sobre'] as $grupo) {
             $subcategorias = Category::where('menu_group', $grupo)->get();
 
             $this->assertTrue(
@@ -98,6 +98,30 @@ class MegaMenuTest extends TestCase
                 $subcategorias->every(fn (Category $c) => $c->parent_id === null),
                 "As subcategorias de navegação de {$grupo} não têm pai."
             );
+        }
+
+        // «Noticias» é misto: actualidade e projectos continuam type=menu.
+        $restante = Category::where('menu_group', 'noticias')
+            ->whereNotIn('slug', ['inovacao-e-tecnologia', 'eventos'])
+            ->get();
+        $this->assertTrue(
+            $restante->every(fn (Category $c) => $c->type === 'menu'),
+            'As restantes subcategorias de noticias continuam type=menu.'
+        );
+        $this->assertTrue(
+            $restante->every(fn (Category $c) => $c->parent_id === null),
+            'As restantes subcategorias de noticias continuam sem pai.'
+        );
+    }
+
+    public function test_inovacao_e_eventos_passaram_a_news_sem_pai(): void
+    {
+        // Decisão do cliente (17/11/2026): «Inovação e tecnologia» e «Eventos»
+        // viram categorias de news editáveis (sem pai, aparecem no select).
+        foreach (['inovacao-e-tecnologia', 'eventos'] as $slug) {
+            $c = Category::where('menu_group', 'noticias')->where('slug', $slug)->firstOrFail();
+            $this->assertSame('news', $c->type, "{$slug} devia ser type=news.");
+            $this->assertNull($c->parent_id, "{$slug} devia continuar sem pai.");
         }
     }
 
