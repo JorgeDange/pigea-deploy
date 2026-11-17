@@ -213,8 +213,8 @@ C:\xampp\php\php.exe artisan cache:clear
 | CSP rigorosa | Pendente | Não aplicada (legado compat) |
 | Deploy FTP automatizado | Pendente de decisão | Cliente prefere manual |
 | **Completar N2 «Aviso de artigo»** | ⚠️ Pendente do cliente no servidor | Código pronto no git (`1dcac95`); falta criar as 2 tabelas via SQL inline (colado direto no separador SQL) + upload dos 10 ficheiros |
-| **Middleware `EnsureMustChangePassword.php` (tranca só admin.*)** | 📝 **Local, não commit/deploy** | Escolha do cliente: só entra no próximo deploy de produção — upload de `1b4ffa13...` pendente |
-| **Paginação painel (ícones `fa-chevron-*`)** | 📝 **Local, não commit/deploy** | `livewire/admin/pagination.blade.php` — ícones reais + texto «Anterior»/«Ver mais»; md5 `9b14f138...`; aguarda commit/decisão do cliente |
+| **Middleware `EnsureMustChangePassword.php` (tranca só admin.*)** | ✅ **Comitted (`1b95a82`)** | Escolha do cliente: só entra **upload no próximo deploy** de produção |
+| **Paginação painel (ícones `fa-chevron-*`)** | ✅ **Comitted (`1b95a82`)** | `livewire/admin/pagination.blade.php` — ícones reais + texto «Anterior»/«Ver mais»; upload em produção pendente |
 | **Elevar `inovacao-e-tecnologia` e `eventos` a `type=news`** | ✅ Local + git (`2043879`); pendente de SQL manual em produção | Inline dado em §5.21; sem mudanças no Mega Menu |
 
 ---
