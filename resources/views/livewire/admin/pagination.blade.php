@@ -17,13 +17,13 @@
     $anterior = null;
 @endphp
 <nav class="dashboard-pagination" aria-label="Paginação">
-    <a href="#" wire:click="gotoPage({{ max(1, $atual - 1) }})" @class(['disabled' => $atual <= 1]) aria-label="Página anterior" aria-disabled="{{ $atual <= 1 ? 'true' : 'false' }}">&laquo;</a>
+    <a href="#" wire:click="gotoPage({{ max(1, $atual - 1) }})" @class(['disabled' => $atual <= 1]) aria-label="Página anterior" aria-disabled="{{ $atual <= 1 ? 'true' : 'false' }}"><i class="fa fa-chevron-left" aria-hidden="true"></i> Anterior</a>
     @foreach ($paginas as $pagina)
         @if ($anterior !== null && $pagina - $anterior > 1)
-        <span class="page-ellipsis" aria-hidden="true">&hellip;</span>
+        <span class="page-ellipsis" aria-hidden="true"><i class="fa fa-ellipsis-h"></i></span>
         @endif
         <a href="#" wire:click="gotoPage({{ $pagina }})" @class(['active' => $pagina === $atual]) @if ($pagina === $atual) aria-current="page" @endif>{{ $pagina }}</a>
         @php $anterior = $pagina; @endphp
     @endforeach
-    <a href="#" wire:click="gotoPage({{ min($ultima, $atual + 1) }})" @class(['disabled' => $atual >= $ultima]) aria-label="Página seguinte" aria-disabled="{{ $atual >= $ultima ? 'true' : 'false' }}">&raquo;</a>
+    <a href="#" wire:click="gotoPage({{ min($ultima, $atual + 1) }})" @class(['disabled' => $atual >= $ultima]) aria-label="Página seguinte" aria-disabled="{{ $atual >= $ultima ? 'true' : 'false' }}">Ver mais <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
 </nav>

@@ -11,8 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * Utilizadores com `users.must_change_password = true` são reencaminhados
  * para a página do perfil até trocarem a senha. As rotas do próprio perfil
- * (GET/POST), a troca de senha e o logout ficam livres; todo o resto do
- * painel fica trancado com um aviso explicando o que fazer.
+ * (GET/POST), a troca de senha e o logout ficam livres; o resto do **painel
+ * admin** fica trancado com um aviso explicando o que fazer. O site público
+ * (rotas fora de `admin.*`) não é afetado.
  *
  * A troca acontece no formulário «A minha senha» (Fase A) — ao gravar,
  * o próprio controlador limpa a flag.
@@ -34,7 +35,12 @@ final class EnsureMustChangePassword
         if ($utilizador !== null && (bool) $utilizador->must_change_password) {
             $rota = $request->route()?->getName() ?? '';
 
-            if (! in_array($rota, self::LIVRES, true) && ! str_starts_with($rota, 'admin.perfil')) {
+            // A tranca aplica-se SÓ ao painel admin — não impede a navegação
+            // pública (o editor pode abrir o site normalmente e sai daqui
+            // quando sair do painel).
+            if (str_starts_with($rota, 'admin.')
+                && ! in_array($rota, self::LIVRES, true)
+                && ! str_starts_with($rota, 'admin.perfil')) {
                 return redirect()->route('admin.perfil')
                     ->with('estado', 'A sua senha foi redefinida pela equipa. Defina uma nova senha para continuar.');
             }
