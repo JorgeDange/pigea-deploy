@@ -48,7 +48,7 @@
               </div>
             @else
               <div class="row-actions">
-                <a class="icon-btn" href="{{ route('admin.utilizador.editar', $utilizador) }}" title="Gerir (dados e senha)" aria-label="Gerir utilizador"><i class="fa fa-user-pen" aria-hidden="true"></i></a>
+                <a class="icon-btn" href="{{ route('admin.utilizador.editar', $utilizador) }}" title="Gerir (dados e senha)" aria-label="Gerir utilizador"><i class="fa fa-edit" aria-hidden="true"></i></a>
                 @if (($utilizador->status ?? 'active') === 'blocked')
                   <button class="icon-btn" title="Reativar" wire:click="alternar({{ $utilizador->id }})"><i class="fa fa-unlock" aria-hidden="true"></i></button>
                 @else
