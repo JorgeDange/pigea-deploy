@@ -416,7 +416,7 @@ curl -sI https://pigea.ao/<ADMIN_PATH>  # 302 → login
 | Diretório — email transacional via mailer `geral` (toquesüstüplos; `newsletter@pigea.ao` INTOCADA) | ✅ Confirmado pelo cliente |
 | Mega menu completo (9 grupos + 44 itens; removida «Missão, visão e valores») | ✅ Em produção |
 | DB categorias news = 37 (10 topos + 27 filhos), menu = 16 | ✅ Verificado |
-| Emails (logo i.ibb.co + glifos Unicode no lugar de SVG) | ✅ Cliente confirma recebimento |
+| Emails (logo i.ibb.co → **`https://docs.pigea.ao/imag/logo.png`** em todos os templates + glifos Unicode) | ✅ Cliente confirma recebimento |
 | Formulário contacto funciona (`report()` no catch → log) | ✅ Confirmado (cidades) |
 | **Fase A — Perfil: «A minha senha» (troca com sessão atual mantida, outras sessões terminadas) + «Informação da conta»** | ✅ Em produção |
 | **Fase B — Gestão de utilizadores a sério**: editar dados, repor senha (troca obrigatória), desativar/reativar real, eliminar em 2 passos, paginação 10/25/50/100, guard último admin | ✅ Em produção (código + SQL) |

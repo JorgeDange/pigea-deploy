@@ -5,7 +5,7 @@
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#FFFFFF; padding:40px 20px;">
         <tr><td align="center">
             <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px; width:100%;">
-                <tr><td align="center" style="padding:0 0 30px 0;"><img src="https://i.ibb.co/jvhNs1zv/logo.png" alt="PIGEA" width="150" style="display:block; width:150px; max-width:150px; height:auto; border:0;"></td></tr>
+                <tr><td align="center" style="padding:0 0 30px 0;"><img src="https://docs.pigea.ao/imag/logo.png" alt="PIGEA" width="150" style="display:block; width:150px; max-width:150px; height:auto; border:0;"></td></tr>
                 <tr><td align="center" style="padding:0 0 20px 0;">
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr><td align="center" style="width:80px; height:80px; background-color:#F2A900; border-radius:50%; font-size:34px; line-height:80px; color:#FFFFFF; font-weight:700; font-family:'Segoe UI Symbol','Apple Symbols',Georgia,serif;">
                         ⏳
