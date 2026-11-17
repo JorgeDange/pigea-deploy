@@ -30,16 +30,18 @@ class ArticleSanitizer
         $config->set('HTML.AllowedElements', $elements);
 
         // Atributos: apenas os por elemento (class filtrada pelo whitelist de classes
-        // via HTML.AllowedClasses).
+        // via HTML.AllowedClasses; style apenas para as propriedades CSS permitidas).
         $attributes = [];
         foreach (config('article.attributes') as $el => $attrs) {
             foreach ($attrs as $attr) {
                 $attributes[] = $el . '.' . $attr;
             }
         }
-        // A classe é universalmente permitida nos elementos que a suportam —
-        // Attr.AllowedClasses restringe os VALORES (array associativo).
-        $config->set('HTML.AllowedAttributes', array_merge($attributes, ['*.class']));
+        // class/style permitidos em qualquer elemento: o valor de style é restrito
+        // a CSS.AllowedProperties (abaixo); o valor de class é restrito às classes
+        // do projecto (HTML.AllowedClasses abaixo).
+        $config->set('HTML.AllowedAttributes', array_merge($attributes, ['*.class', '*.style']));
+        $config->set('CSS.AllowedProperties', implode(',', config('article.css_allowed')));
         $config->set('Attr.AllowedClasses', array_map(fn () => true, array_flip(config('article.classes_ok'))));
 
         // Esquemas de URI: http/https/mailto. URLs relativos (/storage/...) são
@@ -57,8 +59,8 @@ class ArticleSanitizer
         $config->set('HTML.DefinitionID', 'pigea-article-def');
         $config->set('HTML.DefinitionRev', 3);
 
-        // Caminho "optimized": se já houver definição cacheada, maybeGet devolve
-        // null e os elementos já estão lá; caso contrário, customiza.
+        // (CSS.AllowedProperties já foi definido acima, parte de HTML.AllowedAttributes).
+
         $rawDefinition = $config->maybeGetRawDefinition('HTML');
         if ($rawDefinition !== null) {
             // O módulo Target (XHTML 1.1) conflita com o `a` do DTD — adicionamos
@@ -69,10 +71,6 @@ class ArticleSanitizer
             $rawDefinition->addElement('figcaption', 'Block', 'Flow', 'Common');
             $rawDefinition->addAttribute('img', 'loading', 'Enum#eager,lazy');
         }
-
-        // Sem style / on*/script/iframe: não estão na whitelist ⇒ removidos.
-        // rel="noopener noreferrer" em target=_blank é forçado via CSS? não —
-        // forçado abaixo por pós-processamento.
 
         $purifier = new HTMLPurifier($config);
         $clean = $purifier->purify($html);

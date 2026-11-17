@@ -44,8 +44,11 @@ tinymce.init({
 		{ title: 'Imagem à direita', selector: 'figure', classes: 'media-right' }
 	],
 
-	// Lista branca: manter EXATAMENTE alinhada com config/article.php (servidor).
-	valid_elements: 'p,h2,h3,strong,em,u,s,ul,ol,li,a[href|target|rel],blockquote,figure,figcaption,img[src|alt|width|height|loading],table,thead,tbody,tr,th,td[colspan|rowspan],br,div,hr',
+	// Lista branca: alinhada com config/article.php (servidor). Elementos aceitam
+	// `style` — as propriedades permitidas são as mesmas do sandorizador
+	// (config/article.php::css_allowed); o servidor retira o que não estiver
+	// lá, independentemente do que o editor deixar passar.
+	valid_elements: 'p[style],h2[style],h3[style],strong,em,u,s,ul[style],ol[style],li[style],a[href|target|rel],blockquote[style],figure[style],figcaption[style],img[src|alt|width|height|loading|style],table[style],thead[style],tbody[style],tr[style],th[style|colspan|rowspan],td[style|colspan|rowspan],br,div[style],hr',
 	valid_classes: 'p:drop-cap,narrow;blockquote:pull-quote,narrow;div:two-cols;figure:media-left,media-right',
 
 	// Colagem: por omissão o TinyMCE descarta style/fonts/cores/classes alheias

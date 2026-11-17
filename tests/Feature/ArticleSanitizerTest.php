@@ -37,12 +37,31 @@ class ArticleSanitizerTest extends TestCase
         $this->assertStringContainsString('alt="ok"', $out);
     }
 
-    public function test_remove_style(): void
+    public function test_style_text_align_justificado_e_permitido(): void
     {
-        $out = $this->clean('<p style="color:red">x</p>');
+        $out = $this->clean('<p style="text-align:justify">x</p><p style="text-align:center">y</p>');
 
-        $this->assertStringNotContainsString('style=', $out);
-        $this->assertStringContainsString('<p>x</p>', $out);
+        $this->assertStringContainsString('text-align:justify', $out);
+        $this->assertStringContainsString('text-align:center', $out);
+    }
+
+    public function test_style_propriedades_perigosas_removidas(): void
+    {
+        $out = $this->clean('<p style="position:fixed; top:0; left:-100px; color:red; expression(alert(1))">x</p>');
+
+        $this->assertStringNotContainsString('position', $out);
+        $this->assertStringNotContainsString('top:0', $out);
+        $this->assertStringNotContainsString('expression', $out);
+        $this->assertStringContainsString('color:#FF0000', $out);
+        $this->assertStringContainsString('<p style=', $out);
+    }
+
+    public function test_style_url_e_expression_removidas(): void
+    {
+        $out = $this->clean('<p style="background-color: #fff url(javascript:alert(1))">x</p>');
+
+        $this->assertStringNotContainsString('url(', $out);
+        $this->assertStringNotContainsString('javascript:', $out);
     }
 
     public function test_classe_desconhecida_removida_mas_classes_do_pigea_ficam(): void

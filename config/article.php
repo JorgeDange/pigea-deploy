@@ -32,6 +32,19 @@ return [
     /** Classes permitidas (Fase 1/2: drop-cap, pull-quote, narrow, two-cols, media-*). */
     'classes_ok' => ['drop-cap', 'pull-quote', 'narrow', 'two-cols', 'media-left', 'media-right'],
 
+    /**
+     * Propriedades CSS permitidas INLINE (style="…"). Tudo o que não estiver
+     * aqui é REMOVIDO pelo sanitizador ao guardar. Nunca permitir `position`,
+     * `top/left/z-index`, `url(...)`, `@import`, `expression(...)` etc.
+     * Estas cobrem o que o TinyMCE aplica de facto: alinhamento, indent,
+     * cor, fundo, peso/estilo de fonte, altura de linha, tamanho de letra e float.
+     */
+    'css_allowed' => [
+        'text-align', 'text-indent', 'color', 'background-color',
+        'line-height', 'font-size', 'font-weight', 'font-style',
+        'float',
+    ],
+
     /** Schemes permitidos em href/src (http/https/mailto em links). */
     'uri_allowed' => ['http', 'https', 'mailto'],
 ];
