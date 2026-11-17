@@ -2,14 +2,14 @@
 
 **Projeto:** PIGEA
 **Localização:** `C:\Users\Jorge Dange\Documents\PROJECTOS DE CLIENTES\QNB\pigea\pigea-deploy\`
-**Última atualização:** 15/11/2026 (noite — inclui a **release «Produção 2026-11-16»**, o deploy, o **incidente/correção do route cache** em produção, a **reparação da árvore de categorias de notícias** (news=37/menu=16) e a **análise dos 3 uploads de imagem** no editor de notícias)
+**Última atualização:** 17/11/2026 — **RELEASE «Produção 2026-11-16/17» PONTA A PONTA VALIDADA** — inclui a release, o deploy, o incidente do route cache, a reparação da árvore news, os 3 uploads, a Fase A (Perfil) e Fase B (Utilizadores), a Newsletter N2 «Aviso de novo artigo», a troca da logo para `docs.pigea.ao/imag/logo.png`, DKIM validado e **o cliente confirma: «tudo funcionando»**.
 **Propósito:** Manter contexto de tudo o que foi analisado, instalado, decidido e planeado para não perder rastro do trabalho.
 
-> Estado no fecho desta atualização (16/11/2026, noite): **branch `updates` e `main` sincronizadas**; suíte local **295 testes / 1015 assertions verdes**; **produção restaurada, validada pelo cliente e Fase B FECHADA** (columna `must_change_password` confirmada `col=1` no phpMyAdmin; permissões 2/3 verificadas). Tudo em produção e verde.
+> Estado no fecho desta atualização (17/11/2026): **branch `updates` e `main` sincronizadas em `f6648c9`**; suíte local **299 testes / 1032 assertions verdes**; **produção `https://pigea.ao/` 100% operacional validada pelo cliente**: home/admin/login/emails/consistência de DB (col=1)/mail funcional/DKIM ok. **Fase B FECHADA** (`must_change_password` confirmada `col=1`). **Release 2026-11-16/17 contempla**: Newsletter simplificada, home server-rendered, Equipa/Parceiros institucionais, Sobre Nós editável, Diretório transacional (mailer `geral`), Fase A (Perfil senha) + Fase B (utilizadores a sério), Newsletter N2 «Aviso de novo artigo», logo emails, DKIM, CSP/imagens/headers corrigidos.
 
 ---
 
-## 🎯 DIREÇÃO ATUAL DO PROJETO (RESUMO 15/11/2026)
+## 🎯 DIREÇÃO ATUAL DO PROJETO (RESUMO 17/11/2026)
 
 O PIGEA é um portal de notícias + directório (Empresas/Profissionais/Documentos) com painel interno (Spatie roles `admin` e `editor`). Não há registo de empresas/profissionais para uso público — submetem formulários públicos e aguardam aprovação.
 
@@ -42,8 +42,14 @@ O PIGEA é um portal de notícias + directório (Empresas/Profissionais/Document
 | **INCIDENTE de produção 15/11 20:59 — RESOLVIDO** | ✅ 15/11/2026 — "Route [equipa] not defined. (View: …/components/main-menu.blade.php)" em todas as páginas públicas. **Causa:** o `routes/web.php` no servidor estava desatualizado / a route cache (`bootstrap/cache/routes-v7.php`/`config.php`) sombreava as rotas novas (a home renderiza `home.blade.php` → componente `main-menu` → `MenuCategorias::grupos()` → `DESTINOS['sobre']['equipa']` → `route('equipa')` → exceção). **Correção:** completar o deploy FTP da release (`routes/web.php` + código novo) + apagar `bootstrap/cache/routes-v7.php`/`config.php` (ou `php artisan optimize:clear` com SSH) + limpar `storage/framework/views/*.php` + Ctrl+F5. Detalhe completo em `doc/fix-equipa-route-2026-11-15.md`. **Resultado: site volta 200; smoke tests do cliente em curso.** |
 | **Categorias de notícias — produção REPARADA** | ✅ 15/11/2026 (noite) — o select «Categoria» no «Criar Notícia» mostrava «poucas»: produção tinha **news=30** (vs local 37) e **menu=16**. **Causa:** na produção os 7 topos de news (`Água`, `Ambiente`, `Internacional`, `Investigação`, `Mineração`, `Petróleo e Gás`, `Geociências`) **não existiam** como `type='news'`; o `prod-categorias-news.sql` usava `WHERE NOT EXISTS (slug=…)` **sem filtrar o tipo** (a tabela tem `UNIQUE(type,slug)`) → os 7 topos não foram criados e os 17 filhos de Mineração/Petróleo e Gás/Geociências ficaram órfãos (`parent_id NULL`, `menu_group` correto). Academia/Oportunidades escaparam porque o patch `2026_11_11_220000` os promoveu. **Correção (phpMyAdmin, executada e verificada):** 7 INSERTs de topos + 3 UPDATEs (religar 17 órfãos, `Affected rows 5/5/7`) → **news=37, menu=16** ✔ |
 | **Uploads de imagem no «Criar Notícia» — análise dos 3 campos** | ⚠️ Analisado 15/11/2026 (decisão do cliente pendente) — **Foto do autor convidado** e **Imagem de capa** aceitam ficheiro OU link (URL guardado direto nas colunas `guest_author_avatar` / `news.image`). **«Imagens de contexto» não aceita link:** vai **sempre** para a coleção MediaLibrary `contexto` com conversão WebP `nonQueued` (validação só de ficheiro `image/mimes/max:4096` em `NewsEditorController@validar`, loop `processarMidia` com `$request->file('contexto')`); não existe campo `contexto_link` nem validação de URL (nunca implementado). **Nota extra:** a coleção `contexto` **não é renderizada em nenhuma página pública hoje** (código morto para o front). Pedido do cliente: aceitar link também aqui — opções: **(a)** `addMediaFromUrl()` (baixa + converte; save mais lento, falível); **(b)** guardar URLs (coluna JSON `contexto_links`) e `<img src>` direto (rápido, sem WebP) |
+| **Fase A — Perfil do colaborador: «A minha senha»** | ✅ 16/11/2026 — cartão novo (senha atual + nova + repetir; `current_password:web`; `Password::default()`; `throttle:6,1`; **outras sessões terminadas** ao trocar; a sessão atual mantém-se); cartão «Informação da conta» (último acesso, conta criada, 2FA); rota `admin.perfil.senha`; 5 testes novos |
+| **Fase B — Gestão de Utilizadores a sério** | ✅ 16/11/2026 — editar nome/email/papel/telefone/província; repor senha com troca obrigatória (`must_change_password=true`, coluna confirmada `col=1` no servidor); **Desativar/Reativar com efeito real** (middleware `EnsureUserIsActive` + sessões apagadas na hora); **Eliminar em 2 passos** (pedir→escrever email; bloqueada com artigos); paginação 10/25/50/100; coluna «Criado»; badge «Desativado»; guards: sem auto-rebaixar/último admin; **permissões:** `institucional.manage` (só admin) + `newsletter.manage` (admin+editor) |
+| **Email templates — logo i.ibb.co → docs.pigea.ao/imag/logo.png** | ✅ 17/11/2026 — todos os 8 templates; suite 24/24 verde |
+| **Newsletter N2 «Aviso de novo artigo» — opção (i)/B** | ✅ 17/11/2026 — mailable `NewsletterArtigo` (capa+título+excerto+botão «Ler no site»+unsubscribe único); tabelas `newsletter_editions`/`newsletter_edition_items`; ecrã `/gestao-pigea/newsletter/enviar` (10 artigos recentes, **100 activos por clique**, histórico de edições, modo «Teste» só para admin); sidebar «Aviso de artigo»; falhados registados e reenviados; **Suite: 299/1032** |
+| **DKIM (`pigea.ao`)** | ✅ 16/11/2026 — confirmado pelo cliente |
+| **RELEASE 2026-11-16/17 — VALIDADA PELO CLIENTE** | ✅ Cliente reporta «tudo funcionando» 17/11/2026 — site, admin, login, emails, DB consistente (news=37/menu=16, `col=1`), `contacto`/`geral@pigea.ao` OK, DKIM ok, mega menu ok, newsletter/enviar de artigo pronto localmente |
 
-**Produção atual**: site LIVE em `https://pigea.ao/` — **restaurada em 15/11/2026 à noite** após o incidente do route cache (ver tabela acima). Domínio de produção é `pigea.ao` (raiz). `pigea.qnbangola.ao` deixou de ser alvo. O site usa mesmo servidor de Mail (mesma máquina cPanel, `mail.pigea.ao:465 smtps`). O `.env` de produção mantém o bloco `MAIL_*` da newsletter **intocado** e acrescenta apenas `MAIL_GERAL_*` (transacional: `geral@pigea.ao`); `MAIL_GERAL_PASSWORD` é a password real da caixa geral (nunca comitada). **Pendente de confirmação pelo cliente:** `MAIL_GERAL_*` efetivamente presente no `.env` do servidor + smoke tests pós-recuperação.
+**Produção atual**: site LIVE e **validado pelo cliente** em `https://pigea.ao/` — **17/11/2026**. Domínio de produção é `pigea.ao` (raiz). `pigea.qnbangola.ao` deixou de ser alvo. Mail (`mail.pigea.ao:465 smtps`) para a **newsletter intocada** (`newsletter@pigea.ao`); transacional separado (`geral@pigea.ao`, mailer `geral`). `.env` mantém o bloco `MAIL_*` intocado e acrescenta apenas `MAIL_GERAL_*`. Base de dados: `geopacas_pigeadb` (cPanel) — `news=37`, `menu=16`; cotas `must_change_password` e permissões verificadas. **Release completa 2026-11-16/17 em produção**: newsletter simplificada, home server-rendered, Equipa/Parceiros institucionais, Sobre Nós editável, Diretório transacional (mailer `geral`), Fase A (Perfil senha) + Fase B (Utilizadores a sério), Newsletter N2 (aviso de artigo), logo emails em `docs.pigea.ao/imag/logo.png`, DKIM ok. Suite local: **299/1032**. **git**: `updates` ≡ `main` ≡ `f6648c9`.
 
 ---
 
@@ -190,43 +196,38 @@ C:\xampp\php\php.exe artisan cache:clear
 
 ---
 
-## 7. O Que Faltou / Pendências (15/11/2026, noite)
+## 7. O Que Faltou / Pendências (17/11/2026, final)
 
 | Item | Estado | Observação |
 |------|--------|------------|
-| **Contacto falha no envio («Não foi possível enviar a mensagem»)** | 🔧 Em análise — fix local aplicado | Causa provável (classe «cache de configuração desatualizada», como o route cache desta manhã): `bootstrap/cache/config.php` antigo sem o mailer `geral`, OU `MAIL_GERAL_PASSWORD` errada no `.env`. Diagnóstico exato agora possível: `ContactForm` passou a `report($e)` (antes engolia a exceção em silêncio — **zero log**). Passos no servidor: ① apagar `bootstrap/cache/config.php`/`routes-v7.php` (ou SSH `php artisan optimize:clear`) ② testar login webmail `geral@pigea.ao` ③ reenviar e, se falhar, ler `storage/logs/laravel.log` (`[contacto] falha ao enviar`) |
-
-| Item | Estado | Observação |
-|------|--------|------------|
-| ~~Migrar migrações novas na produção~~ | ✅ Feito (15/11/2026) | `prod-patch-2026-11-16.sql` aplicado via phpMyAdmin; verificação `SELECT COUNT(*) FROM migrations WHERE migration LIKE '2026_11_%'` devolveu **29** |
-| **Incidente «Route [equipa] not defined»** | ✅ Resolvido (15/11/2026) | Causa: route cache desatualizada / `routes/web.php` antigo no servidor. Fix: FTP completo da release + remoção de `bootstrap/cache/routes-v7.php`/`config.php` + Ctrl+F5. Ver `doc/fix-equipa-route-2026-11-15.md` |
-| `php artisan storage:link` na produção | ❓ Por confirmar | Necessário para servir uploads; logs não indicam falha de symlink |
-| `.env` de produção — bloco `MAIL_GERAL_*` | ✅ Em produção (mailer `geral` funciona — contacto/registos chegam a `geral@pigea.ao`) | Newsletter stays untouched; mailer transacional separado |
-| Smoke tests pós-recuperação | ✅ Cliente valida: home ok, admin ok, emails ok, editor/login ok | `/`, `/sobre`, `/equipa`, `/parceiros`, `/contactos`, `/entrar-7x2` 200; `/login` 404 |
-| **«Imagens de contexto» — link no 3º upload** | ⏳ Decisão do cliente pendente | Capa e foto de autor aceitam link; contexto só ficheiro (MediaLibrary). Opções: (a) `addMediaFromUrl()` (baixa e converte; lento, falível) (b) coluna JSON de URLs + `<img>` direto (rápido, sem WebP). Nota: a coleção `contexto` não é renderizada publicamente hoje |
-| SMTP definitivamente funcional na produção | ✅ Funcional — SPF validado, **DKIM também (confirmado pelo cliente 16/11)** | Mailer transacional separado `geral` operacional; newsletter intocada |
-| Migração de imagens para WebP na produção | Pendente de decision | Apenas news (capa) têm conversão WebP; imagens estáticas do tema até ~4 MB |
-| Performance mobile PageSpeed 65 → alvo 80+ | Em progresso (otimização CLS medida 90/100/65 antes; pós-deploy re-medir) | §4 async-CSS revertida por FOUC (ver docs.md) |
-| Ainda há comentários extensos em PHP/Blade/JS | ✅ Aplicativa para fases futuras | A migração para docs.md seria fase 2 — catálogo criado em 11/11/2026 (`docs.md`); migração completa não autorizada |
-| CSP rigorosa | Pendente | Considerada na fase inicial; não aplicada em produção (compatibilidade com legado) |
+| ~~Contacto falha no envio~~ | ✅ Resolvido (15–16/11) | Mailer `geral` operacional; `ContactForm` agora `report($e)` (regista sempre no log); o cliente recebe os emails de contacto em `geral@pigea.ao` |
+| ~~Migrar migrações novas na produção~~ | ✅ Feito (15/11/2026) | 29 migrações marcadas; `prod-categorias-news.sql` aplicado e verificado (news=37/menu=16) |
+| ~~Incidente «Route [equipa] not defined»~~ | ✅ Resolvido (15/11/2026) | Ver `doc/fix-equipa-route-2026-11-15.md`; pacote completo definido em `doc/orienta_deploy.md` §12 |
+| ~~`php artisan storage:link`~~ | ✅ Em produção (site serve uploads) | Verificado pelos PDFs/news com media |
+| ~~`.env` MAIL_GERAL_*~~ | ✅ Em produção; mailer `geral` funciona | Newsletter intocada; transacional separado |
+| ~~DKIM~~ | ✅ Confirmado pelo cliente (16/11) | SPF + DKIM válidos; emails chegam |
+| ~~`.env` smoke tests~~ | ✅ Cliente valida: home, admin, emails, editor | Todos 200/404 conforme esperado |
+| **«Imagens de contexto» — link no 3º upload** | ⏳ Decisão do cliente pendente | Capa e foto de autor aceitam link; contexto só ficheiro. Opções: (a) `addMediaFromUrl()` (b) `contexto_links` JSON direto |
+| Migração de imagens para WebP na produção | Pendente de decisão | Apenas news (capa) têm conversão WebP; imagens estáticas até ~4 MB |
+| Performance mobile PageSpeed 65 → alvo 80+ | Em progresso (pós-deploy re-medir) | §4 async-CSS revertida por FOUC; ver docs.md |
+| CSP rigorosa | Pendente | Não aplicada (legado compat) |
 | Deploy FTP automatizado | Pendente de decisão | Cliente prefere manual |
+| **Completar N2 «Aviso de artigo»** | ⚠️ Pendente do cliente no servidor | Código pronto no git; falta criar as 2 tabelas via SQL inline (colado direto no separador SQL) + upload dos 10 ficheiros |
 
 ---
 
-## 8. Próximos Passos (se/quando autorizados)
+## 8. Próximos Passos (quando autorizados)
 
-1. **Imediato (cliente, no servidor de produção — todos concluídos ou redundantes):**
-   - ~~Confirmar no `.env` do servidor as linhas `MAIL_GERAL_*`~~ ✅ **Feito:** mailer `geral` operacional para contacto/registos (validado pelo cliente).
-   - Smoke tests: ✅ o cliente validou `/`, admin, emails, editor.
-   - ~~Se o mega menu vier incompleto~~ ✅ **Feito (15/11/2026):** `prod-categorias-news.sql` corrigido e a árvore verificada no servidor (news=37, menu=16) — os 7 topos e os 17 filhos industriais religados via phpMyAdmin.
-   - ✅ **Coluna `must_change_password` confirmada em produção (16/11):** `col=1` — «Repor senha» operacional com troca obrigatória. **Fase B FECHADA.**
-2. ~~DKIM~~ — **Confirmado atualizado pelo cliente (16/11).**
-3. **Retomar password** do utilizador MySQL `qnbangolaco_pigea` e sobre a APP_KEY expostas no histórico inicial (recomendação anterior).
-4. Verificar em produção que as imagens no hero continuam a funcionar pós-migração (imagens exclusivas à BD do cliente se algum artigo fora de fallback).
-5. Reavaliar **PageSpeed** pós-deploy (imagens e async do hero).
-6. (Pendente de decisão) Comprimir imagens estáticas do tema (banners, city-bg, bg/*.jpg) para WebP com redução de 60–75%.
-7. **Regra permanente de deploy FTP:** nunca subir parcialmente `app/Support/` + `routes/` sem os respectivos controllers/views; no fim de cada release, apagar `bootstrap/cache/routes-v7.php`/`config.php` + `storage/framework/views/*.php` (ou `php artisan optimize:clear`) e fazer Ctrl+F5 + smoke test da home. Foi isto que custou o incidente de 15/11/2026 às 20:59.
-8. **Regra permanente — `bootstrap/cache/` NUNCA sobe:** o git ignora-o (`.gitignore` aninhado), mas os zips de pasta inteira não. `packages.php`/`services.php` são caches do vendor local (com dev deps: pail/pint/sail) — no servidor são `--no-dev` e o boot parte. Admitidos na produção apenas como **cache derivada** (apagar e deixar regenerar). Apos cada upload: `php artisan tinker --execute='echo "ok";'` antes de testar o site. Foi isto que partiu o boot em 16/11 (PailServiceProvider not found).
+1. **Imediato (produção):**
+   - ✅ ~~Todos os itens do 15/11~~ (MAIL_GERAL, DKIM, smoke tests, categorias, must_change_password).
+   - Confirmar que o cliente viu o email do /registo-empresa ou do aviso de artigo, se quiser.
+   - Decidir se o N2 «Aviso de artigo» entra agora: SQL inline em §5.18 + upload 10 ficheiros.
+2. **Retomar password** do MySQL `qnbangolaco_pigea` + APP_KEY (recomendação antiga).
+3. **Reavaliar PageSpeed** (imagens/async-hero) pós-deploy.
+4. **«Imagens de contexto» link** — escolha do cliente (a) ou (b).
+5. **Regra permanente de deploy FTP:** nunca subir parcialmente; sempre: pacote completo `pigea-deploy-production-<data>.zip` (validado com md5sums) + `php artisan tinker --execute='echo "ok";'` + Ctrl+F5 + smoke test. Foi isto que custou os incidentes do 15/11 e 16/11.
+6. **Regra permanente — `bootstrap/cache/` NUNCA sobe:** só config/app.php + providers.php do projeto; os `packages.php`/`services.php` locais contêm dev deps e partem o servidor.
+7. **Nenhuma alteração do `.env`/login Path sem autorização explícita.**
 
 ---
 
@@ -308,6 +309,25 @@ C:\xampp\php\php.exe artisan cache:clear
 | 5.17 | 16/11/2026 (noite) | **README.md atualizado (suite, roadmap, §12 deploy discipline, release 2026-11-16):** números corretos (295/1015), tabela «Release 2026-11-16 — o que mudou em produção» (todos os itens, incluindo Honesty markers: ⚠️ sobre a verificação da coluna `must_change_password` e ⚠️ sobre upload do middleware), secção de erros do painel (Pail/route), pacote completo refresha §12. **Nota produtiva a manter:** o `prod-patch-2026-11-16-b.sql` foi verificado pelo cliente no phpMyAdmin (16/11): permissões 2 rows/3 links; coluna `must_change_password` confirmada `col=1`. **Fase B 100% aplicada em produção.** **DKIM confirmado atualizado pelo cliente (16/11).** Memória entregue em commit junto a outros docs |
 | 5.18 | 17/11/2026 | **«AVISO DE NOVO ARTIGO» (Fase N2, opção B do cliente) — IMPLEMENTADO.** Mailable `NewsletterArtigo` (capa+título+excerto+botão «Ler no site»+unsubscribe único por destinatário); tabela `newsletter_editions`/`newsletter_edition_items` (migração `2026_11_17_100000_*`); ecrã `/gestao-pigea/newsletter/enviar` (escolhe 1 dos 10 artigos publicados, **100 activos por clique**, modo «Enviar teste» só para a caixa do admin, histórico das últimas 5 edições); sidebar «Aviso de artigo» + botão no ecrã de subscritores; falhados registrados e retomados no clique seguinte. **Suite: 299/1032 ✔**. **Produção pendente:** criar as duas tabelas via **SQL manual inline** (sem import) + upload dos 10 ficheiros (md5s) + `optimize:clear`. Cliente com muita dificuldade repetida com imports → SQL fornecido colado direto no separador SQL |
 | 5.19 | 17/11/2026 | **LOGO DOS EMAILS TROCADA — agora: `https://docs.pigea.ao/imag/logo.png`** (pedido do cliente; substituída a i.ibb.co/jvhNs1zv/logo.png em **todos os 8 templates** de email + README). Suite 24/24 nos testes de email ✔ |
+| 5.20 | 17/11/2026 | **RELEASE «PRODUÇÃO 2026-11-16/17» PONTA A PONTA VALIDADA — o cliente confirma: «tudo funcionando».** Estado final commitado e alinhado: `updates` ≡ `main` ≡ `f6648c9`. **Suite 299/1032 verde.** Produção `https://pigea.ao/` íntegra: home 200, mega menu completo (news=37/menu=16), admin operativo, editor/login ok, emails (`geral@pigea.ao`+newsletter) funcionais, DKIM ok, `must_change_password` confirmada `col=1`, permissões `institucional.manage`/`newsletter.manage` corretas (2 rows/3 links), mailer transacional separado. **README.md** e **memoria.md** atualizados com Release/Notes, roadmap e deploy discipline. **Pendente (opcional/próximo ciclo):** completar N2 em produção (criar `newsletter_editions*` via SQL inline + upload 10 ficheiros); middleware `EnsureMustChangePassword` com tranca só em `admin.*` (não subir por decisão do cliente, só no próximo deploy) |
+
+---
+
+## 16. Estado final desta release (para referência)
+
+**Endpoint chave em produção:**
+| URL | Estado |
+|---|---|
+| `https://pigea.ao/` | ✅ 200 (home, mega menu completo, 5 notícias server-rendered) |
+| `https://pigea.ao/equipa` · `/parceiros` · `/sobre` | ✅ 200 |
+| `https://pigea.ao/entrar-7x2` → `/gestao-pigea/*` | ✅ 200/302 (login → admin com RBAC correto) |
+| `/gestao-pigea/perfil` | ✅ 200 (senha + info conta — Fase A) |
+| `/gestao-pigea/utilizadores` (+ `/editar`) | ✅ 200 (Fase B) |
+| `/gestao-pigea/newsletter` (+ `/enviar`) | ✅ 200 (N2 implementado no código; produção pendente de SQL inline) |
+
+**Base de dados `geopacas_pigeadb`:** `categories news=37 menu=16` ✔ · `must_change_password=1` ✔ · `permissions=2` ✔ · `role_has_permissions=3` ✔ · `migrations` contém patch (29+1) ✔
+
+**Git:** `updates` ≡ `main` ≡ `f6648c9` (vários commits fast-forward, nada de force-push). Suite 299/1032 verde em local.
 
 ---
 
