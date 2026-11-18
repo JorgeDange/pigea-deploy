@@ -64,6 +64,25 @@ class ArticleSanitizerTest extends TestCase
         $this->assertStringNotContainsString('javascript:', $out);
     }
 
+    public function test_margin_esquerda_indentacao_outdent_persiste(): void
+    {
+        // O botão de indentação/outdent do TinyMCE emite style="margin-left: …".
+        $out = $this->clean('<p style="margin-left: 3em">x</p>');
+
+        $this->assertStringContainsString('margin-left', $out);
+        $this->assertStringContainsString('3em', $out);
+    }
+
+    public function test_font_family_size_e_color_persist(): void
+    {
+        $out = $this->clean('<p style="font-family: Georgia, serif; font-size: 17px; color: #C8102E; background-color: #FFE5E5">x</p>');
+
+        $this->assertStringContainsString('font-family', $out);
+        $this->assertStringContainsString('Georgia', $out);
+        $this->assertStringContainsString('font-size:17px', $out);
+        $this->assertStringContainsString('#C8102E', $out);
+    }
+
     public function test_classe_desconhecida_removida_mas_classes_do_pigea_ficam(): void
     {
         $out = $this->clean('<p class="drop-cap outro z-ultimo">A</p><blockquote class="pull-quote estranha"><p>B</p></blockquote>');

@@ -36,13 +36,18 @@ return [
      * Propriedades CSS permitidas INLINE (style="…"). Tudo o que não estiver
      * aqui é REMOVIDO pelo sanitizador ao guardar. Nunca permitir `position`,
      * `top/left/z-index`, `url(...)`, `@import`, `expression(...)` etc.
-     * Estas cobrem o que o TinyMCE aplica de facto: alinhamento, indent,
-     * cor, fundo, peso/estilo de fonte, altura de linha, tamanho de letra e float.
+     * Estas cobrem o que o TinyMCE aplica de facto no painel de criação:
+     * alinhamento, indent (margin-left/padding-left), cor, fundo, fontes,
+     * altura de linha, tamanho, float (tabelas alinhadas a float), white-space
+     * e vertical-align (útil para tabelas).
      */
     'css_allowed' => [
         'text-align', 'text-indent', 'color', 'background-color',
-        'line-height', 'font-size', 'font-weight', 'font-style',
-        'float',
+        'line-height', 'font-size', 'font-weight', 'font-style', 'font-family',
+        'text-transform', 'letter-spacing',
+        'float', 'clear',
+        'margin-left', 'margin-right', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom',
+        'list-style-type', 'vertical-align', 'text-decoration', 'white-space',
     ],
 
     /** Schemes permitidos em href/src (http/https/mailto em links). */
