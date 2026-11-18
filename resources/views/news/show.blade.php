@@ -84,7 +84,7 @@
                                                 </div>
                                             </div>
                                             <div class="fs-wrap smpar fl-wrap">
-                                                <div class="fontSize"><span class="fs_title">Tamanho da letra: </span><input type="text" class="rage-slider" data-step="1" data-min="12" data-max="15" value="12"></div>
+                                                <div class="fontSize"><span class="fs_title">Tamanho da letra: </span><input type="text" class="rage-slider" data-step="1" data-min="12" data-max="19" value="15"></div>
                                                 <a class="print-btn" href="javascript:window.print()" data-microtip-position="bottom"><span>Imprimir</span><i class="fal fa-print"></i></a>
                                             </div>
                                             <div class="clearfix"></div>

@@ -503,8 +503,16 @@ function initGmag() {
         $(".mob-hid_filters").slideToggle(300);
     });
     $(".fontSize input").on("input", function () {
-        $('#font_chage').find("p").css("font-size", $(this).val() + "px");
+        $('.article-body').find('p, li, td, th, blockquote, dd, dt, figcaption').css('font-size', $(this).val() + 'px');
     });
+    // Persistir a escolha por sessão do visitante (por nota/usuário)
+    try {
+        var fs = window.localStorage.getItem('pigea.fontSize');
+        if (fs) { $('.fontSize input').val(fs).trigger('input'); }
+        $('.fontSize input').on('change', function () {
+            try { window.localStorage.setItem('pigea.fontSize', $(this).val()); } catch (e) {}
+        });
+    } catch (e) {}
     // scrolltofixed -----------------
     $(".fix-bar").scrollToFixed({
         minWidth: 1064,
